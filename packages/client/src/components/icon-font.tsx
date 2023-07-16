@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import Icon from "@ant-design/icons";
+
 import IconAdvanced from "./svgs/icon-advanced.svg";
 import IconChat from "./svgs/icon-chat.svg";
 import IconGroup from "./svgs/icon-group.svg";
@@ -37,6 +36,7 @@ import IconSwitch from "./svgs/icon-switch.svg";
 import IconNetworkGood from "./svgs/icon-network-good.svg";
 import IconNetworkNormal from "./svgs/icon-network-normal.svg";
 import IconNetworkBad from "./svgs/icon-network-bad.svg";
+
 const iconComponentMap: { [key: string]: any } = {
   "icon-advanced": IconAdvanced,
   "icon-chat": IconChat,
@@ -79,6 +79,7 @@ interface IconFontProps {
 export const IconFont = (props: IconFontProps) => {
   const { type, style } = props;
   const component = iconComponentMap[type];
+
   return component ? (
     <Icon component={component} style={{ ...(style || {}) }} />
   ) : null;

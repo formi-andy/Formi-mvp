@@ -85,8 +85,6 @@ if (!meetingArgs.signature && meetingArgs.sdkSecret && meetingArgs.topic) {
     meetingArgs.cloud_recording_option,
     meetingArgs.cloud_recording_election
   );
-  console.log("=====================================");
-  console.log("meetingArgs", meetingArgs);
 
   const urlArgs = {
     topic: meetingArgs.topic,
@@ -99,17 +97,25 @@ if (!meetingArgs.signature && meetingArgs.sdkSecret && meetingArgs.topic) {
     cloud_recording_election: meetingArgs.cloud_recording_election,
     web: "1",
   };
-  console.log("use url args");
-  console.log(
-    window.location.origin + "/?" + new URLSearchParams(urlArgs).toString()
-  );
 }
+
 const zmClient = ZoomVideo.createClient();
 
-export default function VideoContainer() {
+export default function VideoContainer({
+  sessionKey,
+}: {
+  sessionKey?: string;
+}) {
   return (
     <ZoomContext.Provider value={zmClient}>
-      <VideoFeed meetingArgs={meetingArgs as any} />
+      <VideoFeed
+        meetingArgs={
+          {
+            ...meetingArgs,
+            sessionKey,
+          } as any
+        }
+      />
     </ZoomContext.Provider>
   );
 }

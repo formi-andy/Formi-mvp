@@ -187,8 +187,6 @@ function VideoFeed(props: VideoFeedProps) {
         setSubsessionClient(ssClient);
         setLiveTranscriptionClient(ltClient);
         setIsLoading(false);
-
-        console.log("FINISHED EVERYTHING");
       } catch (e: any) {
         setIsLoading(false);
         message.error(e.reason);
@@ -257,7 +255,7 @@ function VideoFeed(props: VideoFeedProps) {
     console.log("onDialoutChange", payload);
   }, []);
 
-  const onAudioMerged = useCallback((payload) => {
+  const onAudioMerged = useCallback((payload: any) => {
     console.log("onAudioMerged", payload);
   }, []);
 
@@ -291,13 +289,8 @@ function VideoFeed(props: VideoFeedProps) {
     onAudioMerged,
   ]);
 
-  console.log(
-    "BRUH",
-    isSupportGalleryView ? "ONE" : galleryViewWithoutSAB ? "TWO" : "THREE"
-  );
-
   return (
-    <div className="flex flex-col h-fit w-fit">
+    <div className="flex flex-col">
       {loading && <LoadingLayer content={loadingText} />}
       {!loading && (
         <ZoomMediaContext.Provider value={mediaContext}>
@@ -308,9 +301,6 @@ function VideoFeed(props: VideoFeedProps) {
                   <LiveTranscriptionContext.Provider
                     value={liveTranscriptionClient}
                   >
-                    {/* <div className="bg-white p-4 text-xl text-black">
-                      HELLO WORLD
-                    </div> */}
                     {isSupportGalleryView ? (
                       <Video />
                     ) : galleryViewWithoutSAB ? (

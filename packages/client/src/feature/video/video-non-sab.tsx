@@ -247,11 +247,11 @@ const VideoContainer: React.FunctionComponent = () => {
           })}
         </ul>
       </div>
-      {/* <VideoFooter
+      <VideoFooter
         className="video-operations"
         sharing
         shareRef={selfShareRef}
-      /> */}
+      />
       {totalPage > 1 && (
         <Pagination
           page={page}

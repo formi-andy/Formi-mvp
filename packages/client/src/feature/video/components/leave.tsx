@@ -33,16 +33,18 @@ const LeaveButton = (props: LeaveButtonProps) => {
       <IconFont type="icon-leave" />
     </DropdownButton>
   ) : (
-    <Button
-      className={classNames("vc-button")}
-      icon={<IconFont type="icon-leave" />}
-      // eslint-disable-next-line react/jsx-boolean-value
-      ghost={true}
-      shape="circle"
-      size="large"
-      onClick={onLeaveClick}
-      title="Leave session"
-    />
+    <Tooltip title="Leave session" placement="top">
+      <Button
+        className={classNames("vc-button")}
+        icon={<IconFont type="icon-leave" />}
+        // eslint-disable-next-line react/jsx-boolean-value
+        ghost={true}
+        shape="circle"
+        size="large"
+        onClick={onLeaveClick}
+        title="Leave session"
+      />
+    </Tooltip>
   );
 };
 

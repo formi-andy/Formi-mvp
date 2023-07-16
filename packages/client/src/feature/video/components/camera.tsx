@@ -31,6 +31,8 @@ interface CameraButtonProps {
   activeCamera?: string;
   activePlaybackUrl?: string;
 }
+
+// these will be actual recordings in the future
 const videoPlaybacks = [
   {
     title: "Video 1",
@@ -45,6 +47,7 @@ const videoPlaybacks = [
     url: "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
   },
 ];
+
 const CameraButton = (props: CameraButtonProps) => {
   const {
     isStartedVideo,
@@ -92,19 +95,19 @@ const CameraButton = (props: CameraButtonProps) => {
         ),
         "group"
       ),
-      getAntdItem(
-        "Select a Video Playback",
-        "playback",
-        undefined,
-        videoPlaybacks.map((item) =>
-          getAntdItem(
-            item.title,
-            item.url,
-            item.url === activePlaybackUrl && <CheckOutlined />
-          )
-        ),
-        "group"
-      ),
+      // getAntdItem(
+      //   "Select a Video Playback",
+      //   "playback",
+      //   undefined,
+      //   videoPlaybacks.map((item) =>
+      //     getAntdItem(
+      //       item.title,
+      //       item.url,
+      //       item.url === activePlaybackUrl && <CheckOutlined />
+      //     )
+      //   ),
+      //   "group"
+      // ),
       getAntdItem("", "d1", undefined, undefined, "divider"),
       getAntdItem("Mirror My Video", "mirror", isMirrored && <CheckOutlined />),
       mediaStream?.isSupportVirtualBackground()
@@ -113,6 +116,7 @@ const CameraButton = (props: CameraButtonProps) => {
       getAntdItem("", "d2", undefined, undefined, "divider"),
       getAntdItem("Video Statistic", "statistic"),
     ].filter(Boolean) as MenuItem[]);
+
   return (
     <div className={classNames("camera-footer", className)}>
       {isStartedVideo && menuItems ? (
@@ -129,7 +133,7 @@ const CameraButton = (props: CameraButtonProps) => {
           <VideoCameraOutlined />
         </Dropdown.Button>
       ) : (
-        <Tooltip title={`${isStartedVideo ? "stop camera" : "start camera"}`}>
+        <Tooltip title={`${isStartedVideo ? "Stop Camera" : "Start Camera"}`}>
           <Button
             className={classNames("vc-button", className)}
             icon={

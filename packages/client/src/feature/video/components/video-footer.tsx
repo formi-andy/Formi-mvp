@@ -225,25 +225,32 @@ const VideoFooter = (props: VideoFooterProps) => {
     }
     return Promise.resolve();
   };
-  const onHostAudioMuted = useCallback((payload) => {
-    const { action, source, type } = payload;
-    if (action === AudioChangeAction.Join) {
-      setIsStartedAudio(true);
-      setAudio(type);
-    } else if (action === AudioChangeAction.Leave) {
-      setIsStartedAudio(false);
-    } else if (action === AudioChangeAction.Muted) {
-      setIsMuted(true);
-      if (source === MutedSource.PassiveByMuteOne) {
-        message.info("Host muted you");
+  const onHostAudioMuted = useCallback(
+    (payload: {
+      action: AudioChangeAction;
+      source: MutedSource | "passive";
+      type: string;
+    }) => {
+      const { action, source, type } = payload;
+      if (action === AudioChangeAction.Join) {
+        setIsStartedAudio(true);
+        setAudio(type);
+      } else if (action === AudioChangeAction.Leave) {
+        setIsStartedAudio(false);
+      } else if (action === AudioChangeAction.Muted) {
+        setIsMuted(true);
+        if (source === MutedSource.PassiveByMuteOne) {
+          message.info("Host muted you");
+        }
+      } else if (action === AudioChangeAction.Unmuted) {
+        setIsMuted(false);
+        if (source === "passive") {
+          message.info("Host unmuted you");
+        }
       }
-    } else if (action === AudioChangeAction.Unmuted) {
-      setIsMuted(false);
-      if (source === "passive") {
-        message.info("Host unmuted you");
-      }
-    }
-  }, []);
+    },
+    []
+  );
   const onScreenShareClick = useCallback(async () => {
     if (!isStartedScreenShare && shareRef && shareRef.current) {
       await mediaStream?.startShareScreen(shareRef.current, {
@@ -260,6 +267,8 @@ const VideoFooter = (props: VideoFooterProps) => {
     if (!isStartedLiveTranscription) {
       await liveTranscriptionClient?.startLiveTranscription();
       setIsStartedLiveTranscription(true);
+    } else {
+      message.info("Auto live transcription already enabled!");
     }
   }, [isStartedLiveTranscription, liveTranscriptionClient]);
 
@@ -273,7 +282,7 @@ const VideoFooter = (props: VideoFooterProps) => {
     await zmClient.leave(true);
   }, [zmClient]);
 
-  const onPassivelyStopShare = useCallback(({ reason }) => {
+  const onPassivelyStopShare = useCallback(({ reason }: { reason: string }) => {
     console.log("passively stop reason:", reason);
     setIsStartedScreenShare(false);
   }, []);
@@ -307,45 +316,58 @@ const VideoFooter = (props: VideoFooterProps) => {
     [zmClient]
   );
 
-  const onDialOutChange = useCallback((payload) => {
+  const onDialOutChange = useCallback((payload: { code: DialoutState }) => {
     setPhoneCallStatus(payload.code);
   }, []);
 
   const onRecordingClick = async (key: string) => {
-    switch (key) {
-      case "Record": {
-        await recordingClient?.startCloudRecording();
-        break;
+    try {
+      switch (key) {
+        case "Record": {
+          await recordingClient?.startCloudRecording();
+          break;
+        }
+        case "Resume": {
+          await recordingClient?.resumeCloudRecording();
+          break;
+        }
+        case "Stop": {
+          await recordingClient?.stopCloudRecording();
+          break;
+        }
+        case "Pause": {
+          await recordingClient?.pauseCloudRecording();
+          break;
+        }
+        case "Status": {
+          break;
+        }
+        default: {
+          await recordingClient?.startCloudRecording();
+        }
       }
-      case "Resume": {
-        await recordingClient?.resumeCloudRecording();
-        break;
+    } catch (e: any) {
+      if (e?.reason) {
+        message.error(
+          e?.reason.charAt(0).toUpperCase() + e?.reason.slice(1) || "Unknown"
+        );
+        return;
       }
-      case "Stop": {
-        await recordingClient?.stopCloudRecording();
-        break;
-      }
-      case "Pause": {
-        await recordingClient?.pauseCloudRecording();
-        break;
-      }
-      case "Status": {
-        break;
-      }
-      default: {
-        await recordingClient?.startCloudRecording();
-      }
+      message.error(e?.message || "Unknown error");
     }
   };
-  const onVideoCaptureChange = useCallback((payload) => {
-    if (payload.state === VideoCapturingState.Started) {
-      setIsStartedVideo(true);
-    } else {
-      setIsStartedVideo(false);
-    }
-  }, []);
+  const onVideoCaptureChange = useCallback(
+    (payload: { state: VideoCapturingState }) => {
+      if (payload.state === VideoCapturingState.Started) {
+        setIsStartedVideo(true);
+      } else {
+        setIsStartedVideo(false);
+      }
+    },
+    []
+  );
   const onShareAudioChange = useCallback(
-    (payload) => {
+    (payload: { state: "on" | "off" }) => {
       const { state } = payload;
       if (!mediaStream?.isSupportMicrophoneAndShareAudioSimultaneously()) {
         if (state === "on") {
@@ -357,25 +379,31 @@ const VideoFooter = (props: VideoFooterProps) => {
     },
     [mediaStream]
   );
-  const onHostAskToUnmute = useCallback((payload) => {
+  const onHostAskToUnmute = useCallback((payload: { reason: string }) => {
     const { reason } = payload;
     console.log(`Host ask to unmute the audio.`, reason);
   }, []);
 
-  const onCaptionStatusChange = useCallback((payload) => {
-    const { autoCaption } = payload;
-    if (autoCaption) {
-      message.info("Auto live transcription enabled!");
-    }
-  }, []);
+  const onCaptionStatusChange = useCallback(
+    (payload: { autoCaption: boolean }) => {
+      const { autoCaption } = payload;
+      if (autoCaption) {
+        message.info("Auto live transcription enabled!");
+      }
+    },
+    []
+  );
 
-  const onCaptionMessage = useCallback((payload) => {
-    const { text, done } = payload;
-    setCaption({
-      text,
-      isOver: done,
-    });
-  }, []);
+  const onCaptionMessage = useCallback(
+    (payload: { text: string; done: boolean }) => {
+      const { text, done } = payload;
+      setCaption({
+        text,
+        isOver: done,
+      });
+    },
+    []
+  );
   const onCanSeeMyScreen = useCallback(() => {
     message.info("Users can now see your screen", 1);
   }, []);
@@ -516,7 +544,7 @@ const VideoFooter = (props: VideoFooterProps) => {
         isMirrored={isMirrored}
         isBlur={isBlur}
       />
-      {/* {sharing && (
+      {sharing && (
         <ScreenShareButton
           sharePrivilege={sharePrivilege}
           isHostOrManager={zmClient.isHost() || zmClient.isManager()}
@@ -573,7 +601,7 @@ const VideoFooter = (props: VideoFooterProps) => {
             recordingClient?.declineIndividualRecording();
           }}
         />
-      )} */}
+      )}
     </div>
   );
 };

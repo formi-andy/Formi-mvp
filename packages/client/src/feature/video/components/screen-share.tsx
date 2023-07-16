@@ -58,29 +58,41 @@ const ScreenShareButton = (props: ScreenShareButtonProps) => {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {isHostOrManager ? (
-        <DropdownButton
-          className="vc-dropdown-button"
-          size="large"
-          menu={getAntdDropdownMenu(menu, onMenuItemClick)}
-          onClick={onScreenShareClick}
-          trigger={["click"]}
-          type="ghost"
-          icon={<UpOutlined />}
-          placement="topRight"
+        <Tooltip
+          title={`${
+            isStartedScreenShare ? "Stop Screenshare" : "Start Screenshare"
+          }`}
         >
-          <IconFont type="icon-share" />
-        </DropdownButton>
+          <DropdownButton
+            className="vc-dropdown-button"
+            size="large"
+            menu={getAntdDropdownMenu(menu, onMenuItemClick)}
+            onClick={onScreenShareClick}
+            trigger={["click"]}
+            type="ghost"
+            icon={<UpOutlined />}
+            placement="topRight"
+          >
+            <IconFont type="icon-share" />
+          </DropdownButton>
+        </Tooltip>
       ) : (
-        <Button
-          className={classNames("screen-share-button", "vc-button", {
-            "started-share": isStartedScreenShare,
-          })}
-          icon={<IconFont type="icon-share" />}
-          ghost={true}
-          shape="circle"
-          size="large"
-          onClick={onScreenShareClick}
-        />
+        <Tooltip
+          title={`${
+            isStartedScreenShare ? "Stop Screenshare" : "Start Screenshare"
+          }`}
+        >
+          <Button
+            className={classNames("screen-share-button", "vc-button", {
+              "started-share": isStartedScreenShare,
+            })}
+            icon={<IconFont type="icon-share" />}
+            ghost={true}
+            shape="circle"
+            size="large"
+            onClick={onScreenShareClick}
+          />
+        </Tooltip>
       )}
     </>
   );

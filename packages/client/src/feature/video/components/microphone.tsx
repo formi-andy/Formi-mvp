@@ -64,9 +64,9 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
   const tooltipText = isStartedAudio
     ? isMuted
-      ? "unmute"
-      : "mute"
-    : "start audio";
+      ? "Unmute"
+      : "Mute"
+    : "Start Audio";
   const menuItems = [];
   if (microphoneList?.length && audio !== "phone") {
     menuItems.push(
@@ -124,6 +124,7 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
       setIsPhoneModalOpen(false);
     }
   }, [isStartedAudio]);
+
   return (
     <div className={classNames("microphone-footer", className)}>
       {isStartedAudio ? (
