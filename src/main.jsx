@@ -10,6 +10,7 @@ import {
   UploadPage,
   ViewPage,
   NotFoundPage,
+  // LoaderPage,
 } from "./pages";
 import { FirebaseAuthProvider } from "./contexts/FirebaseAuth";
 import { ProtectedRoute, SignedInRoute, AuthPageShell } from "./components";
@@ -17,10 +18,12 @@ import { ProtectedRoute, SignedInRoute, AuthPageShell } from "./components";
 const router = createBrowserRouter([
   {
     path: "/",
+    // loader: <LoaderPage />,
     element: <HomePage />,
   },
   {
     path: "/record",
+    // loader: <LoaderPage />,
     element: (
       <ProtectedRoute>
         <RecordPage />
@@ -29,6 +32,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/signin",
+    // loader: <LoaderPage />,
     element: (
       <SignedInRoute>
         <AuthPageShell>
@@ -39,6 +43,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup",
+    // loader: <LoaderPage />,
     element: (
       <SignedInRoute>
         <AuthPageShell>
@@ -49,6 +54,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/upload",
+    // loader: <LoaderPage />,
     element: (
       <ProtectedRoute>
         <UploadPage />
@@ -57,6 +63,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/view",
+    // loader: <LoaderPage />,
     element: (
       <ProtectedRoute>
         <ViewPage />
@@ -65,6 +72,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
+    // loader: <LoaderPage />,
     element: <NotFoundPage />,
   },
 ]);

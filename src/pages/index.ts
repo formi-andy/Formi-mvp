@@ -5,6 +5,7 @@ import UploadPage from "./UploadPage";
 import ViewPage from "./ViewPage";
 import HomePage from "./HomePage";
 import NotFoundPage from "./NotFoundPage";
+import LoaderPage from "./LoaderPage";
 
 export {
   HomePage,
@@ -14,4 +15,5 @@ export {
   UploadPage,
   ViewPage,
   NotFoundPage,
+  LoaderPage,
 };
