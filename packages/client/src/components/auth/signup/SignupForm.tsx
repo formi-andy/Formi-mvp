@@ -1,28 +1,29 @@
 "use client";
 
 import { useForm } from "@mantine/form";
-import { signIn } from "next-auth/react";
-import { TextInput, PasswordInput, Checkbox } from "@mantine/core";
-import { BsGoogle } from "react-icons/bs";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { TextInput, Checkbox } from "@mantine/core";
+import { FormEvent } from "react";
 
 export default function SignupForm() {
-  const register = () => {
-    const auth = getAuth();
+  const register = (e: FormEvent) => {
+    e.preventDefault();
+    // const auth = getAuth();
 
     const { values } = form;
 
-    createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {
-        // The user account was created successfully
-        const user = userCredential.user;
-        console.log("User account created:", user);
-        // navigate("/view");
-      })
-      .catch((error) => {
-        // There was an error creating the user account
-        console.error("Error creating user account:", error);
-      });
+    console.log("VALUES", values);
+
+    // createUserWithEmailAndPassword(auth, values.email, values.password)
+    //   .then((userCredential) => {
+    //     // The user account was created successfully
+    //     const user = userCredential.user;
+    //     console.log("User account created:", user);
+    //     // navigate("/view");
+    //   })
+    //   .catch((error) => {
+    //     // There was an error creating the user account
+    //     console.error("Error creating user account:", error);
+    //   });
   };
 
   const form = useForm({
@@ -36,20 +37,23 @@ export default function SignupForm() {
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
-      password: (val) =>
-        val.length < 6 ? "Password should include at least 6 characters" : null,
+      password: (val) => {
+        const res =
+          val.length < 6
+            ? "Password should include at least 6 characters"
+            : null;
+        console.log("VAL", val, res);
+        return res;
+      },
     },
   });
 
   return (
-    <form className="flex flex-col gap-y-4">
+    <form className="flex flex-col gap-y-4" onSubmit={(e) => register(e)}>
       <div className="flex gap-x-4">
         <TextInput
-          styles={{
-            label: {
-              fontWeight: 400,
-              marginBottom: "0.5rem",
-            },
+          classNames={{
+            root: "w-full",
           }}
           required
           label="First Name"
@@ -60,11 +64,8 @@ export default function SignupForm() {
           }
         />
         <TextInput
-          styles={{
-            label: {
-              fontWeight: 400,
-              marginBottom: "0.5rem",
-            },
+          classNames={{
+            root: "w-full",
           }}
           required
           label="Last Name"
@@ -75,29 +76,18 @@ export default function SignupForm() {
           }
         />
       </div>
-
       <TextInput
-        styles={{
-          label: {
-            fontWeight: 400,
-          },
-        }}
         required
         label="Email"
-        placeholder="hello@gmail.com"
+        placeholder="hello@homescape.com"
         value={form.values.email}
         onChange={(event) =>
           form.setFieldValue("email", event.currentTarget.value)
         }
         error={form.errors.email && "Invalid email"}
       />
-
-      <PasswordInput
-        styles={{
-          label: {
-            fontWeight: 400,
-          },
-        }}
+      <TextInput
+        type="password"
         required
         label="Password"
         placeholder="Your password"
@@ -110,7 +100,6 @@ export default function SignupForm() {
           "Password should include at least 6 characters"
         }
       />
-
       <Checkbox
         required
         label="I accept terms and conditions"
@@ -119,11 +108,10 @@ export default function SignupForm() {
           form.setFieldValue("terms", event.currentTarget.checked)
         }
       />
-
-      <div className="mt-6">
+      <div>
         <button
           className="w-full px-6 py-2.5 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
-          onClick={register}
+          type="submit"
         >
           Sign Up
         </button>
