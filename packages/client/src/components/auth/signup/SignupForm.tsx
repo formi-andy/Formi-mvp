@@ -2,28 +2,28 @@
 
 import { useForm } from "@mantine/form";
 import { signIn } from "next-auth/react";
-import { TextInput, PasswordInput, Checkbox } from "@mantine/core";
+import { TextInput, Checkbox } from "@mantine/core";
 import { BsGoogle } from "react-icons/bs";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function SignupForm() {
-  const register = () => {
-    const auth = getAuth();
+  // const register = () => {
+  //   const auth = getAuth();
 
-    const { values } = form;
+  //   const { values } = form;
 
-    createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {
-        // The user account was created successfully
-        const user = userCredential.user;
-        console.log("User account created:", user);
-        // navigate("/view");
-      })
-      .catch((error) => {
-        // There was an error creating the user account
-        console.error("Error creating user account:", error);
-      });
-  };
+  //   createUserWithEmailAndPassword(auth, values.email, values.password)
+  //     .then((userCredential) => {
+  //       // The user account was created successfully
+  //       const user = userCredential.user;
+  //       console.log("User account created:", user);
+  //       // navigate("/view");
+  //     })
+  //     .catch((error) => {
+  //       // There was an error creating the user account
+  //       console.error("Error creating user account:", error);
+  //     });
+  // };
 
   const form = useForm({
     initialValues: {
@@ -91,7 +91,7 @@ export default function SignupForm() {
         }
         error={form.errors.email && "Invalid email"}
       />
-
+      {/* 
       <PasswordInput
         styles={{
           label: {
@@ -109,7 +109,7 @@ export default function SignupForm() {
           form.errors.password &&
           "Password should include at least 6 characters"
         }
-      />
+      /> */}
 
       <Checkbox
         required
@@ -123,7 +123,7 @@ export default function SignupForm() {
       <div className="mt-6">
         <button
           className="w-full px-6 py-2.5 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
-          onClick={register}
+          // onClick={register}
         >
           Sign Up
         </button>
