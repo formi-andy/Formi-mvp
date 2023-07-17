@@ -134,7 +134,6 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
           menu={getAntdDropdownMenu(menuItems, onMenuItemClick)}
           onClick={onMicrophoneClick}
           trigger={["click"]}
-          type="ghost"
           icon={<UpOutlined />}
           placement="topRight"
           disabled={disabled}
@@ -163,7 +162,6 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
               )}
               onClick={onMicrophoneClick}
               trigger={["click"]}
-              type="ghost"
               icon={<UpOutlined />}
               placement="topRight"
             >
@@ -174,7 +172,6 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
               className="vc-button"
               icon={<IconFont type="icon-headset" />}
               size="large"
-              ghost
               shape="circle"
               onClick={onMicrophoneClick}
             />

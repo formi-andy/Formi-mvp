@@ -22,7 +22,6 @@ import { produce } from "immer";
 import Video from "@/feature/video/video";
 import VideoSingle from "@/feature/video/video-single";
 import VideoNonSAB from "@/feature/video/video-non-sab";
-// import Preview from "@/feature/preview/preview";
 import ZoomContext from "../../context/zoom-context";
 import ZoomMediaContext from "../../context/media-context";
 import ChatContext from "../../context/chat-context";
@@ -43,6 +42,7 @@ import {
 } from "../../../types/index-types";
 import SubsessionContext from "@/context/subsession-context";
 import { isAndroidBrowser } from "@/utils/platform";
+import PreviewContainer from "@/feature/preview/preview";
 
 interface VideoFeedProps {
   meetingArgs: {
@@ -53,6 +53,8 @@ interface VideoFeedProps {
     password?: string;
     webEndpoint?: string;
     enforceGalleryView?: string;
+    meetingId?: string;
+    joined: boolean;
   };
 }
 const mediaShape = {
@@ -115,6 +117,22 @@ declare global {
   }
 }
 
+function renderVideo(
+  joined: boolean,
+  isSupportGalleryView: boolean,
+  galleryViewWithoutSAB: boolean
+) {
+  if (!joined) {
+    return <PreviewContainer />;
+  } else if (isSupportGalleryView) {
+    return <Video />;
+  } else if (galleryViewWithoutSAB) {
+    return <VideoNonSAB />;
+  } else {
+    return <VideoSingle />;
+  }
+}
+
 function VideoFeed(props: VideoFeedProps) {
   const {
     meetingArgs: {
@@ -125,6 +143,8 @@ function VideoFeed(props: VideoFeedProps) {
       password,
       webEndpoint: webEndpointArg,
       enforceGalleryView,
+      meetingId,
+      joined,
     },
   } = props;
   const [loading, setIsLoading] = useState(true);
@@ -168,9 +188,11 @@ function VideoFeed(props: VideoFeedProps) {
       });
       try {
         setLoadingText("Joining the session...");
-        await zmClient.join(topic, signature, name, password).catch((e) => {
-          console.log(e);
-        });
+        await zmClient
+          .join(topic, signature, meetingId || name, password)
+          .catch((e) => {
+            console.log(e);
+          });
         const stream = zmClient.getMediaStream();
         setMediaStream(stream);
         setIsSupportGalleryView(
@@ -197,6 +219,7 @@ function VideoFeed(props: VideoFeedProps) {
       ZoomVideo.destroyClient();
     };
   }, [
+    meetingId,
     sdkKey,
     signature,
     zmClient,
@@ -301,12 +324,10 @@ function VideoFeed(props: VideoFeedProps) {
                   <LiveTranscriptionContext.Provider
                     value={liveTranscriptionClient}
                   >
-                    {isSupportGalleryView ? (
-                      <Video />
-                    ) : galleryViewWithoutSAB ? (
-                      <VideoNonSAB />
-                    ) : (
-                      <VideoSingle />
+                    {renderVideo(
+                      joined,
+                      isSupportGalleryView,
+                      galleryViewWithoutSAB
                     )}
                     {/* <Router>
                       <Switch>

@@ -69,7 +69,6 @@ const ScreenShareButton = (props: ScreenShareButtonProps) => {
             menu={getAntdDropdownMenu(menu, onMenuItemClick)}
             onClick={onScreenShareClick}
             trigger={["click"]}
-            type="ghost"
             icon={<UpOutlined />}
             placement="topRight"
           >
@@ -87,7 +86,6 @@ const ScreenShareButton = (props: ScreenShareButtonProps) => {
               "started-share": isStartedScreenShare,
             })}
             icon={<IconFont type="icon-share" />}
-            ghost={true}
             shape="circle"
             size="large"
             onClick={onScreenShareClick}
@@ -108,7 +106,6 @@ const ScreenShareLockButton = (props: ScreenShareLockButtonProps) => {
         className="screen-share-button"
         icon={isLockedScreenShare ? <LockOutlined /> : <UnlockOutlined />}
         // eslint-disable-next-line react/jsx-boolean-value
-        ghost={true}
         shape="circle"
         size="large"
         onClick={onScreenShareLockClick}

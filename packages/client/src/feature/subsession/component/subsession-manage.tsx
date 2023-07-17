@@ -73,7 +73,7 @@ const SubsessionManage = (props: SubsessionManageProps) => {
   return (
     <div className="room-manage">
       <div className="room-list-wrap">
-        <Collapse className="room-list" ghost>
+        <Collapse className="room-list">
           {subsessionStatus !== SubsessionStatus.Closing &&
             unassignedUserList.length > 0 && (
               <Panel
@@ -155,7 +155,7 @@ const SubsessionManage = (props: SubsessionManageProps) => {
               trigger="click"
               content={<SubsessionOptions {...subsessionOptions} />}
             >
-              <Button type="primary" className="room-options-btn" ghost>
+              <Button type="primary" className="room-options-btn">
                 Options
               </Button>
             </Popover>

@@ -23,7 +23,6 @@ const LiveTranscriptionButton = (props: LiveTranscriptionButtonProps) => {
           "started-transcription": isStartedLiveTranscription,
         })}
         icon={<IconFont type="icon-subtitle" />}
-        ghost={true}
         shape="circle"
         size="large"
         onClick={onLiveTranscriptionClick}

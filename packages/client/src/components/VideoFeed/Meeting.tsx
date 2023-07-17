@@ -4,28 +4,29 @@ import { useState } from "react";
 import VideoContainer from "./VideoContainer";
 import { TextInput } from "@mantine/core";
 import { message } from "antd";
-import { useSession } from "next-auth/react";
 
 export default function Meeting() {
   const [joined, setJoined] = useState(false);
-  const [meetingID, setMeetingID] = useState("");
+  const [meetingId, setMeetingId] = useState("");
 
   return (
     <div className="flex flex-col w-full items-center">
-      {!joined ? (
-        <div className="flex flex-col items-center w-[400px]">
-          <p className="text-2xl mb-2 font-light">Meeting ID</p>
-          <TextInput
-            classNames={{ root: "w-full" }}
-            placeholder="Enter Meeting ID"
-            className="mb-8"
-            value={meetingID}
-            onChange={(e) => setMeetingID(e.currentTarget.value)}
-          />
+      <div className="flex flex-col items-center w-[400px]">
+        <p className="text-2xl mb-2 font-light">Meeting ID</p>
+        <TextInput
+          disabled={joined}
+          classNames={{ root: "w-full" }}
+          placeholder="Enter Meeting ID"
+          className="mb-8"
+          value={meetingId}
+          onChange={(e) => setMeetingId(e.currentTarget.value)}
+        />
+        <VideoContainer meetingId={meetingId} joined={joined} />
+        {!joined && (
           <button
             className="border rounded px-4 py-1"
             onClick={() => {
-              if (meetingID.length > 0) {
+              if (meetingId.length > 0) {
                 setJoined(true);
               } else {
                 message.error("Please enter a meeting ID");
@@ -34,10 +35,8 @@ export default function Meeting() {
           >
             Join Meeting
           </button>
-        </div>
-      ) : (
-        <VideoContainer sessionKey={meetingID} />
-      )}
+        )}
+      </div>
     </div>
   );
 }

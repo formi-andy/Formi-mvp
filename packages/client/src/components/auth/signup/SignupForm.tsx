@@ -79,7 +79,7 @@ export default function SignupForm() {
       <TextInput
         required
         label="Email"
-        placeholder="hello@homescape.com"
+        placeholder="hello@homescope.com"
         value={form.values.email}
         onChange={(event) =>
           form.setFieldValue("email", event.currentTarget.value)

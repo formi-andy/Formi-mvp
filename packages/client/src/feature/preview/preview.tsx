@@ -189,7 +189,6 @@ const PreviewContainer = () => {
     console.log("preview encode val", encodeVal);
     const decodeOption = decodePreviewOptions(encodeVal);
     console.log("preview config", decodePreviewOptions(encodeVal));
-    message.info(JSON.stringify(decodeOption, null, 2));
     console.log(micList);
   }, [isStartedAudio, isMuted, isStartedVideo]);
 
@@ -269,9 +268,9 @@ const PreviewContainer = () => {
   return (
     <div className="js-preview-view">
       <div id="js-preview-view" className="container preview__root">
-        <span>
-          <h1>Audio And Video Preview</h1>
-        </span>
+        <div className="flex justify-center w-full text-xl font-light mb-4">
+          <h1>Audio and Video Preview</h1>
+        </div>
         <div className="container video-app">
           <video
             id="js-preview-video"
@@ -279,7 +278,7 @@ const PreviewContainer = () => {
             muted={true}
             data-video="0"
           />
-          <div className="video-footer video-operations video-operations-preview">
+          <div className="video-footer video-operations">
             <MicrophoneButton
               isStartedAudio={isStartedAudio}
               isMuted={isMuted}
@@ -303,11 +302,7 @@ const PreviewContainer = () => {
           <div className="audio-test-wrap">
             <h3>Speaker Test</h3>
             <div className="speaker-action">
-              <Button
-                type="primary"
-                onClick={onTestSpeakerClick}
-                className="speaker-btn"
-              >
+              <Button onClick={onTestSpeakerClick} className="speaker-btn">
                 {isPlayingAudio ? "Stop" : "Test Speaker"}
               </Button>
               <Select
@@ -334,11 +329,7 @@ const PreviewContainer = () => {
           <div className="audio-test-wrap">
             <h3>Microphone Test</h3>
             <div className="speaker-action">
-              <Button
-                type="primary"
-                onClick={onTestMicrophoneClick}
-                className="speaker-btn"
-              >
+              <Button onClick={onTestMicrophoneClick} className="speaker-btn">
                 {microphoneBtn}
               </Button>
               <Select
@@ -359,7 +350,7 @@ const PreviewContainer = () => {
             </div>
             <div className="speaker-output">
               <span className="speaker-label">Input level</span>
-              <Progress percent={inputLevel} showInfo={false} />
+              <Progress percent={isMuted ? 0 : inputLevel} showInfo={false} />
             </div>
           </div>
         </div>

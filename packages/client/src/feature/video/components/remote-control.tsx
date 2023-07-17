@@ -166,7 +166,6 @@ export const RemoteControlIndication = (
       <Button
         icon={<IconFont type="icon-remote-control" />}
         size="large"
-        ghost={true}
         shape="circle"
         className={classNames("vc-button", "remote-control-dropdown")}
       />

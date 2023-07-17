@@ -102,9 +102,11 @@ if (!meetingArgs.signature && meetingArgs.sdkSecret && meetingArgs.topic) {
 const zmClient = ZoomVideo.createClient();
 
 export default function VideoContainer({
-  sessionKey,
+  meetingId,
+  joined,
 }: {
-  sessionKey?: string;
+  meetingId?: string;
+  joined: boolean;
 }) {
   return (
     <ZoomContext.Provider value={zmClient}>
@@ -112,7 +114,8 @@ export default function VideoContainer({
         meetingArgs={
           {
             ...meetingArgs,
-            sessionKey,
+            meetingId,
+            joined,
           } as any
         }
       />

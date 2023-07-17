@@ -27,7 +27,6 @@ const CmdMessageItem = (props: CmdMessageItemProps) => {
       <Button
         className="chat-message-avatar"
         onClick={onAvatarClick}
-        ghost
         shape="circle"
         size="large"
       >

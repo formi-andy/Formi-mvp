@@ -126,7 +126,6 @@ const CameraButton = (props: CameraButtonProps) => {
           menu={getAntdDropdownMenu(menuItems, onMenuItemClick)}
           onClick={onCameraClick}
           trigger={["click"]}
-          type="ghost"
           icon={<UpOutlined />}
           placement="topRight"
         >
@@ -143,7 +142,6 @@ const CameraButton = (props: CameraButtonProps) => {
                 <VideoCameraAddOutlined />
               )
             }
-            ghost={true}
             shape="circle"
             size="large"
             onClick={onCameraClick}

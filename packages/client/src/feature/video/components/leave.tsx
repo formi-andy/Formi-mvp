@@ -25,7 +25,6 @@ const LeaveButton = (props: LeaveButtonProps) => {
         onEndClick
       )}
       trigger={["click"]}
-      type="ghost"
       onClick={onLeaveClick}
       icon={<UpOutlined />}
       placement="topRight"
@@ -38,7 +37,6 @@ const LeaveButton = (props: LeaveButtonProps) => {
         className={classNames("vc-button")}
         icon={<IconFont type="icon-leave" />}
         // eslint-disable-next-line react/jsx-boolean-value
-        ghost={true}
         shape="circle"
         size="large"
         onClick={onLeaveClick}
