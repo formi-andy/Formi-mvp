@@ -1,15 +1,13 @@
-import { CaptureButton } from "@/components/CaptureButton/CaptureButton";
 import { Instructions } from "@/components/Instructions/Instructions";
-import { VideoFeed } from "@/components/VideoFeed/VideoFeed";
+import Meeting from "@/components/VideoFeed/Meeting";
 
 type Props = {};
 
 const Record = (props: Props) => {
   return (
-    <div>
+    <div className="flex flex-col gap-y-4">
       <Instructions />
-      <VideoFeed />
-      <CaptureButton />
+      <Meeting />
     </div>
   );
 };
