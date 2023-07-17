@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Button, Tooltip, Menu, Dropdown } from "antd";
 import {
   CheckOutlined,
@@ -20,12 +20,12 @@ interface CameraButtonProps {
   isStartedVideo: boolean;
   isMirrored?: boolean;
   isBlur?: boolean;
-  onCameraClick: () => void;
-  onSwitchCamera: (deviceId: string) => void;
-  onMirrorVideo?: () => void;
+  onCameraClick: () => Promise<void>;
+  onSwitchCamera: (deviceId: string) => Promise<void>;
+  onMirrorVideo?: () => Promise<void>;
   onVideoStatistic?: () => void;
-  onBlurBackground?: () => void;
-  onSelectVideoPlayback?: (url: string) => void;
+  onBlurBackground?: () => Promise<void>;
+  onSelectVideoPlayback?: (url: string) => Promise<void>;
   className?: string;
   cameraList?: MediaDevice[];
   activeCamera?: string;
@@ -65,18 +65,21 @@ const CameraButton = (props: CameraButtonProps) => {
     onSelectVideoPlayback,
   } = props;
   const { mediaStream } = useContext(ZoomMediaContext);
-  const onMenuItemClick = (payload: { key: any }) => {
+  const onMenuItemClick = async (payload: { key: any }) => {
+    if (loading) return;
+    setLoading(true);
     if (payload.key === "mirror") {
-      onMirrorVideo?.();
+      await onMirrorVideo?.();
     } else if (payload.key === "statistic") {
       onVideoStatistic?.();
     } else if (payload.key === "blur") {
-      onBlurBackground?.();
+      await onBlurBackground?.();
     } else if (/^https:\/\//.test(payload.key)) {
-      onSelectVideoPlayback?.(payload.key);
+      await onSelectVideoPlayback?.(payload.key);
     } else {
-      onSwitchCamera(payload.key);
+      await onSwitchCamera(payload.key);
     }
+    setLoading(false);
   };
   const menuItems =
     cameraList &&
@@ -117,6 +120,8 @@ const CameraButton = (props: CameraButtonProps) => {
       getAntdItem("Video Statistic", "statistic"),
     ].filter(Boolean) as MenuItem[]);
 
+  const [loading, setLoading] = useState(false);
+
   return (
     <div className={classNames("camera-footer", className)}>
       {isStartedVideo && menuItems ? (
@@ -124,7 +129,12 @@ const CameraButton = (props: CameraButtonProps) => {
           className="vc-dropdown-button"
           size="large"
           menu={getAntdDropdownMenu(menuItems, onMenuItemClick)}
-          onClick={onCameraClick}
+          onClick={async () => {
+            if (loading) return;
+            setLoading(true);
+            await onCameraClick();
+            setLoading(false);
+          }}
           trigger={["click"]}
           icon={<UpOutlined />}
           placement="topRight"
@@ -144,7 +154,12 @@ const CameraButton = (props: CameraButtonProps) => {
             }
             shape="circle"
             size="large"
-            onClick={onCameraClick}
+            onClick={async () => {
+              if (loading) return;
+              setLoading(true);
+              await onCameraClick();
+              setLoading(false);
+            }}
           />
         </Tooltip>
       )}

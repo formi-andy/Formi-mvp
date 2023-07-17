@@ -22,14 +22,14 @@ interface MicrophoneButtonProps {
   disabled?: boolean;
   audio?: string;
   phoneCountryList?: any[];
-  onMicrophoneClick: () => void;
-  onMicrophoneMenuClick: (key: string) => void;
+  onMicrophoneClick: () => Promise<void>;
+  onMicrophoneMenuClick: (key: string) => Promise<void>;
   onPhoneCallClick?: (
     code: string,
     phoneNumber: string,
     name: string,
     option: any
-  ) => void;
+  ) => Promise<void>;
   onPhoneCallCancel?: (
     code: string,
     phoneNumber: string,
@@ -62,6 +62,7 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
     onPhoneCallCancel,
   } = props;
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const tooltipText = isStartedAudio
     ? isMuted
       ? "Unmute"
@@ -132,11 +133,15 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
           className="vc-dropdown-button"
           size="large"
           menu={getAntdDropdownMenu(menuItems, onMenuItemClick)}
-          onClick={onMicrophoneClick}
+          onClick={async () => {
+            setLoading(true);
+            await onMicrophoneClick();
+            setLoading(false);
+          }}
           trigger={["click"]}
           icon={<UpOutlined />}
           placement="topRight"
-          disabled={disabled}
+          disabled={disabled || loading}
         >
           {isMuted ? (
             audio === "phone" ? (
@@ -160,7 +165,11 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
                 [getAntdItem("Invite by phone", "phone")],
                 onPhoneMenuClick
               )}
-              onClick={onMicrophoneClick}
+              onClick={async () => {
+                setLoading(true);
+                await onMicrophoneClick();
+                setLoading(false);
+              }}
               trigger={["click"]}
               icon={<UpOutlined />}
               placement="topRight"
@@ -183,8 +192,22 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
         setVisible={(visible: boolean) => setIsPhoneModalOpen(visible)}
         phoneCallStatus={phoneCallStatus}
         phoneCountryList={phoneCountryList}
-        onPhoneCallCancel={onPhoneCallCancel}
-        onPhoneCallClick={onPhoneCallClick}
+        onPhoneCallCancel={async (code, phoneNumber, option) => {
+          if (!onPhoneCallCancel) {
+            return;
+          }
+          setLoading(true);
+          await onPhoneCallCancel(code, phoneNumber, option);
+          setLoading(false);
+        }}
+        onPhoneCallClick={async (code, phoneNumber, name, option) => {
+          if (!onPhoneCallClick) {
+            return;
+          }
+          setLoading(true);
+          await onPhoneCallClick(code, phoneNumber, name, option);
+          setLoading(false);
+        }}
       />
     </div>
   );

@@ -188,8 +188,9 @@ function VideoFeed(props: VideoFeedProps) {
       });
       try {
         setLoadingText("Joining the session...");
+        // TODO: MAKE TOPIC DYNAMIC, make name the user`s name
         await zmClient
-          .join(topic, signature, meetingId || name, password)
+          .join(topic, signature, meetingId ?? name, password)
           .catch((e) => {
             console.log(e);
           });

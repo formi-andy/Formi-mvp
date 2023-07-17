@@ -1,6 +1,6 @@
 export const devConfig = {
-  sdkKey: "2PW1ihoMnfTqs3nBoT3z3RMpnnoG4Sn1cxii",
-  sdkSecret: "4hKUFxpn5Sca9tAgiu5Q3U1yGP9QXqkJvKj6",
+  sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
+  sdkSecret: process.env.ZOOM_MEETING_SDK_SECRET,
   webEndpoint: "zoom.us",
   topic: "React Demo",
   name: `React`,
