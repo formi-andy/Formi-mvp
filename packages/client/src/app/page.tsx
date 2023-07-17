@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LandingTypeWriter from "@/components/Landing/Typewriter";
+import WaitList from "@/components/WaitList/WaitList";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
           Learn More
         </Link>
       </div>
+      <WaitList />
     </main>
   );
 }
