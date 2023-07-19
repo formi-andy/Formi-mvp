@@ -6,7 +6,7 @@ export const Instructions = () => {
       <p>2. Enable permissions and trust settings on your phone</p>
       <p>
         3. Press Join Meeting and enter the meeting ID. Your doctor will provide
-        you with this.
+        you with it.
       </p>
       <p>
         4. Click the Start Screenshare button and select your phone from the

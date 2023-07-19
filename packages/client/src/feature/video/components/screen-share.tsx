@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Tooltip, Menu, Dropdown } from "antd";
 import classNames from "classnames";
 import { IconFont } from "../../../components/icon-font";
@@ -55,7 +54,6 @@ const ScreenShareButton = (props: ScreenShareButtonProps) => {
     onSharePrivilegeClick?.(Number(payload.key));
   };
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {isHostOrManager ? (
         <Tooltip
@@ -105,7 +103,6 @@ const ScreenShareLockButton = (props: ScreenShareLockButtonProps) => {
       <Button
         className="screen-share-button"
         icon={isLockedScreenShare ? <LockOutlined /> : <UnlockOutlined />}
-        // eslint-disable-next-line react/jsx-boolean-value
         shape="circle"
         size="large"
         onClick={onScreenShareLockClick}
