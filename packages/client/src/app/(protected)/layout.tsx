@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
+import AuthContext from "@/contexts/Authcontext";
 
 export default async function ProtectedLayout({
   children,
@@ -13,5 +14,5 @@ export default async function ProtectedLayout({
     redirect("/login");
   }
 
-  return <>{children}</>;
+  return <AuthContext>{children}</AuthContext>;
 }

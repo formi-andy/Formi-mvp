@@ -30,7 +30,6 @@
     "eslint": "8.43.0",
     "eslint-config-next": "13.4.7",
     "firebase-admin": "^11.9.0",
-    "html2canvas": "^1.4.1",
     "immer": "^10.0.2",
     "jsrsasign": "^10.8.6",
     "lodash": "^4.17.21",
