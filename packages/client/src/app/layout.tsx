@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="flex flex-col items-center">
         <Header />
         <MantineProvider>
-          <div className="px-4 md:px-8 w-full h-full">{children}</div>
+          <div className="px-4 md:px-8 w-full">{children}</div>
         </MantineProvider>
         <Footer />
       </body>

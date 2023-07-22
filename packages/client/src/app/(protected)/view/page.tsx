@@ -97,7 +97,7 @@ const View = () => {
                         url,
                         name: url.split("/").pop() || "Image",
                       });
-                      open();
+                      // open();
                     }}
                   />
                 </div>
