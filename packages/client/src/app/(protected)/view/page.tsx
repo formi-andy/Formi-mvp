@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import Link from "next/link";
 import {
   getStorage,
   ref,
@@ -13,7 +11,6 @@ import {
 import { firebaseApp } from "@/lib/firebase";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { Pagination, Modal } from "@mantine/core";
 import { AiFillFileImage } from "react-icons/ai";
 
 const storage = getStorage(firebaseApp);
@@ -22,7 +19,6 @@ const View = () => {
   const [urls, setUrls] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState<boolean>(true);
-  const [opened, { open, close }] = useDisclosure(false);
   const [selectedImage, setSelectedImage] = useState({
     url: "",
     name: "",
@@ -69,13 +65,6 @@ const View = () => {
 
   return (
     <div className="block">
-      {/* <div>
-        <Link href="/upload">
-          <p className="text-xl px-8 py-2 w-1/2 bg-blue-500 hover:bg-blue-700 text-white transition-all cursor-pointer">
-            Upload more images
-          </p>
-        </Link>
-      </div> */}
       <div className="flex flex-col gap-y-4">
         <p className="text-4xl font-light">Gallery</p>
         <div>
@@ -117,18 +106,6 @@ const View = () => {
           )}
         </div>
       </div>
-      {/* <Pagination total={10} /> */}
-      {/* <Modal
-        opened={opened}
-        onClose={close}
-        title={selectedImage.name}
-        centered
-        className="fixed w-full h-full"
-      >
-        <div className="w-[960px] h-[540px]">
-          <Image src={selectedImage.url} alt="Description" fill={true} />
-        </div>
-      </Modal> */}
     </div>
   );
 };
