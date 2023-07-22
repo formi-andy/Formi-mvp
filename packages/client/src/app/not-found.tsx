@@ -4,9 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-type Props = {};
-
-const NotFoundPage = (props: Props) => {
+const NotFoundPage = () => {
   const router = useRouter();
 
   return (
