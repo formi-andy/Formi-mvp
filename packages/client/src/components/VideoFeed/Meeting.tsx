@@ -8,7 +8,6 @@ import { message } from "antd";
 export default function Meeting() {
   const [joined, setJoined] = useState(false);
   const meetingRef = useRef<HTMLInputElement>(null);
-
   return (
     <div className="flex flex-col w-full items-center">
       <div className="flex flex-col items-center w-[400px]">

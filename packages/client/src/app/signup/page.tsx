@@ -20,7 +20,6 @@ const SignUp = () => {
           width={64}
           height={64}
           alt="logo"
-          // className="w-auto h-7 sm:h-8"
           src="https://merakiui.com/images/logo.svg"
         />
       </div>

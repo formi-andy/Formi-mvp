@@ -34,6 +34,7 @@
     "immer": "^10.0.2",
     "jsrsasign": "^10.8.6",
     "lodash": "^4.17.21",
+    "nanoid": "^4.0.2",
     "next": "13.4.7",
     "next-auth": "^4.22.1",
     "next-images": "^1.8.5",
