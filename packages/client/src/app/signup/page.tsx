@@ -6,7 +6,7 @@ import SignupForm from "@/components/auth/signup/SignupForm";
 
 const SignUp = () => {
   return (
-    <div className="flex p-8 items-center flex-col gap-y-4  w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
+    <div className="flex p-8 items-center flex-col gap-y-4 w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-zinc-800 lg:max-w-4xl">
       {/* <div
         className="hidden bg-cover lg:block lg:w-1/2"
         style={{
@@ -26,7 +26,7 @@ const SignUp = () => {
       </div>
 
       <SignupForm />
-      <div className="w-full flex items-center justify-between text-neutral-600">
+      <div className="w-full flex items-center justify-between">
         <span className="flex flex-1 border-b"></span>
         <p className="w-fit px-4 text-xs text-center uppercase">
           other sign up methods
@@ -34,7 +34,7 @@ const SignUp = () => {
         <span className="flex flex-1 border-b"></span>
       </div>
       <LoginButton />
-      <div className="text-xs font-light text-center text-black whitespace-pre">
+      <div className="text-xs font-light text-center whitespace-pre">
         Have an account?{" "}
         <Link href="/login" className="font-medium hover:underline">
           Log In

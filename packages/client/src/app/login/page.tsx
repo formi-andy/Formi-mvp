@@ -7,7 +7,7 @@ export default function Login() {
   return (
     <div className="flex items-center flex-col p-4 w-full">
       <p className="text-3xl font-semibold pb-8">Log in to Homescope</p>
-      <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
+      <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-zinc-800 lg:max-w-4xl">
         {/* <div
         className="hidden bg-cover lg:block lg:w-1/2"
         style={{
@@ -15,7 +15,7 @@ export default function Login() {
             "url('https://images.unsplash.com/photo-1606660265514-358ebbadc80d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1575&q=80')",
         }}
       /> */}
-        <div className="flex flex-col items-center gap-y-4 w-full max-w-sm p-6 m-auto mx-auto bg-white dark:bg-gray-800">
+        <div className="flex flex-col items-center gap-y-4 w-full max-w-sm p-6 m-auto mx-auto">
           <div className="flex justify-center mx-auto">
             <Image
               width={64}
@@ -26,15 +26,15 @@ export default function Login() {
             />
           </div>
           <LoginForm />
-          <div className="w-full flex items-center justify-between text-black">
-            <span className="flex flex-1 border-b border-black" />
+          <div className="w-full flex items-center justify-between">
+            <span className="flex flex-1 border-b" />
             <p className="w-fit px-4 text-xs text-center uppercase">
-              other sign in methods
+              other log in methods
             </p>
-            <span className="flex flex-1 border-b border-black" />
+            <span className="flex flex-1 border-b" />
           </div>
           <LoginButton />
-          <div className="text-xs font-light text-center text-black whitespace-pre">
+          <div className="text-xs font-light text-center whitespace-pre">
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="font-medium hover:underline">
               Create One
