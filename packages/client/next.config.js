@@ -9,5 +9,9 @@ const nextConfig = {
 
     return config;
   },
+  images: {
+    formats: ["image/avif", "image/webp"],
+    domains: ["firebasestorage.googleapis.com"],
+  },
 };
 module.exports = nextConfig;
