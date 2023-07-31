@@ -1,6 +1,8 @@
 import { initFirestore } from "@next-auth/firebase-adapter";
 import { cert } from "firebase-admin/app";
 
+// FOR SERVER SIDE AND NEXT-AUTH
+
 export const firestore = initFirestore({
   credential: cert({
     projectId: process.env.FIREBASE_PROJECT_ID,
