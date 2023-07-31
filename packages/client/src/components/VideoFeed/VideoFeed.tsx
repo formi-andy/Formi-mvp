@@ -54,7 +54,6 @@ interface VideoFeedProps {
     password?: string;
     webEndpoint?: string;
     enforceGalleryView?: string;
-    meetingId?: string;
     joined: boolean;
   };
 }
@@ -146,7 +145,6 @@ function VideoFeed(props: VideoFeedProps) {
       password,
       webEndpoint: webEndpointArg,
       enforceGalleryView,
-      meetingId,
       joined,
     },
   } = props;
@@ -190,10 +188,10 @@ function VideoFeed(props: VideoFeedProps) {
         stayAwake: true,
       });
       try {
+        setIsLoading(true);
         setLoadingText("Joining the session...");
-        // TODO: MAKE TOPIC DYNAMIC
         await zmClient
-          .join(topic, signature, data?.user?.name ?? name, password)
+          .join(topic, signature ?? "test", data?.user?.name ?? name, password)
           .catch((e) => {
             console.log(e);
           });
@@ -224,7 +222,6 @@ function VideoFeed(props: VideoFeedProps) {
     };
   }, [
     data?.user?.name,
-    meetingId,
     sdkKey,
     signature,
     zmClient,
