@@ -20,13 +20,16 @@ export default function Home() {
       <div className="flex flex-col md:flex-row gap-x-8">
         <Link
           href="/login"
-          className="flex items-center text-center justify-center border border-black bg-black hover:bg-neutral-700 hover:border-neutral-700 text-white font-medium py-2 w-40 rounded transition"
+          className="flex items-center text-center justify-center border border-black bg-black hover:bg-zinc-700 hover:border-zinc-700 text-white font-medium h-12 w-40 rounded-lg transition"
         >
           Get Started
         </Link>
-        <Link href="/about" className={style.gradientButton}>
-          Learn More
-        </Link>
+        <div className="relative">
+          <span className={style.gradientButtonShadow} />
+          <Link href="/about" className={style.gradientButton}>
+            Learn More
+          </Link>
+        </div>
       </div>
     </main>
   );
