@@ -18,7 +18,7 @@ const Upload = () => {
     }
 
     setUploading(true);
-    const userId = data?.user?.email?.replace(/\./g, "_");
+    const userId = data?.user?.id;
 
     // Upload each file
     for (let i = 0; i < files.length; i++) {

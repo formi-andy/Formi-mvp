@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { formatBytes } from "@/utils/formatBytes";
 import { AiOutlineCheck } from "react-icons/ai";
@@ -13,7 +13,7 @@ const acceptedFileTypes = {
 
 type Props = {
   files: File[];
-  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  setFiles: Dispatch<SetStateAction<File[]>>;
 };
 
 export default function Dropzone({ files, setFiles }: Props) {
@@ -55,7 +55,7 @@ export default function Dropzone({ files, setFiles }: Props) {
       <div
         {...getRootProps()}
         className={`
-          w-full h-1/4 cursor-pointer border-2 rounded-md flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
+          w-full h-[400px] cursor-pointer border-2 rounded-md flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
           ${isDragAccept ? "border-green-500 bg-green-100" : ""} 
           ${isDragReject ? "border-red-500 bg-red-100" : ""} 
           ${
