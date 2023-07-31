@@ -191,7 +191,7 @@ function VideoFeed(props: VideoFeedProps) {
         setIsLoading(true);
         setLoadingText("Joining the session...");
         await zmClient
-          .join(topic, signature ?? "test", data?.user?.name ?? name, password)
+          .join(topic, signature, data?.user?.name ?? name, password)
           .catch((e) => {
             console.log(e);
           });
