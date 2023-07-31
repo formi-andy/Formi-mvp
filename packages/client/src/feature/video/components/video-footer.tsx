@@ -43,6 +43,7 @@ import { LeaveButton } from "./leave";
 import { TranscriptionSubtitle } from "./transcription-subtitle";
 import { current } from "immer";
 import IsoRecordingModal from "./recording-ask-modal";
+import { ScreenshotButton } from "./screenshot";
 interface VideoFooterProps {
   className?: string;
   shareRef?: MutableRefObject<HTMLCanvasElement | null>;
@@ -556,6 +557,7 @@ const VideoFooter = (props: VideoFooterProps) => {
           }}
         />
       )}
+      {sharing && shareRef && <ScreenshotButton containerRef={shareRef} />}
       {recordingButtons.map((button: RecordButtonProps) => {
         return (
           <RecordingButton

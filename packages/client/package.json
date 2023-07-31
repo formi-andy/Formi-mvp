@@ -23,7 +23,6 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@zoom/videosdk": "^1.8.0",
-    "@zoom/videosdk-ui-toolkit": "^1.8.0",
     "antd": "^5.7.0",
     "autoprefixer": "10.4.14",
     "classnames": "^2.3.2",

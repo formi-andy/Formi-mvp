@@ -46,9 +46,6 @@ importers:
       '@zoom/videosdk':
         specifier: ^1.8.0
         version: 1.8.0
-      '@zoom/videosdk-ui-toolkit':
-        specifier: ^1.8.0
-        version: 1.8.0
       antd:
         specifier: ^5.7.0
         version: 5.7.0(react-dom@18.2.0)(react@18.2.0)
@@ -2773,10 +2770,6 @@ packages:
 
   /@xtuc/long@4.2.2:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
-    dev: false
-
-  /@zoom/videosdk-ui-toolkit@1.8.0:
-    resolution: {integrity: sha512-tD9VFdUZxMI+1JVYDebMwcerkQPhAt9K+c7XQm4YxLO7I0p4FldcmoJqw+Zk1I0QpNPdtM6vWFVLu87WcB910g==}
     dev: false
 
   /@zoom/videosdk@1.8.0:

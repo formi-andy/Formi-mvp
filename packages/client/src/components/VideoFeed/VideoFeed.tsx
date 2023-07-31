@@ -43,6 +43,7 @@ import {
 import SubsessionContext from "@/context/subsession-context";
 import { isAndroidBrowser } from "@/utils/platform";
 import PreviewContainer from "@/feature/preview/preview";
+import { useSession } from "next-auth/react";
 
 interface VideoFeedProps {
   meetingArgs: {
@@ -134,6 +135,8 @@ function renderVideo(
 }
 
 function VideoFeed(props: VideoFeedProps) {
+  const { data } = useSession();
+
   const {
     meetingArgs: {
       sdkKey,
@@ -188,9 +191,9 @@ function VideoFeed(props: VideoFeedProps) {
       });
       try {
         setLoadingText("Joining the session...");
-        // TODO: MAKE TOPIC DYNAMIC, make name the user`s name
+        // TODO: MAKE TOPIC DYNAMIC
         await zmClient
-          .join(topic, signature, meetingId ?? name, password)
+          .join(topic, signature, data?.user?.name ?? name, password)
           .catch((e) => {
             console.log(e);
           });
@@ -220,6 +223,7 @@ function VideoFeed(props: VideoFeedProps) {
       ZoomVideo.destroyClient();
     };
   }, [
+    data?.user?.name,
     meetingId,
     sdkKey,
     signature,
