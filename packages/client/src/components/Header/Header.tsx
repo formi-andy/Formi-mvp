@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import Link from "next/link";
-import Image from "next/image";
 import { authOptions } from "@/lib/auth";
 import SideButton from "./SideButton.header";
+import ProfileDropdown from "./ProfileDropdown.header";
 
 export default async function Header() {
   const session = await getServerSession(authOptions);
@@ -13,7 +13,7 @@ export default async function Header() {
         Homescope
       </Link>
       <nav className="h-full">
-        <div className="hidden md:flex h-full">
+        <div className="hidden md:flex h-full items-center">
           {session ? (
             <div className="flex gap-x-4 h-full">
               <Link
@@ -35,17 +35,11 @@ export default async function Header() {
                 Upload
               </Link>
               <div className="h-full flex items-center relative">
-                <Image
-                  src={session.user.image}
-                  alt="Profile Picture"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
+                <ProfileDropdown url={session.user.image} />
               </div>
             </div>
           ) : (
-            <Link href="/login" className="border rounded px-4 py-1">
+            <Link href="/login" className="border rounded h-fit px-4 py-1">
               Login
             </Link>
           )}

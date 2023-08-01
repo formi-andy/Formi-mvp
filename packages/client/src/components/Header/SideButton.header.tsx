@@ -1,5 +1,7 @@
 "use client";
 
+// TODO: Implement when mantine 7 is stable
+
 import { useState } from "react";
 import { Burger } from "@mantine/core";
 
