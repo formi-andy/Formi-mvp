@@ -2,17 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.mantine-Notifications-root {
-  width: 440px;
-  bottom: 0px;
-  margin-left: auto;
-  padding: 1rem;
-}
-
-.mantine-Notifications-root > div {
-  @apply flex flex-col gap-y-2;
-}
-
 .grid-auto-fill {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

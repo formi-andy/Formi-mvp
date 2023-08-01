@@ -23,7 +23,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Header />
         <MantineProvider>
           <Notifications />
-          <div className="px-4 md:px-8 w-full">{children}</div>
+          <div className="px-4 md:px-8 w-full flex flex-col h-fit min-h-[calc(100vh_-_152px)]">
+            {children}
+          </div>
         </MantineProvider>
         <Footer />
       </body>

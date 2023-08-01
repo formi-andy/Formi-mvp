@@ -8,7 +8,7 @@ export default async function Header() {
   const session = await getServerSession(authOptions);
 
   return (
-    <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 mb-8">
+    <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 mb-4">
       <Link href="/" className="text-2xl font-medium">
         Homescope
       </Link>
