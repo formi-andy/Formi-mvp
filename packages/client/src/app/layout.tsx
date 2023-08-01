@@ -5,6 +5,7 @@ import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import Footer from "@/components/Footer/Footer";
 import { Notifications } from "@mantine/notifications";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
   title: "Homescope",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ColorSchemeScript />
       </head>
       <body className="h-fit">
+        <NextTopLoader showSpinner={false} />
         <Header />
         <MantineProvider>
           <Notifications />

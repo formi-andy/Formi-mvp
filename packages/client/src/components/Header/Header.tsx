@@ -39,7 +39,10 @@ export default async function Header() {
               </div>
             </div>
           ) : (
-            <Link href="/login" className="border rounded h-fit px-4 py-1">
+            <Link
+              href="/login"
+              className="border rounded h-fit px-4 py-1 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
+            >
               Login
             </Link>
           )}
