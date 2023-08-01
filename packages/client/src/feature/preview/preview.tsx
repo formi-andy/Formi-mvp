@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useContext, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import ZoomVideo, {
   TestMicrophoneReturn,
   TestSpeakerReturn,
@@ -82,7 +82,6 @@ const updateMicFeedbackStyle = () => {
   if (newMicFeedbackStyle !== "" && micIcon) {
     micIcon.classList.toggle(newMicFeedbackStyle);
   }
-  console.log(newMicFeedbackStyle, newVolumeIntensity);
   prevMicFeedbackStyle = newMicFeedbackStyle;
 };
 
@@ -96,16 +95,6 @@ const encodePreviewOptions = (
   res = (res | Number(isMuted)) << 1;
   res = res | Number(isStartedAudio);
   return res;
-};
-const decodePreviewOptions = (val: number) => {
-  /*
-      LSB: audio,
-      MSB: video
-   */
-  const isStartedAudio = !!((val & AUDIO_MASK) === AUDIO_MASK);
-  const isMuted = !!((val & MIC_MASK) === MIC_MASK);
-  const isStartedVideo = !!((val & VIDEO_MASK) === VIDEO_MASK);
-  return { isStartedVideo, isMuted, isStartedAudio };
 };
 const { Option } = Select;
 
@@ -180,22 +169,9 @@ const PreviewContainer = () => {
     }
   };
 
-  useEffect(() => {
-    const encodeVal = encodePreviewOptions(
-      isStartedAudio,
-      isMuted,
-      isStartedVideo
-    );
-    console.log("preview encode val", encodeVal);
-    const decodeOption = decodePreviewOptions(encodeVal);
-    console.log("preview config", decodePreviewOptions(encodeVal));
-    console.log(micList);
-  }, [isStartedAudio, isMuted, isStartedVideo]);
-
   useMount(() => {
     PREVIEW_VIDEO = document.getElementById("js-preview-video");
     mountDevices().then((devices) => {
-      console.log("devicesdevicesdevicesdevices", devices);
       setMicList(devices.mics);
       setCameraList(devices.cameras);
       setSpeakerList(devices.speakers);

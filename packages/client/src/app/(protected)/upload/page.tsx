@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import Dropzone from "@/components/DropZone/DropZone";
 import { useSession } from "next-auth/react";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { UploadResult, getStorage, ref, uploadBytes } from "firebase/storage";
 import { Loader } from "@mantine/core";
 import { firebaseApp } from "@/lib/firebase";
+import { message } from "antd";
 
 const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -17,26 +18,32 @@ const Upload = () => {
       return;
     }
 
-    setUploading(true);
-    const userId = data?.user?.email?.replace(/\./g, "_");
+    try {
+      message.loading({ content: "Uploading images", key: "uploading" });
+      setUploading(true);
+      const userId = data?.user?.id;
 
-    // Upload each file
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+      let promises: Promise<UploadResult>[] = [];
 
-      const storage = getStorage(firebaseApp);
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const storage = getStorage(firebaseApp);
+        const imagesRef = ref(storage, `images/${userId}/${file.name}`);
 
-      const imagesRef = ref(storage, `images/${userId}/${file.name}`);
-
-      try {
-        uploadBytes(imagesRef, file).then((snapshot) => {
-          console.log(`Uploaded ${file.name}`);
-        });
-      } catch (error) {
-        console.error(`Failed to upload ${file.name}:`, error);
+        promises.push(uploadBytes(imagesRef, file));
       }
+
+      await Promise.all(promises);
+      message.success({
+        content: "Successfully uploaded images",
+        key: "uploading",
+      });
+    } catch (error) {
+      console.log("error", error);
+      message.error({ content: "Failed to upload images", key: "uploading" });
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   return (
@@ -44,11 +51,10 @@ const Upload = () => {
       <p className="text-2xl">Upload Pictures</p>
       <Dropzone files={files} setFiles={setFiles} />
       <button
-        className={`text-xl px-8 py-2 rounded-md bg-blue-500 text-white transition-all hover:bg-blue-700 flex items-center justify-center gap-x-4 relative ${
-          uploading
-            ? "opacity-50 cursor-not-allowed"
-            : "opacity-100 cursor-pointer"
-        }`}
+        disabled={uploading || files.length === 0}
+        className={
+          "disabled:cursor-not-allowed disabled:bg-gray-300 text-xl px-8 py-2 rounded-md bg-blue-500 text-white transition-all hover:bg-blue-700 flex items-center justify-center gap-x-4 relative"
+        }
         onClick={upload}
       >
         {uploading && (

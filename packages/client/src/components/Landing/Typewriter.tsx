@@ -2,11 +2,7 @@
 
 import Typewriter from "typewriter-effect";
 
-const words = [
-  "Patients",
-  "Doctors",
-  "Scale",
-];
+const words = ["Patients", "Doctors", "Scale"];
 
 export default function LandingTypeWriter() {
   return (

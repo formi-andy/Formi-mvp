@@ -1,0 +1,52 @@
+.gradientButton {
+  @apply flex items-center relative text-center justify-center font-medium py-2 w-40 h-12 rounded-lg text-black dark:text-white bg-white dark:bg-zinc-800;
+  transition: 200ms ease-in-out;
+  background-clip: padding-box;
+  box-shadow: 0 4px 4px 0px #00000010;
+  border: 1px solid transparent;
+}
+
+.gradientButtonShadow {
+    @apply absolute w-40 h-12;
+    --borderWidth: 1px;
+    z-index: -2;
+    background: linear-gradient(60deg, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+    animation: animatedgradient 3s ease alternate infinite;
+    background-size: 300% 300%;
+    border-radius: 8px;
+  }
+
+.gradientButtonShadow:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: calc(-1 * var(--borderWidth));
+  left: calc(-1 * var(--borderWidth));
+  height: calc(100% + var(--borderWidth) * 2);
+  width: calc(100% + var(--borderWidth) * 2); 
+  background: linear-gradient(60deg, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  animation: animatedgradient 3s ease alternate infinite;
+  background-size: 300% 300%;
+  filter:blur(36px);
+  opacity: 0.8;
+  background-clip: padding-box;
+  border-radius: 8px;
+}
+
+.gradientButton:hover {
+    color: white;
+    border: 0px;
+    background: linear-gradient(60deg, transparent, #1098ad, #07b39b,#6fba82, transparent);
+}
+
+@keyframes animatedgradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}

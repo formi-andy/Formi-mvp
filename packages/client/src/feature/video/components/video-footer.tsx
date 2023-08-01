@@ -274,17 +274,14 @@ const VideoFooter = (props: VideoFooterProps) => {
   }, [isStartedLiveTranscription, liveTranscriptionClient]);
 
   const onLeaveClick = useCallback(async () => {
-    console.log("onLeaveClick");
     await zmClient.leave();
   }, [zmClient]);
 
   const onEndClick = useCallback(async () => {
-    console.log("onEndClick");
     await zmClient.leave(true);
   }, [zmClient]);
 
   const onPassivelyStopShare = useCallback(({ reason }: { reason: string }) => {
-    console.log("passively stop reason:", reason);
     setIsStartedScreenShare(false);
   }, []);
   const onDeviceChange = useCallback(() => {
@@ -312,7 +309,6 @@ const VideoFooter = (props: VideoFooterProps) => {
       ) {
         setRecordingIsoStatus(payload?.status);
       }
-      console.log("recording-iso-change", payload);
     },
     [zmClient]
   );
@@ -382,7 +378,6 @@ const VideoFooter = (props: VideoFooterProps) => {
   );
   const onHostAskToUnmute = useCallback((payload: { reason: string }) => {
     const { reason } = payload;
-    console.log(`Host ask to unmute the audio.`, reason);
   }, []);
 
   const onCaptionStatusChange = useCallback(

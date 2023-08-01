@@ -11,7 +11,7 @@ const nextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    domains: ["firebasestorage.googleapis.com"],
+    domains: ["firebasestorage.googleapis.com", "lh3.googleusercontent.com"],
   },
 };
 module.exports = nextConfig;
