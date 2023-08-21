@@ -7,46 +7,92 @@
 }
 
 .gradientButtonShadow {
-    @apply absolute w-40 h-12;
-    --borderWidth: 1px;
-    z-index: -2;
-    background: linear-gradient(60deg, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
-    animation: animatedgradient 3s ease alternate infinite;
-    background-size: 300% 300%;
-    border-radius: 8px;
-  }
+  @apply absolute w-40 h-12;
+  --borderWidth: 1px;
+  z-index: -2;
+  background: linear-gradient(
+    60deg,
+    #a166ab,
+    #5073b8,
+    #1098ad,
+    #07b39b,
+    #6fba82
+  );
+  animation: animatedgradient 3s ease alternate infinite;
+  background-size: 300% 300%;
+  border-radius: 8px;
+}
 
 .gradientButtonShadow:before {
-  content: '';
+  content: "";
   position: absolute;
   z-index: -1;
   top: calc(-1 * var(--borderWidth));
   left: calc(-1 * var(--borderWidth));
   height: calc(100% + var(--borderWidth) * 2);
-  width: calc(100% + var(--borderWidth) * 2); 
-  background: linear-gradient(60deg, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  width: calc(100% + var(--borderWidth) * 2);
+  background: linear-gradient(
+    60deg,
+    #a166ab,
+    #5073b8,
+    #1098ad,
+    #07b39b,
+    #6fba82
+  );
   animation: animatedgradient 3s ease alternate infinite;
   background-size: 300% 300%;
-  filter:blur(36px);
+  filter: blur(36px);
   opacity: 0.8;
   background-clip: padding-box;
   border-radius: 8px;
 }
 
 .gradientButton:hover {
-    color: white;
-    border: 0px;
-    background: linear-gradient(60deg, transparent, #1098ad, #07b39b,#6fba82, transparent);
+  color: white;
+  border: 0px;
+  background: linear-gradient(
+    60deg,
+    transparent,
+    #1098ad,
+    #07b39b,
+    #6fba82,
+    transparent
+  );
 }
 
 @keyframes animatedgradient {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.wrapper {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.marquee {
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  animation: marquee 10s linear infinite;
+}
+
+.marquee p {
+  display: inline-block;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
