@@ -3,6 +3,7 @@ import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import SideButton from "./SideButton.header";
 import ProfileDropdown from "./ProfileDropdown.header";
+import MobileMenu from "./MobileMenu";
 
 export default async function Header() {
   const session = await getServerSession(authOptions);
@@ -46,98 +47,12 @@ export default async function Header() {
               Login
             </Link>
           )}
-          <div className="flex items-center md:hidden group">
-            {/* <SideButton /> */}
-          </div>
+        </div>
+        <div className="flex h-full md:hidden justify-center items-center group">
+          <SideButton />
         </div>
       </nav>
-      {/* <aside className="mobileHeaderContainer">
-        <div
-          className="mobileNavContainer"
-          style={{
-            opacity: opened ? 1 : 0,
-            pointerEvents: opened ? "all" : "none",
-          }}
-        >
-          {workerApp ? (
-            <>
-              <MobileNavLink
-                to={`${ROUTE.WORKER_APP.PATH_NAME}${ROUTE.WORKER_APP.DASHBOARD}`}
-                onClick={() => setOpened(false)}
-              >
-                Dashboard
-              </MobileNavLink>
-              <MobileNavLink
-                to={`${ROUTE.WORKER_APP.PATH_NAME}${ROUTE.WORKER_APP.PERFORMANCE}`}
-                onClick={() => setOpened(false)}
-              >
-                Performance
-              </MobileNavLink>
-              <MobileNavLink
-                to={`${ROUTE.WORKER_APP.PATH_NAME}${ROUTE.WORKER_APP.FINANCE}`}
-                onClick={() => setOpened(false)}
-              >
-                Finance
-              </MobileNavLink>
-            </>
-          ) : (
-            <>
-              <MobileNavLink
-                to={`${ROUTE.APP.DASHBOARD}`}
-                onClick={() => setOpened(false)}
-              >
-                Dashboard
-              </MobileNavLink>
-              <MobileNavLink
-                to={`${ROUTE.APP.PEOPLE}`}
-                onClick={() => setOpened(false)}
-              >
-                People
-              </MobileNavLink>
-              <MobileNavLink
-                to={`${ROUTE.APP.PROJECT}`}
-                onClick={() => setOpened(false)}
-              >
-                Project
-              </MobileNavLink>
-              {user?.email === "office@trunk.tools" && (
-                <MobileNavLink
-                  to={`${ROUTE.APP.PAYMENT}`}
-                  onClick={() => setOpened(false)}
-                >
-                  Payment
-                </MobileNavLink>
-              )}
-            </>
-          )}
-          <MobileNavLink
-            to={`${ROUTE.WORKER_APP.PATH_NAME}${ROUTE.WORKER_APP.PROFILE}`}
-            onClick={() => setOpened(false)}
-          >
-            My Account
-          </MobileNavLink>
-          <MobileNavLink
-            to={`${ROUTE.WORKER_APP.PATH_NAME}${ROUTE.WORKER_APP.CARDS}`}
-            onClick={() => setOpened(false)}
-          >
-            My Card
-          </MobileNavLink>
-          <button
-            type="button"
-            className="px-4 text-2xl h-fit transition hover:text-white items-center flex font-izoard"
-            onClick={logout}
-          >
-            Logout
-          </button>
-        </div>
-        <div
-          className="mobileHeaderOverlay"
-          style={{
-            opacity: opened ? 1 : 0,
-            pointerEvents: opened ? "all" : "none",
-          }}
-        />
-      </aside> */}
+      <MobileMenu />
     </header>
   );
 }

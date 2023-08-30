@@ -1,20 +1,18 @@
 "use client";
 
-// TODO: Implement when mantine 7 is stable
-
-import { useState } from "react";
 import { Burger } from "@mantine/core";
+import { useMobileMenu } from "@/hooks/useMobileMenu";
 
 export default function SideButton() {
-  const [opened, setOpened] = useState(false);
+  const { opened, setOpened } = useMobileMenu();
   return (
     <Burger
       className="block"
-      size={32}
+      size={24}
       classNames={{
         burger: `${
-          opened === false && "bg-brandBlack group-hover:bg-white"
-        } before:bg-brandBlack after:bg-brandBlack group-hover:before:bg-white group-hover:after:bg-white`,
+          opened === false && "bg-brandBlack group-hover:bg-blue-500"
+        } before:bg-brandBlack after:bg-brandBlack group-hover:before:bg-blue-500 group-hover:after:bg-blue-500`,
       }}
       opened={opened}
       onClick={() => setOpened((o) => !o)}

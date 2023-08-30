@@ -24,7 +24,7 @@ export default function VideoContainer({
     getSignature();
 
     async function getSignature() {
-      const res = await axios.post("/api/auth/video-signature", {
+      const res = await axios.post("/api/video-signature", {
         meetingId,
         password: "",
         sessionKey: "",
