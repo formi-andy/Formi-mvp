@@ -23,13 +23,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           type="image/png"
           sizes="180x180"
         />
-        
         <ColorSchemeScript />
       </head>
       <body className="h-fit">
         <NextTopLoader showSpinner={false} />
-        <Header />
         <MantineProvider>
+          <Header />
           <Notifications />
           <div className="px-4 md:px-8 w-full flex flex-col h-fit min-h-[calc(100vh_-_152px)]">
             {children}
