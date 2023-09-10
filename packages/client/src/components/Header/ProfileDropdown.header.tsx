@@ -12,26 +12,26 @@ export default function ProfileDropdown({ url }: { url: string }) {
   return (
     <Menu shadow="md" width={200} trigger="hover">
       <Menu.Target>
-        <Link href="/profile">
-          <Image
-            src={url}
-            alt="Profile Picture"
-            width={32}
-            height={32}
-            className="rounded-full"
-            priority
-          />
-        </Link>
+        {/* <Link href="/profile"> */}
+        <Image
+          src={url}
+          alt="Profile Picture"
+          width={32}
+          height={32}
+          className="rounded-full"
+          priority
+        />
+        {/* </Link> */}
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Menu.Item
+        {/* <Menu.Item
           leftSection={<BsPersonFill />}
           component={Link}
           href="/profile"
         >
           Profile
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item
           leftSection={<IoIosLogOut />}
           onClick={() => {

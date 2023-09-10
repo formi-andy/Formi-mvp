@@ -1,5 +1,7 @@
 import Link from "next/link";
 import LandingTypeWriter from "@/components/Landing/Typewriter";
+import LandingProviderInfo from "@/components/Landing/ProviderInfo";
+import LandingSteps from "@/components/Landing/Steps";
 
 import style from "./landing.module.css";
 
@@ -17,7 +19,7 @@ export default function Home() {
         Homescope is the platform that gives patients and their doctors easy
         access to 24/7 monitoring of their health.
       </p>
-      <div className="flex flex-col md:flex-row gap-x-8 gap-y-4">
+      <div className="flex flex-col md:flex-row gap-y-4 gap-x-8">
         <Link
           href="/login"
           className="flex items-center text-center justify-center border border-black bg-black hover:bg-zinc-700 hover:border-zinc-700 text-white font-medium h-12 w-40 rounded-lg transition"

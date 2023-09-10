@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useContext, useEffect } from "react";
-import { RouteComponentProps } from "react-router-dom";
 import { Button, Dropdown, Menu } from "antd";
 import { SubsessionUserStatus, SubsessionStatus } from "@zoom/videosdk";
 import ZoomContext from "../../context/zoom-context";
@@ -25,9 +24,7 @@ import { usePrevious } from "../../hooks";
 import { useAskForHelp } from "./hooks/useAskForHelp";
 import MediaContext from "../../context/media-context";
 import "./subsession.scss";
-const SubsessionContainer: React.FunctionComponent<RouteComponentProps> = (
-  props
-) => {
+const SubsessionContainer: React.FunctionComponent<any> = (props) => {
   const zmClient = useContext(ZoomContext);
   const subsessionClient = useContext(SubsessionContext);
   const { mediaStream } = useContext(MediaContext);
@@ -121,7 +118,7 @@ const SubsessionContainer: React.FunctionComponent<RouteComponentProps> = (
     <Menu
       onClick={onAttendeeBoMenuClick}
       className="attendee-bo-menu"
-      theme="dark"
+      // theme="dark"
     >
       {subsessionStatus === SubsessionStatus.InProgress && (
         <Menu.Item key="askHelp">Ask for Help </Menu.Item>

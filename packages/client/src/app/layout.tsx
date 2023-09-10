@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import "./globals.css";
 import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import Footer from "@/components/Footer/Footer";
 import { Notifications } from "@mantine/notifications";
 import NextTopLoader from "nextjs-toploader";
 

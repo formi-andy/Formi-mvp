@@ -553,7 +553,7 @@ const VideoFooter = (props: VideoFooterProps) => {
         />
       )}
       {sharing && shareRef && <ScreenshotButton containerRef={shareRef} />}
-      {recordingButtons.map((button: RecordButtonProps) => {
+      {/* {recordingButtons.map((button: RecordButtonProps) => {
         return (
           <RecordingButton
             key={button.text}
@@ -563,7 +563,7 @@ const VideoFooter = (props: VideoFooterProps) => {
             {...button}
           />
         );
-      })}
+      })} */}
       {liveTranscriptionClient?.getLiveTranscriptionStatus()
         .isLiveTranscriptionEnabled && (
         <>
