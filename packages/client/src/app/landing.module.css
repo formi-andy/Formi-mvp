@@ -1,5 +1,13 @@
-.gradientButton {
+/* .gradientButton {
   @apply flex items-center relative text-center justify-center font-medium py-2 w-40 h-12 rounded-lg text-black dark:text-white bg-white dark:bg-zinc-800;
+  transition: 200ms ease-in-out;
+  background-clip: padding-box;
+  box-shadow: 0 4px 4px 0px #00000010;
+  border: 1px solid transparent;
+} */
+
+.gradientButton {
+  @apply flex items-center relative text-center justify-center font-medium py-2 w-40 h-12 rounded-lg text-black bg-white;
   transition: 200ms ease-in-out;
   background-clip: padding-box;
   box-shadow: 0 4px 4px 0px #00000010;

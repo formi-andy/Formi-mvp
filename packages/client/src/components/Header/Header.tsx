@@ -17,21 +17,39 @@ export default async function Header() {
         <div className="hidden md:flex h-full items-center">
           {session ? (
             <div className="flex gap-x-4 h-full">
-              <Link
+              {/* <Link
                 href="/dashboard"
                 className="h-full px-4 flex items-center hover:bg-slate-50 dark:hover:bg-zinc-800 transition"
               >
                 Dashboard
-              </Link>
+              </Link> */}
               <Link
+                href="/dashboard"
+                className="h-full px-4 flex items-center hover:bg-slate-50 transition"
+              >
+                Dashboard
+              </Link>
+              {/* <Link
                 href="/record"
                 className="h-full px-4 flex items-center hover:bg-slate-50 dark:hover:bg-zinc-800 transition"
               >
                 Record
-              </Link>
+              </Link> */}
               <Link
+                href="/record"
+                className="h-full px-4 flex items-center hover:bg-slate-50 transition"
+              >
+                Record
+              </Link>
+              {/* <Link
                 href="/upload"
                 className="h-full px-4 flex items-center hover:bg-slate-50 dark:hover:bg-zinc-800 transition"
+              >
+                Upload
+              </Link> */}
+              <Link
+                href="/upload"
+                className="h-full px-4 flex items-center hover:bg-slate-50 transition"
               >
                 Upload
               </Link>

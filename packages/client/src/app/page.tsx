@@ -33,46 +33,6 @@ export default function Home() {
           </Link>
         </div>
       </div>
-      <div className="flex flex-col gap-y-4 w-full">
-        <div className="bg-black px-8 py-8 rounded-2xl w-full">
-          <p className="text-white text-2xl">Our Doctors</p>
-          <hr className="bg-white my-8" />
-          <div className={style.wrapper}>
-            <div className={style.marquee}>
-              <p className="text-white">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                volutpat, ante eu bibendum tincidunt, sem lacus vehicula augue,
-                ut suscipit.
-              </p>
-              <p className="text-white">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                volutpat, ante eu bibendum tincidunt, sem lacus vehicula augue,
-                ut suscipit.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-black px-8 py-8 rounded-2xl w-full">
-          <p className="text-white text-2xl">Our Partners</p>
-          <hr className="bg-white my-8" />
-          <div className={style.wrapper}>
-            <div className={style.marquee}>
-              <p className="text-white">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                volutpat, ante eu bibendum tincidunt, sem lacus vehicula augue,
-                ut suscipit.
-              </p>
-              <p className="text-white">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                volutpat, ante eu bibendum tincidunt, sem lacus vehicula augue,
-                ut suscipit.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <LandingProviderInfo />
-      <LandingSteps />
     </main>
   );
 }

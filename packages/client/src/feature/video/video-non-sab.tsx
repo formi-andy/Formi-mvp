@@ -107,14 +107,14 @@ const VideoContainer: React.FunctionComponent = () => {
   const currentUserIndex = visibleParticipants.findIndex(
     (user) => user.userId === zmClient.getCurrentUserInfo()?.userId
   );
-  let selfVideoLayout = null;
+  let selfVideoLayout = null as any;
   if (currentUserIndex > -1) {
     const item = videoLayout[currentUserIndex];
     if (item && canvasDimension) {
       selfVideoLayout = {
         ...item,
         y: canvasDimension.height - item.y - item.height,
-      };
+      } as any;
     }
   }
   useEffect(() => {

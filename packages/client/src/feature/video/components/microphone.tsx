@@ -68,7 +68,7 @@ const MicrophoneButton = (props: MicrophoneButtonProps) => {
       ? "Unmute"
       : "Mute"
     : "Start Audio";
-  const menuItems = [];
+  const menuItems = [] as any[];
   if (microphoneList?.length && audio !== "phone") {
     menuItems.push(
       getAntdItem(

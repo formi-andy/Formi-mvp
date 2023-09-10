@@ -6,7 +6,7 @@ import { ZoomClient } from "../../../../types/index-types";
 const broadcastNotificationKey = "BoNitification";
 export function useBroadcastMessage(zmClient: ZoomClient) {
   const onBroadcastMessage = useCallback(
-    (payload) => {
+    (payload: any) => {
       notification.open({
         key: broadcastNotificationKey,
         message: `${zmClient.getSessionHost()?.displayName} to Everyone`,
