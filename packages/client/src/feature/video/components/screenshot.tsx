@@ -60,7 +60,7 @@ const ScreenshotButton = ({
       return;
     }
     canvas.onclick = function () {
-      window.open(this.toDataURL(image / jpg));
+      window.open(canvas?.toDataURL("image/jpg"));
     };
 
     // download output
