@@ -50,6 +50,7 @@ const Avatar = (props: AvatarProps) => {
   const onSliderChange = (value: number) => {
     setLocalVolume?.(userId, value);
   };
+
   const menu = [] as any[];
   if (advancedFeature?.adjustVolumn.enabled) {
     menu.push(
