@@ -1,6 +1,4 @@
 export const devConfig = {
-  sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
-  sdkSecret: process.env.ZOOM_MEETING_SDK_SECRET,
   webEndpoint: "zoom.us",
   topic: "",
   name: "",

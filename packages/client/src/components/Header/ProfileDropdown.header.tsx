@@ -3,44 +3,44 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import type { MenuProps } from "antd";
-import { Dropdown } from "antd";
+import { Menu } from "@mantine/core";
 import { IoIosLogOut } from "react-icons/io";
 import { BsPersonFill } from "react-icons/bs";
 import { signOut } from "next-auth/react";
 
-const items: MenuProps["items"] = [
-  {
-    key: "1",
-    label: (
-      <Link href="/profile" className="w-40 flex gap-x-2 items-center">
-        <BsPersonFill /> Profile
-      </Link>
-    ),
-  },
-  {
-    key: "2",
-    onClick: () => signOut({ callbackUrl: "/" }),
-    label: (
-      <div className="w-24 flex gap-x-2 items-center">
-        <IoIosLogOut /> Logout
-      </div>
-    ),
-  },
-];
 export default function ProfileDropdown({ url }: { url: string }) {
   return (
-    <Dropdown menu={{ items }} placement="bottomRight">
-      <Link href="/profile">
-        <Image
-          src={url}
-          alt="Profile Picture"
-          width={32}
-          height={32}
-          className="rounded-full"
-          priority
-        />
-      </Link>
-    </Dropdown>
+    <Menu shadow="md" width={200} trigger="hover">
+      <Menu.Target>
+        <Link href="/profile">
+          <Image
+            src={url}
+            alt="Profile Picture"
+            width={32}
+            height={32}
+            className="rounded-full"
+            priority
+          />
+        </Link>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Item
+          leftSection={<BsPersonFill />}
+          component={Link}
+          href="/profile"
+        >
+          Profile
+        </Menu.Item>
+        <Menu.Item
+          leftSection={<IoIosLogOut />}
+          onClick={() => {
+            signOut({ callbackUrl: "/" });
+          }}
+        >
+          Logout
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
   );
 }

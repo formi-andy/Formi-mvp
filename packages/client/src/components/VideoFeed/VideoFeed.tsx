@@ -46,7 +46,6 @@ import { useSession } from "next-auth/react";
 
 interface VideoFeedProps {
   meetingArgs: {
-    sdkKey: string;
     topic: string;
     signature: string;
     name: string;
@@ -137,7 +136,6 @@ function VideoFeed(props: VideoFeedProps) {
 
   const {
     meetingArgs: {
-      sdkKey,
       topic,
       signature,
       name,
@@ -221,7 +219,6 @@ function VideoFeed(props: VideoFeedProps) {
     };
   }, [
     data?.user?.name,
-    sdkKey,
     signature,
     zmClient,
     topic,
