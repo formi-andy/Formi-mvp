@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import { formatBytes } from "@/utils/formatBytes";
 import { AiOutlineCheck } from "react-icons/ai";
 import { BiSolidTrashAlt } from "react-icons/bi";
+import { TextInput } from "@mantine/core";
 
 const maxSize = 1024 * 1024 * 10; // 10MB
 const maxFiles = 20;
@@ -14,9 +15,16 @@ const acceptedFileTypes = {
 type Props = {
   files: File[];
   setFiles: Dispatch<SetStateAction<File[]>>;
+  fileNameToPatientMap: Record<string, string>;
+  setFileNameToPatientMap: Dispatch<SetStateAction<Record<string, string>>>;
 };
 
-export default function Dropzone({ files, setFiles }: Props) {
+export default function Dropzone({
+  files,
+  setFiles,
+  fileNameToPatientMap,
+  setFileNameToPatientMap,
+}: Props) {
   const {
     getRootProps,
     getInputProps,
@@ -30,23 +38,46 @@ export default function Dropzone({ files, setFiles }: Props) {
     maxFiles: maxFiles,
     onDrop: (acceptedFiles) => {
       setFiles((prev) => [...prev, ...acceptedFiles]);
+
+      setFileNameToPatientMap((prev) => {
+        const newMap = { ...prev };
+        acceptedFiles.forEach((file) => {
+          newMap[file.name] = "";
+        });
+        return newMap;
+      });
     },
   });
 
   const listedFiles = acceptedFiles.map((file, index) => (
-    <li key={file.name} className="flex items-center gap-x-4">
-      <AiOutlineCheck size={20} />
-      <p>
-        {file.name} - {formatBytes(file.size)} bytes
-      </p>
-      <button
-        className="cursor-pointer hover:opacity-80 transition-all opacity-100"
-        onClick={() => {
-          setFiles((prev) => prev.filter((_, i) => i !== index));
-        }}
-      >
-        <BiSolidTrashAlt size={20} />
-      </button>
+    <li key={file.name} className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-x-4">
+        <AiOutlineCheck size={20} />
+        <p className="flex-shrink-0">
+          {file.name} - {formatBytes(file.size)} bytes
+        </p>
+      </div>
+      <div className="flex items-center gap-x-4">
+        <TextInput
+          className="w-1/4 md:w-[400px]"
+          placeholder="Patient Name"
+          value={fileNameToPatientMap[file.name]}
+          onChange={(e) => {
+            setFileNameToPatientMap((prev) => ({
+              ...prev,
+              [file.name]: e.target.value,
+            }));
+          }}
+        />
+        <button
+          className="cursor-pointer hover:opacity-80 transition-all opacity-100"
+          onClick={() => {
+            setFiles((prev) => prev.filter((_, i) => i !== index));
+          }}
+        >
+          <BiSolidTrashAlt size={20} />
+        </button>
+      </div>
     </li>
   ));
 
@@ -89,9 +120,9 @@ export default function Dropzone({ files, setFiles }: Props) {
         </div>
       </div>
       {files.length > 0 && (
-        <div className="flex flex-col items-center justify-center gap-y-2">
+        <div className="flex flex-col items-center justify-center gap-y-2 w-full">
           <p className="text-xl">Accepted Files</p>
-          <ul>{listedFiles}</ul>
+          <ul className="w-full px-8 flex flex-col gap-y-2">{listedFiles}</ul>
         </div>
       )}
       {fileRejections.length > 0 && (
