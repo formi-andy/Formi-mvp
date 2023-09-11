@@ -9,7 +9,7 @@ import { TextInput } from "@mantine/core";
 const maxSize = 1024 * 1024 * 10; // 10MB
 const maxFiles = 20;
 const acceptedFileTypes = {
-  "image/*": ["jpeg", "png", "gif", "bmp"],
+  "image/*": ["jpeg", "png"],
 };
 
 type Props = {
