@@ -4,6 +4,7 @@ import LandingProviderInfo from "@/components/Landing/ProviderInfo";
 import LandingSteps from "@/components/Landing/Steps";
 
 import style from "./landing.module.css";
+import WaitList from "@/components/WaitList/WaitList";
 
 export default function Home() {
   return (
@@ -21,7 +22,7 @@ export default function Home() {
       </p>
       <div className="flex flex-col md:flex-row gap-y-4 gap-x-8">
         <Link
-          href="/login"
+          href="/signup"
           className="flex items-center text-center justify-center border border-black bg-black hover:bg-zinc-700 hover:border-zinc-700 text-white font-medium h-12 w-40 rounded-lg transition"
         >
           Get Started
@@ -33,6 +34,7 @@ export default function Home() {
           </Link>
         </div>
       </div>
+      <WaitList />
     </main>
   );
 }

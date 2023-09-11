@@ -11,6 +11,9 @@ import { message } from "antd";
 const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [fileNameToPatientMap, setFileNameToPatientMap] = useState<
+    Record<string, string>
+  >({});
   const { data } = useSession();
 
   const upload = async () => {
@@ -28,7 +31,13 @@ const Upload = () => {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const storage = getStorage(firebaseApp);
-        const imagesRef = ref(storage, `images/${userId}/${file.name}`);
+
+        const patientName = fileNameToPatientMap[file.name] || "Unlabeled";
+
+        const imagesRef = ref(
+          storage,
+          `images/${userId}/${patientName}/${file.name}`
+        );
 
         promises.push(uploadBytes(imagesRef, file));
       }
@@ -39,7 +48,7 @@ const Upload = () => {
         key: "uploading",
       });
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
       message.error({ content: "Failed to upload images", key: "uploading" });
     } finally {
       setUploading(false);
@@ -49,7 +58,12 @@ const Upload = () => {
   return (
     <div className="w-full h-full flex flex-col gap-y-4">
       <p className="text-2xl">Upload Pictures</p>
-      <Dropzone files={files} setFiles={setFiles} />
+      <Dropzone
+        files={files}
+        setFiles={setFiles}
+        fileNameToPatientMap={fileNameToPatientMap}
+        setFileNameToPatientMap={setFileNameToPatientMap}
+      />
       <button
         disabled={uploading || files.length === 0}
         className={

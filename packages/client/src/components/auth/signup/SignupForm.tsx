@@ -11,7 +11,7 @@ export default function SignupForm() {
 
     const { values } = form;
 
-    console.log("VALUES", values);
+    // console.log("VALUES", values);
 
     // createUserWithEmailAndPassword(auth, values.email, values.password)
     //   .then((userCredential) => {

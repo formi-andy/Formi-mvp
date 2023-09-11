@@ -1,16 +1,15 @@
 import {
   getStorage,
   ref,
-  list,
+  listAll,
   getDownloadURL,
   StorageReference,
 } from "firebase/storage";
 import { firebaseApp } from "@/lib/firebase";
 import { authOptions } from "@/lib/auth";
-import Link from "next/link";
-import Image from "@/components/Image/Image";
-import NextImage from "next/image";
 import { getServerSession } from "next-auth";
+import Gallery from "@/components/Gallery/Gallery";
+import fetchUpdatedData from "@/utils/fetchUpdatedImageData";
 
 const storage = getStorage(firebaseApp);
 
@@ -18,54 +17,45 @@ const View = async () => {
   const session = await getServerSession(authOptions);
   const imagesRef = ref(storage, `images/${session?.user?.id}`);
 
-  const res = await list(imagesRef);
+  const res = await listAll(imagesRef);
+
+  let groupedImages = {
+    unlabeled: [] as string[],
+  };
 
   let promises = res.items.map((itemRef: StorageReference) =>
-    getDownloadURL(itemRef)
+    getDownloadURL(itemRef).then((url) => {
+      groupedImages.unlabeled.push(url);
+    })
   );
 
-  let urls = await Promise.all(promises);
+  // Get URLs from subfolders
+  for (const prefix of res.prefixes) {
+    const subRes = await listAll(prefix);
+    const label =
+      prefix.name.toLowerCase() === "unlabeled" ? "unlabeled" : prefix.name;
+    groupedImages[label] = groupedImages[label] || [];
+
+    const subPromises = subRes.items.map((itemRef: StorageReference) =>
+      getDownloadURL(itemRef).then((url) => {
+        groupedImages[label].push(url);
+      })
+    );
+    promises = promises.concat(subPromises);
+  }
+
+  await Promise.all(promises);
+  // const groupedImages = await fetchUpdatedData(session);
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <p className="text-4xl font-light">Gallery</p>
-      {urls.length > 0 ? (
-        <div className="grid-auto-fill gap-4">
-          {urls.map((url, index) => (
-            <div key={index} className="relative min-w-[200px] h-[150px]">
-              <Image url={url} alt={"Description"} />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col gap-y-8 items-center h-[calc(100vh_-_160px)] justify-center">
-          <div>
-            <div className="relative flex h-[200px] justify-center mb-4">
-              <NextImage
-                src="/assets/undraw_images.svg"
-                fill={true}
-                className="w-full h-full"
-                alt="No Images Found"
-              />
-            </div>
-            <p className="text-3xl font-extralight">No images uploaded yet</p>
-          </div>
-          <Link
-            href="/record"
-            className="flex w-fit items-center gap-x-2 text-2xl font-extralight hover:underline"
-          >
-            Join a meeting to start recording
-          </Link>
-          <Link
-            href="/upload"
-            className="flex w-fit items-center gap-x-2 text-2xl font-extralight hover:underline"
-          >
-            Already have images? Upload them here
-          </Link>
-        </div>
-      )}
-    </div>
+    <Gallery
+      groupedImages={groupedImages}
+      session={session}
+      // fetchUpdatedData={() => fetchUpdatedData(session)}
+    />
   );
+
+  // return <Gallery groupedImages={groupedImages} session={session} />;
 };
 
 export default View;
