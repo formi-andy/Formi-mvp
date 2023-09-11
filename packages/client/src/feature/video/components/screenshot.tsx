@@ -43,17 +43,20 @@ const ScreenshotButton = ({
   }
 
   function shoot() {
-    let screenShareVideo = document.getElementById("ZOOM_WEB_SDK_SELF_VIDEO");
+    let selfScreenShareVideo = document.getElementById(
+      "ZOOM_WEB_SDK_SELF_VIDEO"
+    );
+    let videoCanvas = document.getElementById("video-canvas");
     let video = document.getElementById(
       containerRef.current?.id || "_super_random_string_"
     );
 
-    if (!screenShareVideo && !video) {
+    if (!videoCanvas && !video) {
       return;
     }
 
-    let canvas = screenShareVideo
-      ? capture(screenShareVideo as HTMLVideoElement)
+    let canvas = videoCanvas
+      ? capture(videoCanvas as HTMLVideoElement)
       : capture(video as HTMLVideoElement);
 
     if (!canvas) {

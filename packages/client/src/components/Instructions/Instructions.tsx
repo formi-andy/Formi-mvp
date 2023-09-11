@@ -11,12 +11,13 @@ export const Instructions = () => {
         with the meeting ID does not exist, a new meeting will be created.
       </p>
       <p>
-        4. Click the Start Screenshare button and select the HomeScope device
-        from the device menu.
+        4. Click the Start Camera button and select the HomeScope device from
+        the device menu.
       </p>
       <p>
-        5. Click &quot;capture&quot; to take screen shots. These are downloaded
-        onto your personal computer.
+        5. Click &quot;capture&quot; to take screen shots. Capturing will
+        capture the camera`&apos;`s output. These are downloaded onto your
+        personal computer.
       </p>
       <p>6. Click &quot;stop&quot; to stop the video feed.</p>
       <p>7. Click &quot;upload&quot; to upload the images to the cloud.</p>
