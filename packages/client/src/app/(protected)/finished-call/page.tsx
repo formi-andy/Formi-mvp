@@ -21,7 +21,7 @@ const FinishedCall = () => {
         </Link>
         <Link
           className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white rounded-lg transition w-52 h-12"
-          href="/join"
+          href="/record"
         >
           Join Another Meeting
         </Link>
