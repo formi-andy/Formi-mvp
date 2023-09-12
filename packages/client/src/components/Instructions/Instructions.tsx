@@ -7,16 +7,17 @@ export const Instructions = () => {
         2. Enable permissions for microphone and camera if prompted and needed
       </p>
       <p>
-        3. Enter the meeting ID and press the Join Meeting button. If a meeting
-        with the meeting ID does not exist, a new meeting will be created.
+        3. Enter a meeting ID and press the Join Meeting button. This will
+        either join an existing meeting if the meeting ID is in use or create a
+        new meeting with the entered meeting ID.
       </p>
       <p>
-        4. Click the Start Camera button and select the HomeScope device from
-        the device menu.
+        4. Click the Start Screen Share button and select the Teslong device
+        from the device menu.
       </p>
       <p>
         5. Click &quot;capture&quot; to take screen shots. Capturing will
-        capture the camera`&apos;`s output. These are downloaded onto your
+        capture the camera&apos;s output. These are downloaded onto your
         personal computer.
       </p>
       <p>6. Click &quot;stop&quot; to stop the video feed.</p>
