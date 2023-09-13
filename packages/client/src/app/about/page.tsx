@@ -1,11 +1,61 @@
 import React from "react";
+import { BsLightningCharge } from "react-icons/bs";
+import { TbArrowsJoin } from "react-icons/tb";
+import { TfiWorld } from "react-icons/tfi";
 
 type Props = {};
 
 const AboutPage = (props: Props) => {
   return (
-    <div className="min-h-screen py-8 flex justify-center">
-      <div className="flex flex-col gap-y-8 text-center w-3/4">
+    <div className="min-h-screen py-8 gap-y-4 flex flex-col items-center mt-32">
+      <p className="tracking-wide text-blue-500 font-light text-lg text-center">
+        OUR MISSION
+      </p>
+      <p className="text-4xl font-bold text-center">
+        Building the future of virtual care
+      </p>
+      <div className="flex flex-col text-xl items-center mt-12">
+        <span className="flex whitespace-pre-wrap text-center">
+          We build for <p className="font-bold">doctors and patients.</p>
+        </span>
+        <p>See everything you can during an in-person visit, from anywhere.</p>
+      </div>
+      <div className="flex flex-col gap-8 lg:flex-row mt-12">
+        <div className="flex gap-x-4 w-80">
+          <div className="bg-black w-10 h-10 rounded-lg text-white items-center justify-center flex">
+            <BsLightningCharge size={20} />
+          </div>
+          <div className="flex flex-col gap-y-1 text-left flex-1">
+            <p className="text-2xl font-medium leading-none">Fast</p>
+            <p className="text-neutral-600">
+              Our design makes virtual visits lightning-quick.
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-x-4 w-80">
+          <div className="bg-black w-10 h-10 rounded-lg text-white items-center justify-center flex">
+            <TbArrowsJoin size={20} />
+          </div>
+          <div className="flex flex-col gap-y-1 text-left flex-1">
+            <p className="text-2xl font-medium leading-none">Compatible</p>
+            <p className="text-neutral-600">
+              Homescope integrate with all EMR systems and devices.
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-x-4 w-80">
+          <div className="bg-black w-10 h-10 rounded-lg text-white items-center justify-center flex">
+            <TfiWorld size={20} />
+          </div>
+          <div className="flex flex-col gap-y-1 text-left flex-1">
+            <p className="text-2xl font-medium leading-none">Accessible</p>
+            <p className="text-neutral-600">
+              Accessible for everyone, regardless of technical ability.
+            </p>
+          </div>
+        </div>
+      </div>
+      {/* <div className="flex flex-col gap-y-8 text-center w-3/4">
         <div className="flex flex-col gap-y-4">
           <p className="text-3xl font-bold">
             Say hello to the future of virtual care
@@ -15,7 +65,7 @@ const AboutPage = (props: Props) => {
               See everything you can during an in-person visit, from anywhere.
             </p>
             <p className="text-lg font-bold">
-              HomeScope Aims to improve virtual health care in these five ways
+              HomeScope aims to improve virtual health care in these five ways
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-0 md:gap-x-4 gap-y-4">
@@ -90,7 +140,7 @@ const AboutPage = (props: Props) => {
             touch!
           </p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
