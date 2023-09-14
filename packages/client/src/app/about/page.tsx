@@ -1,4 +1,3 @@
-import React from "react";
 import { BsLightningCharge } from "react-icons/bs";
 import { TbArrowsJoin } from "react-icons/tb";
 import { TfiWorld } from "react-icons/tfi";
@@ -7,18 +6,20 @@ type Props = {};
 
 const AboutPage = (props: Props) => {
   return (
-    <div className="min-h-screen py-8 gap-y-4 flex flex-col items-center mt-32">
+    <div className="min-h-[calc(100vh_-_152px)] py-8 gap-y-4 flex flex-col items-center mt-24">
       <p className="tracking-wide text-blue-500 font-light text-lg text-center">
         OUR MISSION
       </p>
-      <p className="text-4xl font-bold text-center">
+      <p className="text-4xl md:text-6xl font-bold text-center">
         Building the future of virtual care
       </p>
-      <div className="flex flex-col text-xl items-center mt-12">
+      <div className="flex flex-col text-base md:text-xl items-center mt-12">
         <span className="flex whitespace-pre-wrap text-center">
           We build for <p className="font-bold">doctors and patients.</p>
         </span>
-        <p>See everything you can during an in-person visit, from anywhere.</p>
+        <p className="text-center">
+          See everything you can during an in-person visit, from anywhere.
+        </p>
       </div>
       <div className="flex flex-col gap-8 lg:flex-row mt-12">
         <div className="flex gap-x-4 w-80">
@@ -55,6 +56,9 @@ const AboutPage = (props: Props) => {
           </div>
         </div>
       </div>
+      {/* <p className="tracking-wide text-blue-500 font-light text-lg text-center mt-24">
+        OUR STORY
+      </p> */}
       {/* <div className="flex flex-col gap-y-8 text-center w-3/4">
         <div className="flex flex-col gap-y-4">
           <p className="text-3xl font-bold">
