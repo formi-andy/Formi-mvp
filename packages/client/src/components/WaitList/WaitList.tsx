@@ -36,10 +36,8 @@ export default function WaitList() {
         let result = await axios.post("/api/waitlist", {
           email,
         });
-        // console.log(result);
         success();
       } catch (err) {
-        // console.log(err);
         error();
       }
     } else {
@@ -59,9 +57,9 @@ export default function WaitList() {
     <div className="flex flex-col gap-y-4 w-full md:w-3/4 mt-16">
       {contextHolder}
       <p className="text-2xl font-semibold text-center">Join the waitlist</p>
-      <div className="flex flex-col md:flex-row gap-y-4 gap-x-8 md:items-center">
+      <div className="flex flex-col md:flex-row gap-y-4 gap-x-8 items-center justify-center">
         <TextInput
-          placeholder="Email"
+          placeholder="hello@homescope.us"
           className="w-full"
           value={email}
           onChange={(event) => setEmail(event.currentTarget.value)}
