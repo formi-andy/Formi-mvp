@@ -10,7 +10,9 @@ export default function ConvexClientProvider({
   return (
     <ConvexContext>
       <Header />
-      {children}
+      <div className="px-4 md:px-8 flex flex-col h-fit min-h-[calc(100vh_-_152px)]">
+        {children}
+      </div>
     </ConvexContext>
   );
 }

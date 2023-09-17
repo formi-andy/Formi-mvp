@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <NextTopLoader showSpinner={false} />
           <MantineProvider>
             <Notifications />
-            <div className="px-4 md:px-8 w-full flex flex-col h-fit min-h-[calc(100vh_-_80px)]">
+            <div className="w-full flex flex-col h-fit">
               <ConvexClientProvider>{children}</ConvexClientProvider>
             </div>
           </MantineProvider>
