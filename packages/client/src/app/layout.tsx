@@ -7,6 +7,7 @@ import { Notifications } from "@mantine/notifications";
 import NextTopLoader from "nextjs-toploader";
 import ConvexClientProvider from "@/contexts/ConvexClientProvider";
 import { ClerkProvider } from "@clerk/nextjs";
+import "@mantine/notifications/styles.css";
 
 export const metadata = {
   title: "Homescope",
@@ -32,12 +33,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <body className="h-fit">
           <NextTopLoader showSpinner={false} />
           <MantineProvider>
-            <Notifications />
+            <Notifications autoClose={3000} />
             <div className="w-full flex flex-col h-fit">
               <ConvexClientProvider>{children}</ConvexClientProvider>
+              <Footer />
             </div>
           </MantineProvider>
-          <Footer />
         </body>
       </html>
     </ClerkProvider>

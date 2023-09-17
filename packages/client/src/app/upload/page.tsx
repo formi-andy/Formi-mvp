@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Dropzone from "@/components/DropZone/DropZone";
-import { useSession } from "next-auth/react";
-import { UploadResult, getStorage, ref, uploadBytes } from "firebase/storage";
 import { Loader } from "@mantine/core";
-import { firebaseApp } from "@/lib/firebase";
-import { message } from "antd";
+import useNetworkToasts from "@/hooks/useNetworkToasts";
+import { useAuth } from "@clerk/nextjs";
 
 const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -14,7 +12,8 @@ const Upload = () => {
   const [fileNameToPatientMap, setFileNameToPatientMap] = useState<
     Record<string, string>
   >({});
-  const { data } = useSession();
+  const user = useAuth();
+  const toast = useNetworkToasts();
 
   const upload = async () => {
     if (uploading || files.length === 0) {
@@ -22,34 +21,36 @@ const Upload = () => {
     }
 
     try {
-      message.loading({ content: "Uploading images", key: "uploading" });
+      toast.loading({ title: "Uploading images", message: "Please wait" });
       setUploading(true);
-      const userId = data?.user?.id;
-
-      let promises: Promise<UploadResult>[] = [];
-
+      const userId = user.userId;
+      let promises: Promise<Response>[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const storage = getStorage(firebaseApp);
-
         const patientName = fileNameToPatientMap[file.name] || "Unlabeled";
-
-        const imagesRef = ref(
-          storage,
-          `images/${userId}/${patientName}/${file.name}`
+        const sendImageUrl = new URL(
+          `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/send-image?userId=${userId}&patientName=${patientName}`
         );
-
-        promises.push(uploadBytes(imagesRef, file));
+        promises.push(
+          fetch(sendImageUrl, {
+            method: "POST",
+            headers: { "Content-Type": file!.type },
+            body: file,
+          })
+        );
       }
-
       await Promise.all(promises);
-      message.success({
-        content: "Successfully uploaded images",
-        key: "uploading",
+      toast.success({
+        title: "Successfully uploaded images",
+        message: "Visit the dashboard to view your images",
       });
+      setFiles([]);
     } catch (error) {
       // console.log("error", error);
-      message.error({ content: "Failed to upload images", key: "uploading" });
+      toast.error({
+        title: "Error uploading images",
+        message: "Please try again later",
+      });
     } finally {
       setUploading(false);
     }

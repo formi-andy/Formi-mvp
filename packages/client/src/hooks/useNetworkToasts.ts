@@ -1,7 +1,5 @@
 "use client";
 
-// TODO: REPLACE ANTD MESSAGES WITH THIS WHEN MANTINE 7 IS OUT OF ALPHA
-
 import { useRef } from "react";
 import {
   showNotification,
@@ -39,48 +37,66 @@ const useNetworkToasts = () => {
     }
   };
 
-  const beforeSubmit = (beforeSubmitMessage?: string) => {
+  const loading = ({
+    title,
+    message,
+  }: {
+    title?: string;
+    message?: string;
+  }) => {
     callToast({
       loading: true,
-      title: "Submitting...",
-      message: beforeSubmitMessage || defaultMessages.before,
+      title: title || "Submitting...",
+      message: message || defaultMessages.before,
       autoClose: false,
       withCloseButton: false,
     });
   };
 
-  const submitSuccess = (successMessage?: string) => {
+  const success = ({
+    title,
+    message,
+  }: {
+    title?: string;
+    message?: string;
+  }) => {
     callToast({
       loading: false,
-      title: "Success!",
-      message: successMessage || defaultMessages.success,
+      title: title || "Success",
+      message: message || defaultMessages.success,
       autoClose: true,
-      withCloseButton: false,
+      withCloseButton: true,
       color: "green",
     });
   };
 
-  const submitError = (errorMessage?: string) => {
+  const error = ({
+    title,
+    message,
+  }: {
+    title?: string;
+    message?: string;
+  }) => {
     callToast({
       loading: false,
-      title: "Error",
-      message: errorMessage || defaultMessages.error,
-      autoClose: false,
+      title: title || "Error",
+      message: message || defaultMessages.error,
+      autoClose: true,
       withCloseButton: true,
       color: "red",
     });
   };
 
-  const dismissToast = () => {
+  const dismiss = () => {
     hideNotification(toastId.current as string);
     toastId.current = undefined;
   };
 
   return {
-    beforeSubmit,
-    submitError,
-    submitSuccess,
-    dismissToast,
+    loading,
+    error,
+    success,
+    dismiss,
   };
 };
 
