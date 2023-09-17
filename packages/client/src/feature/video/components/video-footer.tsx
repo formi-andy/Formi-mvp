@@ -44,7 +44,7 @@ import { TranscriptionSubtitle } from "./transcription-subtitle";
 import { current } from "immer";
 import IsoRecordingModal from "./recording-ask-modal";
 import { ScreenshotButton } from "./screenshot";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 interface VideoFooterProps {
   className?: string;
   shareRef?: MutableRefObject<HTMLCanvasElement | null>;
@@ -88,7 +88,7 @@ const VideoFooter = (props: VideoFooterProps) => {
   const [recordingIsoStatus, setRecordingIsoStatus] = useState<
     "" | RecordingStatus
   >("");
-  const router = useRouter();
+  // const router = useRouter();
   const zmClient = useContext(ZoomContext);
   const onCameraClick = useCallback(async () => {
     if (isStartedVideo) {
@@ -277,8 +277,8 @@ const VideoFooter = (props: VideoFooterProps) => {
 
   const onLeaveClick = useCallback(async () => {
     await zmClient.leave();
-    router.push("/finished-call");
-  }, [zmClient, router]);
+    // router.push("/finished-call");
+  }, [zmClient]);
 
   const onEndClick = useCallback(async () => {
     await zmClient.leave(true);
