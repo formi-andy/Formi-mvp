@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { Textarea } from "@mantine/core";
 import Link from "next/link";
 
 const FinishedCall = () => {
-  const { data } = useSession();
   const [notes, setNotes] = useState("");
 
   return (
