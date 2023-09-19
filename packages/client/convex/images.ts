@@ -35,6 +35,19 @@ export const storeImage = internalMutation({
   },
 });
 
+export const listImages = query({
+  args: {},
+  handler: async (ctx) => {
+    const images = await ctx.db.query("images").collect();
+    return Promise.all(
+      images.map(async (image) => ({
+        ...image,
+        url: await ctx.storage.getUrl(image.storage_id),
+      }))
+    );
+  },
+});
+
 // Helpers
 export async function imageQuery(
   ctx: QueryCtx,
