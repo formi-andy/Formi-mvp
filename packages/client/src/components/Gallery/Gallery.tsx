@@ -5,13 +5,13 @@ import Image from "@/components/Image/Image";
 import { AiOutlineCheck } from "react-icons/ai";
 import NoImages from "./NoImages";
 import { api } from "../../../convex/_generated/api";
+import { useQuery } from "convex/react";
+import { Skeleton } from "antd";
+import { GALLERY_LOADERS } from "@/commons/constants/loaders";
 
-interface GalleryProps {
-  images: any;
-  // images: ReturnType<typeof api.images.listImages>;
-}
+const Gallery: React.FC = () => {
+  let images = useQuery(api.images.listImages);
 
-const Gallery: React.FC<GalleryProps> = ({ images }) => {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [selecting, setSelecting] = useState(false);
 
@@ -37,7 +37,20 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
 
   const renderImages = () => {
     if (images === undefined) {
-      return <div>Loading...</div>;
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(GALLERY_LOADERS)].map((i) => {
+            return (
+              <div key={i} className="min-w-[200px] h-fit z-100">
+                <Skeleton.Button
+                  active
+                  className="!w-full !h-full min-h-[150px]"
+                />
+              </div>
+            );
+          })}
+        </div>
+      );
     }
 
     if (images.length === 0) {
@@ -46,10 +59,10 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {images.map((image: any) => {
+        {images.map((image) => {
           return (
             <div
-              className="relative min-w-[200px] h-[150px]"
+              className="flex flex-col"
               onClick={() => {
                 if (selecting) {
                   toggleSelection(image._id);
@@ -57,7 +70,10 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
               }}
               key={image._id}
             >
-              <Image url={image.url} alt={"Description"} />
+              <div className="relative min-w-[200px] h-[150px]">
+                <Image url={image.url} alt={"Description"} />
+              </div>
+              <div>{image.title}</div>
               {selectedImages.includes(image._id) && (
                 <div className="absolute inset-0 bg-white opacity-50" />
               )}

@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import "./globals.css";
-import Footer from "@/components/Footer/Footer";
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
@@ -36,7 +35,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Notifications autoClose={3000} />
             <div className="w-full flex flex-col h-fit">
               <ConvexClientProvider>{children}</ConvexClientProvider>
-              <Footer />
             </div>
           </MantineProvider>
         </body>

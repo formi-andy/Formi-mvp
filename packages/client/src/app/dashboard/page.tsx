@@ -1,13 +1,11 @@
-"use client";
-
 import Gallery from "@/components/Gallery/Gallery";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { auth, currentUser } from "@clerk/nextjs";
+import { User } from "next-auth";
 
-const View = () => {
-  let images = useQuery(api.images.listImages);
+export default async function Dashboard() {
+  const user: User | null = await currentUser();
 
-  return <Gallery images={images} />;
-};
-
-export default View;
+  return <Gallery />;
+}

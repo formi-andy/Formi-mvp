@@ -1,31 +1,50 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { useAuth } from "@clerk/nextjs";
 import { ConvexReactClient, ConvexProvider } from "convex/react";
+import AppLoader from "@/components/Loaders/AppLoader";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-export function ClerkConvexAdapter({ convex }: { convex: ConvexReactClient }) {
-  const { getToken, isSignedIn } = useAuth();
+export function ClerkConvexAdapter({
+  convex,
+  setLoading,
+}: {
+  convex: ConvexReactClient;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+}) {
+  const { getToken, isSignedIn, isLoaded } = useAuth();
 
   useEffect(() => {
+    if (!isLoaded) return;
+    setLoading(true);
     if (isSignedIn) {
-      convex.setAuth(async () =>
-        getToken({ template: "convex", skipCache: true })
+      convex.setAuth(
+        async () => getToken({ template: "convex", skipCache: true }),
+        () => setLoading(false)
       );
     } else {
       convex.clearAuth();
+      setLoading(false);
     }
-  }, [getToken, isSignedIn, convex]);
+  }, [getToken, isSignedIn, convex, setLoading, isLoaded]);
   return null;
 }
 
 export default function ConvexContext({ children }: { children: ReactNode }) {
+  const [loading, setLoading] = useState(true);
+
   return (
     <ConvexProvider client={convex}>
-      <ClerkConvexAdapter convex={convex} />
-      {children}
+      <ClerkConvexAdapter convex={convex} setLoading={setLoading} />
+      {loading ? <AppLoader /> : children}
     </ConvexProvider>
   );
 }

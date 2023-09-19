@@ -17,16 +17,24 @@ export const getImages = internalQuery({
   },
 });
 
-/** Create a new Clerk user or update existing Clerk user data. */
 export const storeImage = internalMutation({
-  args: { storageId: v.string(), author: v.string() },
+  args: {
+    storageId: v.string(),
+    author: v.string(),
+    patientId: v.optional(v.string()),
+  },
   async handler(
     ctx,
-    { storageId, author }: { storageId: string; author: string }
+    {
+      storageId,
+      author,
+      patientId,
+    }: { storageId: string; author: string; patientId?: string }
   ) {
     const storageRecord = await ctx.db.insert("images", {
       storage_id: storageId,
       user_id: author,
+      patient_id: patientId,
       title: "",
       tags: [],
     });
@@ -38,11 +46,19 @@ export const storeImage = internalMutation({
 export const listImages = query({
   args: {},
   handler: async (ctx) => {
-    const images = await ctx.db.query("images").collect();
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated call to get images");
+    }
+    const { subject } = identity;
+    const images = await ctx.db
+      .query("images")
+      .withIndex("by_user_id", (q) => q.eq("user_id", subject))
+      .collect();
     return Promise.all(
       images.map(async (image) => ({
         ...image,
-        url: await ctx.storage.getUrl(image.storage_id),
+        url: (await ctx.storage.getUrl(image.storage_id)) || "",
       }))
     );
   },

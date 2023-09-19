@@ -15,4 +15,10 @@ export default defineSchema({
     clerkUser: v.any(),
     color: v.string(),
   }).index("by_clerk_id", ["clerkUser.id"]),
+  patientDoctors: defineTable({
+    patient_id: v.string(),
+    doctor_id: v.string(),
+  })
+    .index("by_patient_id", ["patient_id"])
+    .index("by_doctor_id", ["doctor_id"]),
 });

@@ -15,15 +15,27 @@ const acceptedFileTypes = {
 type Props = {
   files: File[];
   setFiles: Dispatch<SetStateAction<File[]>>;
-  fileNameToPatientMap: Record<string, string>;
-  setFileNameToPatientMap: Dispatch<SetStateAction<Record<string, string>>>;
+  uploadData: {
+    file: File;
+    title: string;
+    patientId?: string;
+  }[];
+  setUploadData: Dispatch<
+    SetStateAction<
+      {
+        file: File;
+        title: string;
+        patientId?: string;
+      }[]
+    >
+  >;
 };
 
 export default function Dropzone({
   files,
   setFiles,
-  fileNameToPatientMap,
-  setFileNameToPatientMap,
+  uploadData,
+  setUploadData,
 }: Props) {
   const {
     getRootProps,
@@ -39,38 +51,53 @@ export default function Dropzone({
     onDrop: (acceptedFiles) => {
       setFiles((prev) => [...prev, ...acceptedFiles]);
 
-      setFileNameToPatientMap((prev) => {
-        const newMap = { ...prev };
-        acceptedFiles.forEach((file) => {
-          newMap[file.name] = "";
-        });
-        return newMap;
+      setUploadData((prev) => {
+        const parsedFiles = acceptedFiles.map((file) => ({
+          file,
+          title: file.name,
+          patientId: "",
+        }));
+        return [...prev, ...parsedFiles];
       });
     },
   });
 
-  const listedFiles = acceptedFiles.map((file, index) => (
-    <li key={file.name} className="flex items-center justify-between w-full">
-      <div className="flex items-center gap-x-4">
-        <AiOutlineCheck size={20} />
-        <p className="flex-shrink-0">
-          {file.name} - {formatBytes(file.size)} bytes
+  const listedFiles = uploadData.map((data, index) => (
+    <li key={data.file.name} className="flex flex-col gap-y-2 w-full">
+      <div className="flex w-full items-center gap-x-2 md:gap-x-4">
+        <AiOutlineCheck size={20} className="min-w-[20px]" />
+        <p className="truncate">
+          {data.file.name} - {formatBytes(data.file.size)} bytes
         </p>
       </div>
-      <div className="flex items-center gap-x-4">
+      <div className="flex w-full items-center gap-x-4">
         <TextInput
-          className="w-1/4 md:w-[400px]"
-          placeholder="Patient Name"
-          value={fileNameToPatientMap[file.name]}
+          className="w-full"
+          placeholder="Title"
+          value={data.title}
           onChange={(e) => {
-            setFileNameToPatientMap((prev) => ({
-              ...prev,
-              [file.name]: e.target.value,
-            }));
+            setUploadData((prev) => {
+              const newData = [...prev];
+              newData[index].title = e.target.value;
+              console.log("NEW DATA", newData);
+              return newData;
+            });
+          }}
+        />
+        <TextInput
+          className="w-2/5 max-w-[400px]"
+          placeholder="Patient"
+          value={data.patientId}
+          onChange={(e) => {
+            setUploadData((prev) => {
+              const newData = [...prev];
+              newData[index].title = e.target.value;
+              return newData;
+            });
           }}
         />
         <button
-          className="cursor-pointer hover:opacity-80 transition-all opacity-100"
+          className="border hover:border-red-600 rounded cursor-pointer hover:text-red-600 hover:bg-red-50 w-9 h-9 min-w-[36px] flex items-center justify-center transition"
           onClick={() => {
             setFiles((prev) => prev.filter((_, i) => i !== index));
           }}
@@ -122,7 +149,7 @@ export default function Dropzone({
       {files.length > 0 && (
         <div className="flex flex-col items-center justify-center gap-y-2 w-full">
           <p className="text-xl">Accepted Files</p>
-          <ul className="w-full px-8 flex flex-col gap-y-2">{listedFiles}</ul>
+          <ul className="w-full flex flex-col gap-y-2">{listedFiles}</ul>
         </div>
       )}
       {fileRejections.length > 0 && (

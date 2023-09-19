@@ -9,9 +9,13 @@ import { useAuth } from "@clerk/nextjs";
 const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [fileNameToPatientMap, setFileNameToPatientMap] = useState<
-    Record<string, string>
-  >({});
+  const [uploadData, setUploadData] = useState<
+    {
+      file: File;
+      title: string;
+      patientId?: string;
+    }[]
+  >([]);
   const user = useAuth();
   const toast = useNetworkToasts();
 
@@ -27,9 +31,11 @@ const Upload = () => {
       let promises: Promise<Response>[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const patientName = fileNameToPatientMap[file.name] || "Unlabeled";
+        // const patientName = fileNameToPatientMap[file.name] || "Unlabeled";
         const sendImageUrl = new URL(
-          `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/send-image?userId=${userId}&patientName=${patientName}`
+          `${
+            process.env.NEXT_PUBLIC_CONVEX_SITE_URL
+          }/send-image?userId=${userId}&patientName=${""}`
         );
         promises.push(
           fetch(sendImageUrl, {
@@ -62,13 +68,13 @@ const Upload = () => {
       <Dropzone
         files={files}
         setFiles={setFiles}
-        fileNameToPatientMap={fileNameToPatientMap}
-        setFileNameToPatientMap={setFileNameToPatientMap}
+        uploadData={uploadData}
+        setUploadData={setUploadData}
       />
       <button
         disabled={uploading || files.length === 0}
         className={
-          "disabled:cursor-not-allowed disabled:bg-gray-300 text-xl px-8 py-2 rounded-md bg-blue-500 text-white transition-all hover:bg-blue-700 flex items-center justify-center gap-x-4 relative"
+          "w-fit disabled:cursor-not-allowed disabled:bg-gray-300 text-xl px-8 py-2 rounded-md bg-blue-500 text-white transition-all hover:bg-blue-700 flex items-center justify-center gap-x-4"
         }
         onClick={upload}
       >
