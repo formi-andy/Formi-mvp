@@ -8,6 +8,7 @@ import {
 
 import { v } from "convex/values";
 import { Doc, Id } from "./_generated/dataModel";
+import dayjs from "dayjs";
 
 /** Get images by Clerk user id (AKA "subject" on auth)  */
 export const getImages = internalQuery({
@@ -22,6 +23,7 @@ export const storeImage = internalMutation({
     storageId: v.string(),
     author: v.string(),
     patientId: v.optional(v.string()),
+    title: v.string(),
   },
   async handler(
     ctx,
@@ -29,13 +31,14 @@ export const storeImage = internalMutation({
       storageId,
       author,
       patientId,
-    }: { storageId: string; author: string; patientId?: string }
+      title,
+    }: { storageId: string; author: string; patientId?: string; title: string }
   ) {
     const storageRecord = await ctx.db.insert("images", {
       storage_id: storageId,
       user_id: author,
       patient_id: patientId,
-      title: "",
+      title,
       tags: [],
     });
 
@@ -54,13 +57,26 @@ export const listImages = query({
     const images = await ctx.db
       .query("images")
       .withIndex("by_user_id", (q) => q.eq("user_id", subject))
+      .order("desc")
       .collect();
-    return Promise.all(
+
+    const imagesWithUrls = await Promise.all(
       images.map(async (image) => ({
         ...image,
         url: (await ctx.storage.getUrl(image.storage_id)) || "",
       }))
     );
+
+    const imagesByDay: Record<string, typeof imagesWithUrls> = {};
+    imagesWithUrls.forEach((image) => {
+      const date = dayjs(image._creationTime).format("M/DD/YYYY");
+      if (!imagesByDay[date]) {
+        imagesByDay[date] = [];
+      }
+      imagesByDay[date].push(image);
+    });
+
+    return imagesByDay;
   },
 });
 

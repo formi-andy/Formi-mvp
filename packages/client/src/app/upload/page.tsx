@@ -35,7 +35,9 @@ const Upload = () => {
         const sendImageUrl = new URL(
           `${
             process.env.NEXT_PUBLIC_CONVEX_SITE_URL
-          }/send-image?userId=${userId}&patientName=${""}`
+          }/send-image?userId=${userId}&patientName=${""}&title=${
+            uploadData[i].title
+          }`
         );
         promises.push(
           fetch(sendImageUrl, {

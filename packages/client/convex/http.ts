@@ -91,9 +91,11 @@ http.route({
 
     // Step 2: Save the storage ID to the database via a mutation
     const author = new URL(request.url).searchParams.get("userId")!;
+    const title = new URL(request.url).searchParams.get("title")!;
     await ctx.runMutation(internal.images.storeImage, {
       storageId,
       author,
+      title,
     });
 
     // Step 3: Return a response with the correct CORS headers
