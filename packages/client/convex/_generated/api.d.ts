@@ -17,6 +17,7 @@ import type {
 import type * as http from "../http";
 import type * as images from "../images";
 import type * as users from "../users";
+import type * as waitlist from "../waitlist";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   images: typeof images;
   users: typeof users;
+  waitlist: typeof waitlist;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

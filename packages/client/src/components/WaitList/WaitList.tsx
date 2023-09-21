@@ -2,46 +2,52 @@
 
 import React, { useState } from "react";
 import { TextInput } from "@mantine/core";
-import { message } from "antd";
-import axios from "axios";
+import useNetworkToasts from "@/hooks/useNetworkToasts";
+import { api } from "../../../convex/_generated/api";
+import { useMutation } from "convex/react";
+import { ConvexError } from "convex/values";
 
 export default function WaitList() {
   const [email, setEmail] = useState("");
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const success = () => {
-    messageApi.open({
-      type: "success",
-      content: "Successfully joined the waitlist!",
-    });
-  };
-
-  const warning = () => {
-    messageApi.open({
-      type: "warning",
-      content: "Please enter a valid email address.",
-    });
-  };
-
-  const error = () => {
-    messageApi.open({
-      type: "error",
-      content: "Something went wrong. Please try again.",
-    });
-  };
+  const [loading, setLoading] = useState(false);
+  const toast = useNetworkToasts();
+  const joinWaitlist = useMutation(api.waitlist.joinWaitlist);
 
   const submit = async () => {
     if (validateEmail(email)) {
       try {
-        let result = await axios.post("/api/waitlist", {
+        setLoading(true);
+        toast.loading({
+          title: "Joining the waitlist...",
+          message: "Thanks for your patience!",
+        });
+        await joinWaitlist({
           email,
         });
-        success();
+        toast.success({
+          title: "Successfully joined the waitlist!",
+          message: "We'll be in touch soon.",
+        });
       } catch (err) {
-        error();
+        if (err instanceof ConvexError && err.data.code === 409) {
+          toast.error({
+            title: "You're already on the waitlist!",
+            message: "We'll be in touch soon!",
+          });
+        } else {
+          toast.error({
+            title: "Something went wrong!",
+            message: "Please try again.",
+          });
+        }
+      } finally {
+        setLoading(false);
       }
     } else {
-      warning();
+      toast.error({
+        title: "Please enter a valid email address.",
+        message: "We promise not to spam you!",
+      });
     }
   };
 
@@ -55,7 +61,6 @@ export default function WaitList() {
 
   return (
     <div className="flex flex-col gap-y-4 w-full md:w-3/4 mt-16">
-      {contextHolder}
       <p className="text-2xl font-semibold text-center">Join the waitlist</p>
       <div className="flex flex-col md:flex-row gap-y-4 gap-x-8 items-center justify-center">
         <TextInput
@@ -66,6 +71,7 @@ export default function WaitList() {
         />
         <button
           onClick={submit}
+          disabled={loading}
           className="flex items-center text-center justify-center border border-black bg-black hover:bg-zinc-700 hover:border-zinc-700 text-white font-medium h-10 w-32 rounded-lg transition"
         >
           Submit

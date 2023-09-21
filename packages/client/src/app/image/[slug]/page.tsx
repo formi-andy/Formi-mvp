@@ -75,13 +75,14 @@ function ImagePage({ params }: { params: { slug: string } }) {
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
+    console.log("FIRING");
     if (image !== undefined) {
       form.setFieldValue("title", image.title);
       form.setFieldValue("description", image.description || "");
       form.setFieldValue("patientId", image.patient_id || "");
       form.setFieldValue("tags", image.tags);
     }
-  }, [image, form]);
+  }, [image]);
 
   if (image === undefined) {
     return <AppLoader />;
@@ -89,7 +90,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
 
   const items = [
     { title: "dashboard", href: "/dashboard" },
-    { title: slug, href: `/images/${slug}` },
+    { title: slug, href: `/image/${slug}` },
   ].map((item, index) => (
     <Link
       href={item.href}

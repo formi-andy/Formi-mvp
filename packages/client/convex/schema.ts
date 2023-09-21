@@ -21,4 +21,21 @@ export default defineSchema({
   })
     .index("by_patient_id", ["patient_id"])
     .index("by_doctor_id", ["doctor_id"]),
+  organizations: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+  }),
+  organizationMembers: defineTable({
+    organization_id: v.string(),
+    user_id: v.string(),
+    role: v.string(),
+  })
+    .index("by_organization_id", ["organization_id"])
+    .index("by_user_id", ["user_id"]),
+  waitlist: defineTable({
+    email: v.string(),
+    name: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    message: v.optional(v.string()),
+  }).index("by_email", ["email"]),
 });
