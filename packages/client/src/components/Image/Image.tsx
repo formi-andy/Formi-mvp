@@ -20,7 +20,7 @@ export default function Image({ url, alt }: { url: string; alt: string }) {
         style={{
           opacity: loading ? 0 : 1,
         }}
-        className="hover:brightness-75 cursor-pointer transition rounded object-cover"
+        className="rounded-lg object-cover"
       />
     </>
   );

@@ -6,10 +6,11 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
+import NextImage from "next/image";
 import { MdNotes } from "react-icons/md";
 import { PiTagSimpleLight } from "react-icons/pi";
 import { GoPencil } from "react-icons/go";
-import { Breadcrumbs, TextInput, TagsInput } from "@mantine/core";
+import { Breadcrumbs, TextInput, TagsInput, Modal } from "@mantine/core";
 import dayjs from "dayjs";
 
 import Image from "@/components/Image/Image";
@@ -46,6 +47,7 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
   });
   const deleteImage = useMutation(api.images.deleteImages);
   const updateImage = useMutation(api.images.updateImage);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const toast = useNetworkToasts();
   const router = useRouter();
 
@@ -126,28 +128,8 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
               <button
                 className="w-10 h-10 flex items-center justify-center border rounded hover:bg-red-500 hover:text-white transition hover:border-red-500"
                 disabled={updating}
-                onClick={async () => {
-                  try {
-                    setUpdating(true);
-                    toast.loading({
-                      title: "Deleting image",
-                      message: "Please be patient",
-                    });
-                    await deleteImage({
-                      ids: [image._id],
-                    });
-                    toast.success({
-                      title: "Successfully deleted image",
-                      message: "Redirecting to dashboard",
-                    });
-                    router.push("/dashboard");
-                  } catch (err) {
-                    toast.error({
-                      title: "Error deleting image",
-                      message: "Please try again later",
-                    });
-                    setUpdating(false);
-                  }
+                onClick={() => {
+                  setConfirmDelete(true);
                 }}
               >
                 <BiSolidTrashAlt size={20} />
@@ -174,7 +156,7 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
         <p className="text-lg">
           Uploaded at {dayjs(image._creationTime).format("M/DD/YYYY h:mm A")}
         </p>
-        <div className="flex flex-col border">
+        <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
             <MdNotes size={24} /> Notes
           </div>
@@ -193,7 +175,7 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
             )}
           </div>
         </div>
-        <div className="flex flex-col border">
+        <div className="flex flex-col border rounded-lg">
           <div className="items-center flex w-full border-b p-4 text-xl font-medium gap-x-4">
             <PiTagSimpleLight />
             Tags
@@ -263,6 +245,65 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
           </div>
         )}
       </div>
+      <Modal
+        opened={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        centered
+        classNames={{
+          body: "flex flex-col gap-y-4 items-center",
+        }}
+      >
+        <div className="relative aspect-square w-1/2">
+          <NextImage
+            src={image.url}
+            alt={image.title}
+            fill={true}
+            className="rounded-lg"
+          />
+        </div>
+        <div>
+          <p className="text-xl font-medium text-center">
+            Are you sure you want to delete this image?
+          </p>
+          <p className="text-opacity-50 text-center">This cannot be undone</p>
+        </div>
+        <div className="flex gap-x-4">
+          <button
+            className="w-40 text-xl h-12 border rounded-lg hover:border-black transition"
+            onClick={() => setConfirmDelete(false)}
+          >
+            Cancel
+          </button>
+          <button
+            className="w-40 text-xl bg-red-500 hover:bg-red-600 transition text-white rounded-lg"
+            onClick={async () => {
+              try {
+                setUpdating(true);
+                toast.loading({
+                  title: "Deleting image",
+                  message: "Please be patient",
+                });
+                await deleteImage({
+                  ids: [image._id],
+                });
+                toast.success({
+                  title: "Successfully deleted image",
+                  message: "Redirecting to dashboard",
+                });
+                router.push("/dashboard");
+              } catch (err) {
+                toast.error({
+                  title: "Error deleting image",
+                  message: "Please try again later",
+                });
+                setUpdating(false);
+              }
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

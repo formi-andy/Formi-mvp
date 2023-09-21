@@ -99,7 +99,7 @@ const Gallery: React.FC = () => {
             {images.map((image) => {
               return (
                 <div
-                  className="flex flex-col relative"
+                  className="flex flex-col relative cursor-pointer"
                   onClick={(e) => {
                     if (selecting) {
                       toggleSelection(image._id);
