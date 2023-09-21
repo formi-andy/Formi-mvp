@@ -18,6 +18,8 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import TextArea from "antd/es/input/TextArea";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
+import { BiSolidTrashAlt } from "react-icons/bi";
+import { useRouter } from "next/navigation";
 
 function renderTags(tags: string[]) {
   if (tags.length === 0) {
@@ -42,8 +44,10 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
   const image = useQuery(api.images.getImage, {
     id: slug as Id<"images">,
   });
+  const deleteImage = useMutation(api.images.deleteImages);
   const updateImage = useMutation(api.images.updateImage);
   const toast = useNetworkToasts();
+  const router = useRouter();
 
   const { user, isLoaded } = useUser();
   const [editing, setEditing] = useState(false);
@@ -107,17 +111,48 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
             {items}
           </Breadcrumbs>
           {isLoaded && user?.id === image.user_id && (
-            <button
-              className={`w-10 h-10 flex items-center justify-center border rounded hover:bg-blue-500 hover:text-white transition hover:border-blue-500
+            <div className="flex gap-x-2">
+              <button
+                className={`w-10 h-10 flex items-center justify-center border rounded hover:bg-blue-500 hover:text-white transition hover:border-blue-500
               ${editing ? "bg-blue-500 text-white border-blue-500" : "bg-white"}
               `}
-              disabled={updating}
-              onClick={() => {
-                setEditing(!editing);
-              }}
-            >
-              <GoPencil size={20} />
-            </button>
+                disabled={updating}
+                onClick={() => {
+                  setEditing(!editing);
+                }}
+              >
+                <GoPencil size={20} />
+              </button>
+              <button
+                className="w-10 h-10 flex items-center justify-center border rounded hover:bg-red-500 hover:text-white transition hover:border-red-500"
+                disabled={updating}
+                onClick={async () => {
+                  try {
+                    setUpdating(true);
+                    toast.loading({
+                      title: "Deleting image",
+                      message: "Please be patient",
+                    });
+                    await deleteImage({
+                      ids: [image._id],
+                    });
+                    toast.success({
+                      title: "Successfully deleted image",
+                      message: "Redirecting to dashboard",
+                    });
+                    router.push("/dashboard");
+                  } catch (err) {
+                    toast.error({
+                      title: "Error deleting image",
+                      message: "Please try again later",
+                    });
+                    setUpdating(false);
+                  }
+                }}
+              >
+                <BiSolidTrashAlt size={20} />
+              </button>
+            </div>
           )}
         </div>
         {editing ? (
