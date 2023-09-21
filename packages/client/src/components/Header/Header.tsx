@@ -9,7 +9,7 @@ export default function Header() {
   const { isSignedIn } = useAuth();
 
   return (
-    <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 mb-4">
+    <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 mb-8">
       <Link href="/" className="text-2xl font-medium">
         Homescope
       </Link>

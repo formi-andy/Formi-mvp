@@ -1,20 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "@/components/Image/Image";
+import { useQuery } from "convex/react";
+import { Skeleton } from "antd";
+import dayjs from "dayjs";
+import Link from "next/link";
+
 import { AiOutlineCheck } from "react-icons/ai";
 import NoImages from "./NoImages";
 import { api } from "../../../convex/_generated/api";
-import { useQuery } from "convex/react";
-import { Skeleton } from "antd";
 import { GALLERY_LOADERS } from "@/commons/constants/loaders";
-import dayjs from "dayjs";
 
 const Gallery: React.FC = () => {
   let images = useQuery(api.images.listImages);
 
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [selecting, setSelecting] = useState(false);
+  const router = useRouter();
 
   const toggleSelection = (id: string) => {
     setSelectedImages((prev) => {
@@ -40,13 +44,13 @@ const Gallery: React.FC = () => {
   const renderImages = () => {
     if (images === undefined) {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {[...Array(GALLERY_LOADERS)].map((i) => {
             return (
-              <div key={i} className="min-w-[200px] h-fit z-100">
+              <div key={i} className="min-w-[200px] aspect-square h-fit z-100">
                 <Skeleton.Button
                   active
-                  className="!w-full !h-full min-h-[150px]"
+                  className="!w-full !h-full min-h-[200px]"
                 />
               </div>
             );
@@ -63,19 +67,22 @@ const Gallery: React.FC = () => {
       return (
         <div key={date} className="flex flex-col gap-y-2">
           <p className="text-xl md:text-2xl font-light">{date}</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {images.map((image) => {
               return (
                 <div
                   className="flex flex-col relative"
-                  onClick={() => {
+                  onClick={(e) => {
                     if (selecting) {
                       toggleSelection(image._id);
+                    } else {
+                      e.preventDefault();
+                      router.push(`/image/${image._id}`);
                     }
                   }}
                   key={image._id}
                 >
-                  <div className="relative min-w-[200px] h-[150px]">
+                  <div className="relative min-w-[200px] min-h-[200px] aspect-square">
                     <Image url={image.url} alt={"Description"} />
                   </div>
                   <div className="flex flex-col">

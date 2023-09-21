@@ -1,22 +1,7 @@
-import {
-  internalMutation,
-  internalQuery,
-  mutation,
-  query,
-  QueryCtx,
-} from "./_generated/server";
+import { mutation, internalMutation, query } from "./_generated/server";
 
 import { v } from "convex/values";
-import { Doc, Id } from "./_generated/dataModel";
 import dayjs from "dayjs";
-
-/** Get images by Clerk user id (AKA "subject" on auth)  */
-export const getImages = internalQuery({
-  args: { subject: v.string() },
-  async handler(ctx, args) {
-    return await imageQuery(ctx, args.subject);
-  },
-});
 
 export const storeImage = internalMutation({
   args: {
@@ -43,6 +28,71 @@ export const storeImage = internalMutation({
     });
 
     return storageRecord;
+  },
+});
+
+export const getImage = query({
+  args: {
+    id: v.id("images"),
+  },
+  async handler(ctx, args) {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated call to get image");
+    }
+
+    const { id } = args;
+
+    const image = await ctx.db.get(id);
+    if (!image) {
+      throw new Error("Image not found");
+    }
+
+    return {
+      ...image,
+      url: (await ctx.storage.getUrl(image.storage_id)) || "",
+    };
+  },
+});
+
+// TODO: use patient ID
+export const updateImage = mutation({
+  args: {
+    id: v.id("images"),
+    title: v.string(),
+    patient_id: v.optional(v.id("users")),
+    description: v.optional(v.string()),
+    tags: v.array(v.string()),
+  },
+  async handler(ctx, args) {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated call to update image");
+    }
+
+    const { id, title, patient_id, description, tags } = args;
+
+    const image = await ctx.db.get(id);
+    if (!image) {
+      throw new Error("Image not found");
+    }
+
+    if (image.user_id !== identity.subject) {
+      throw new Error("Unauthorized call to update image");
+    }
+
+    await ctx.db.patch(id, {
+      title,
+      description,
+      tags,
+    });
+
+    return {
+      ...image,
+      title,
+      description,
+      tags,
+    };
   },
 });
 
@@ -79,14 +129,3 @@ export const listImages = query({
     return imagesByDay;
   },
 });
-
-// Helpers
-export async function imageQuery(
-  ctx: QueryCtx,
-  clerkUserId: string
-): Promise<any> {
-  return await ctx.db
-    .query("images")
-    .withIndex("by_user_id", (q) => q.eq("user_id", clerkUserId))
-    .unique();
-}

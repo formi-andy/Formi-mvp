@@ -1,8 +1,10 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { api } from "./_generated/api";
 import type { WebhookEvent } from "@clerk/backend";
 import { Webhook } from "svix";
+import { Id } from "./_generated/dataModel";
 
 function ensureEnvironmentVariable(name: string): string {
   const value = process.env[name];

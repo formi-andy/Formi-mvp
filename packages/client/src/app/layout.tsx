@@ -5,6 +5,7 @@ import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import NextTopLoader from "nextjs-toploader";
 import ConvexClientProvider from "@/contexts/ConvexClientProvider";
+
 import { ClerkProvider } from "@clerk/nextjs";
 import "@mantine/notifications/styles.css";
 
