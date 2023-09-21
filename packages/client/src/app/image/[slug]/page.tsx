@@ -1,9 +1,11 @@
 "use client";
 
+import { ErrorBoundary } from "react-error-boundary";
 import { useMutation, useQuery } from "convex/react";
 import { useForm } from "@mantine/form";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import NotFoundPage from "@/app/not-found";
 
 import Link from "next/link";
 import NextImage from "next/image";
@@ -21,6 +23,7 @@ import TextArea from "antd/es/input/TextArea";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { useRouter } from "next/navigation";
+import { ConvexError } from "convex/values";
 
 function renderTags(tags: string[]) {
   if (tags.length === 0) {
@@ -39,7 +42,7 @@ function renderTags(tags: string[]) {
 }
 
 // TODO: Move this to ssr after convex supports server side reactive queries
-export default function ImagePage({ params }: { params: { slug: string } }) {
+function ImagePage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   // cast to Id<"images"> to satisfy type checker
   const image = useQuery(api.images.getImage, {
@@ -305,5 +308,44 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
         </div>
       </Modal>
     </div>
+  );
+}
+
+function fallbackRender({ error, resetErrorBoundary }) {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+  if (error instanceof ConvexError) {
+    switch ((error.data as { code: number }).code) {
+      case 404:
+        return <NotFoundPage />;
+      case 401:
+        return (
+          <div role="alert">
+            <p>Something went wrong:</p>
+            <pre style={{ color: "red" }}>You are not authorized</pre>
+          </div>
+        );
+      default:
+        return (
+          <div role="alert">
+            <p>Something went wrong:</p>
+            <pre style={{ color: "red" }}>{error.data.message}</pre>
+          </div>
+        );
+    }
+  }
+
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre style={{ color: "red" }}>{error.message}</pre>
+    </div>
+  );
+}
+
+export default function Page({ params }: { params: { slug: string } }) {
+  return (
+    <ErrorBoundary fallbackRender={fallbackRender}>
+      <ImagePage params={params} />
+    </ErrorBoundary>
   );
 }

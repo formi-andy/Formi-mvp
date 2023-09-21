@@ -1,6 +1,6 @@
 import { mutation, internalMutation, query } from "./_generated/server";
 
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import dayjs from "dayjs";
 
 export const storeImage = internalMutation({
@@ -38,14 +38,20 @@ export const getImage = query({
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Unauthenticated call to get image");
+      throw new ConvexError({
+        message: "Unauthenticated call to get image",
+        code: 401,
+      });
     }
 
     const { id } = args;
 
     const image = await ctx.db.get(id);
     if (!image) {
-      throw new Error("Image not found");
+      throw new ConvexError({
+        message: "Image not found",
+        code: 404,
+      });
     }
 
     return {
@@ -67,18 +73,27 @@ export const updateImage = mutation({
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Unauthenticated call to update image");
+      throw new ConvexError({
+        message: "Unauthenticated call to get image",
+        code: 401,
+      });
     }
 
     const { id, title, patient_id, description, tags } = args;
 
     const image = await ctx.db.get(id);
     if (!image) {
-      throw new Error("Image not found");
+      throw new ConvexError({
+        message: "Image not found",
+        code: 404,
+      });
     }
 
     if (image.user_id !== identity.subject) {
-      throw new Error("Unauthorized call to update image");
+      throw new ConvexError({
+        message: "Unauthenticated call to get image",
+        code: 401,
+      });
     }
 
     await ctx.db.patch(id, {
