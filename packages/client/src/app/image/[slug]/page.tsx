@@ -75,7 +75,6 @@ function ImagePage({ params }: { params: { slug: string } }) {
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    console.log("FIRING");
     if (image !== undefined) {
       form.setFieldValue("title", image.title);
       form.setFieldValue("description", image.description || "");

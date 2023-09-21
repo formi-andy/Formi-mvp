@@ -79,7 +79,6 @@ export default function Dropzone({
             setUploadData((prev) => {
               const newData = [...prev];
               newData[index].title = e.target.value;
-              console.log("NEW DATA", newData);
               return newData;
             });
           }}
