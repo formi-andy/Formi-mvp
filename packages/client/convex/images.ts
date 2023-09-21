@@ -129,3 +129,35 @@ export const listImages = query({
     return imagesByDay;
   },
 });
+
+export const deleteImages = mutation({
+  args: {
+    ids: v.array(v.id("images")),
+  },
+  async handler(ctx, args) {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated call to delete images");
+    }
+
+    const { ids } = args;
+
+    await Promise.all(
+      ids.map(async (id) => {
+        const image = await ctx.db.get(id);
+        if (!image) {
+          throw new Error("Image not found");
+        }
+
+        if (image.user_id !== identity.subject) {
+          throw new Error("Unauthorized call to delete image");
+        }
+
+        await ctx.db.delete(id);
+        await ctx.storage.delete(image.storage_id);
+      })
+    );
+
+    return ids;
+  },
+});

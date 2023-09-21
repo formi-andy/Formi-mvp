@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "@/components/Image/Image";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import Link from "next/link";
@@ -12,13 +12,18 @@ import { AiOutlineCheck } from "react-icons/ai";
 import NoImages from "./NoImages";
 import { api } from "../../../convex/_generated/api";
 import { GALLERY_LOADERS } from "@/commons/constants/loaders";
+import useNetworkToasts from "@/hooks/useNetworkToasts";
+import { Id } from "../../../convex/_generated/dataModel";
 
 const Gallery: React.FC = () => {
   let images = useQuery(api.images.listImages);
+  const deleteMutation = useMutation(api.images.deleteImages);
 
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [selecting, setSelecting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const router = useRouter();
+  const toast = useNetworkToasts();
 
   const toggleSelection = (id: string) => {
     setSelectedImages((prev) => {
@@ -33,21 +38,44 @@ const Gallery: React.FC = () => {
   };
 
   const deleteImages = async () => {
-    let promises = [];
-    for (const storageId of selectedImages) {
-      // await api.images.deleteImage(storageId);
+    try {
+      setDeleting(true);
+      toast.loading({
+        title: "Deleting images...",
+        message: "Please be patient",
+      });
+
+      // cast to Id<"images">[] to make TS happy
+      await deleteMutation({
+        ids: selectedImages as Id<"images">[],
+      });
+      toast.success({
+        title: "Images deleted",
+        message: "Please refresh the page",
+      });
+      setSelectedImages([]);
+      setSelecting(false);
+    } catch (e) {
+      console.log(e);
+      toast.error({
+        title: "Error deleting images",
+        message: "Please try again later",
+      });
+    } finally {
+      setDeleting(false);
     }
-    setSelecting(false);
-    setSelectedImages([]);
   };
 
   const renderImages = () => {
     if (images === undefined) {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-          {[...Array(GALLERY_LOADERS)].map((i) => {
+          {[...Array(GALLERY_LOADERS)].map((_, index) => {
             return (
-              <div key={i} className="min-w-[200px] aspect-square h-fit z-100">
+              <div
+                key={index}
+                className="min-w-[200px] aspect-square h-fit z-100"
+              >
                 <Skeleton.Button
                   active
                   className="!w-full !h-full min-h-[200px]"
@@ -120,10 +148,12 @@ const Gallery: React.FC = () => {
             <button
               className="px-6 py-2 text-white bg-red-500 hover:bg-red-600 transition-all rounded-lg"
               onClick={deleteImages}
+              disabled={deleting}
             >
               Delete Selected Images
             </button>
             <button
+              disabled={deleting}
               className="px-6 py-2 text-white bg-blue-500 hover:bg-blue-600 transition-all rounded-lg"
               onClick={() => {
                 setSelecting(false);

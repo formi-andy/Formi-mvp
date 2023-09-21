@@ -72,7 +72,7 @@ export default function ImagePage({ params }: { params: { slug: string } }) {
       form.setFieldValue("patientId", image.patient_id || "");
       form.setFieldValue("tags", image.tags);
     }
-  }, [image]);
+  }, [image, form]);
 
   if (image === undefined) {
     return <AppLoader />;
