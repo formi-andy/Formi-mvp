@@ -50,8 +50,8 @@ importers:
         specifier: 18.2.6
         version: 18.2.6
       '@zoom/videosdk':
-        specifier: 1.8.0
-        version: 1.8.0
+        specifier: 1.8.5
+        version: 1.8.5
       antd:
         specifier: ^5.7.0
         version: 5.7.0(react-dom@18.2.0)(react@18.2.0)
@@ -74,8 +74,8 @@ importers:
         specifier: 8.43.0
         version: 8.43.0
       eslint-config-next:
-        specifier: 13.4.7
-        version: 13.4.7(eslint@8.43.0)(typescript@5.1.3)
+        specifier: 13.5.2
+        version: 13.5.2(eslint@8.43.0)(typescript@5.1.3)
       firebase:
         specifier: ^10.1.0
         version: 10.1.0(react-native@0.72.4)
@@ -2975,8 +2975,8 @@ packages:
     resolution: {integrity: sha512-dUseBIQVax+XtdJPzhwww4GetTjlkRSsXeQnisIJWBaHsnxYcN2RGzsPHi58D6qnkATjnhuAtQTJmR1hKYQQPg==}
     dev: false
 
-  /@next/eslint-plugin-next@13.4.7:
-    resolution: {integrity: sha512-ANEPltxzXbyyG7CvqxdY4PmeM5+RyWdAJGufTHnU+LA/i3J6IDV2r8Z4onKwskwKEhwqzz5lMaSYGGXLyHX+mg==}
+  /@next/eslint-plugin-next@13.5.2:
+    resolution: {integrity: sha512-Ew8DOUerJYGRo8pI84SVwn9wxxx8sH92AanCXSkkLJM2W0RJEWy+BqWSCfrlA/3ZIczEl4l4o4lOeTGBPYfBJg==}
     dependencies:
       glob: 7.1.7
     dev: false
@@ -4130,8 +4130,8 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: false
 
-  /@zoom/videosdk@1.8.0:
-    resolution: {integrity: sha512-+BuiRkaCTKCLvnJtAJaHo5lsyp9D65s30DUC57aYWMQ3uwi1YlkM6cxRPznMCM6iIINeT8OXwr+ZxTIcza1wZg==}
+  /@zoom/videosdk@1.8.5:
+    resolution: {integrity: sha512-ZGqaz7meGPBMcKdFAQEou5PTZqeAq2N2sfSkhM+rfNzJNNJET8b8wlmS6bODCNZjHFN4ow0wl43PmkcMGIp9Fw==}
     dev: false
 
   /abort-controller@3.0.0:
@@ -5622,8 +5622,8 @@ packages:
     dev: false
     optional: true
 
-  /eslint-config-next@13.4.7(eslint@8.43.0)(typescript@5.1.3):
-    resolution: {integrity: sha512-+IRAyD0+J1MZaTi9RQMPUfr6Q+GCZ1wOkK6XM52Vokh7VI4R6YFGOFzdkEFHl4ZyIX4FKa5vcwUP2WscSFNjNQ==}
+  /eslint-config-next@13.5.2(eslint@8.43.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-kCF7k7fHBtFtxfP6J6AP6Mo0vW3CrFeoIuoZ7NHGIvLFc/RUaIspJ6inO/R33zE1o9t/lbJgTnsqnRB++sxCUQ==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0
       typescript: '>=3.3.1'
@@ -5631,7 +5631,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@next/eslint-plugin-next': 13.4.7
+      '@next/eslint-plugin-next': 13.5.2
       '@rushstack/eslint-patch': 1.3.3
       '@typescript-eslint/parser': 5.62.0(eslint@8.43.0)(typescript@5.1.3)
       eslint: 8.43.0
