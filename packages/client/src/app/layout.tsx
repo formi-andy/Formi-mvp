@@ -5,6 +5,7 @@ import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import NextTopLoader from "nextjs-toploader";
 import ConvexClientProvider from "@/contexts/ConvexClientProvider";
+import { Inter } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import "@mantine/notifications/styles.css";
@@ -13,6 +14,11 @@ export const metadata = {
   title: "Homescope",
   description: "",
 };
+
+const inter = Inter({
+  variable: "--inter-font",
+  subsets: ["latin"],
+});
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -30,7 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           />
           <ColorSchemeScript />
         </head>
-        <body className="h-fit">
+        <body className={`h-fit ${inter.className}`}>
           <NextTopLoader showSpinner={false} />
           <MantineProvider>
             <Notifications autoClose={3000} />

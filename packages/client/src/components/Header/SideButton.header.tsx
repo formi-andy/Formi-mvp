@@ -1,10 +1,10 @@
 "use client";
 
+import { useHeader } from "@/contexts/HeaderContext";
 import { Burger } from "@mantine/core";
-import { useMobileMenu } from "@/hooks/useMobileMenu";
 
 export default function SideButton() {
-  const { opened, setOpened } = useMobileMenu();
+  const { opened, setOpened } = useHeader();
   return (
     <Burger
       className="block"

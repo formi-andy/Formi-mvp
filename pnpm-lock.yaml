@@ -50,8 +50,8 @@ importers:
         specifier: 18.2.6
         version: 18.2.6
       '@zoom/videosdk':
-        specifier: 1.8.5
-        version: 1.8.5
+        specifier: 1.8.0
+        version: 1.8.0
       antd:
         specifier: ^5.7.0
         version: 5.7.0(react-dom@18.2.0)(react@18.2.0)
@@ -82,6 +82,9 @@ importers:
       firebase-admin:
         specifier: ^11.9.0
         version: 11.9.0
+      google:
+        specifier: link:@next/font/google
+        version: link:@next/font/google
       immer:
         specifier: ^10.0.2
         version: 10.0.2
@@ -4130,8 +4133,8 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: false
 
-  /@zoom/videosdk@1.8.5:
-    resolution: {integrity: sha512-ZGqaz7meGPBMcKdFAQEou5PTZqeAq2N2sfSkhM+rfNzJNNJET8b8wlmS6bODCNZjHFN4ow0wl43PmkcMGIp9Fw==}
+  /@zoom/videosdk@1.8.0:
+    resolution: {integrity: sha512-+BuiRkaCTKCLvnJtAJaHo5lsyp9D65s30DUC57aYWMQ3uwi1YlkM6cxRPznMCM6iIINeT8OXwr+ZxTIcza1wZg==}
     dev: false
 
   /abort-controller@3.0.0:

@@ -1,8 +1,9 @@
 "use client";
 import styles from "./header.module.css";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
-import { useMobileMenu } from "@/hooks/useMobileMenu";
+import { useHeader } from "@/contexts/HeaderContext";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { ReactNode } from "react";
 
 function MobileNavLink({
   to,
@@ -10,15 +11,14 @@ function MobileNavLink({
   onClick,
 }: {
   to: string;
-  children: React.ReactNode;
+  children: ReactNode;
   onClick: () => void;
 }) {
   const pathname = "";
-  // const { pathname } = "router";
   return (
     <Link
       href={to}
-      className={`px-4 text-2xl h-fit transition hover:text-white items-center flex font-izoard ${
+      className={`px-4 text-xl h-fit transition hover:text-blue-500 items-center flex ${
         pathname === to ? "text-white" : "text-brandBlack"
       }`}
       onClick={onClick}
@@ -29,7 +29,7 @@ function MobileNavLink({
 }
 
 export default function MobileMenu() {
-  const { opened, setOpened } = useMobileMenu();
+  const { opened, setOpened } = useHeader();
 
   return (
     <aside
@@ -54,18 +54,16 @@ export default function MobileMenu() {
         <MobileNavLink to={`/upload`} onClick={() => setOpened(false)}>
           Upload
         </MobileNavLink>
-        <MobileNavLink to={`/profile`} onClick={() => setOpened(false)}>
-          Profile
-        </MobileNavLink>
-        <button
-          type="button"
-          className="px-4 text-2xl h-fit transition hover:text-white items-center flex font-izoard"
-          onClick={() => {
-            signOut({ callbackUrl: "/" });
-          }}
-        >
-          Logout
-        </button>
+        <SignedIn>
+          <div className="relative left-4 md:left-8">
+            <UserButton afterSignOutUrl="/login" />
+          </div>
+        </SignedIn>
+        <SignedOut>
+          <MobileNavLink to={`/login`} onClick={() => setOpened(false)}>
+            Log In
+          </MobileNavLink>
+        </SignedOut>
       </div>
       <div
         className={styles.mobileHeaderBackdrop}

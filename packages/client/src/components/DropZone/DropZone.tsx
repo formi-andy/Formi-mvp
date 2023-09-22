@@ -6,10 +6,12 @@ import { AiOutlineCheck } from "react-icons/ai";
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { TextInput } from "@mantine/core";
 
-const maxSize = 1024 * 1024 * 10; // 10MB
+const maxSize = 1024 * 1024 * 5; // 5MB
 const maxFiles = 20;
 const acceptedFileTypes = {
-  "image/*": ["jpeg", "png"],
+  "image/png": [".png"],
+  "image/jpeg": [".jpeg", ".jpg"],
+  "image/webp": [".webp"],
 };
 
 type Props = {
@@ -112,7 +114,7 @@ export default function Dropzone({
       <div
         {...getRootProps()}
         className={`
-          w-full h-[400px] cursor-pointer border-2 rounded-md flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
+          px-4 md:px-8 w-full h-[400px] cursor-pointer border-2 rounded-md flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
           ${isDragAccept ? "border-green-500 bg-green-100" : ""} 
           ${isDragReject ? "border-red-500 bg-red-100" : ""} 
           ${
@@ -123,9 +125,12 @@ export default function Dropzone({
         `}
       >
         <input {...getInputProps()} />
-        <p className="text-2xl">
+        <p className="text-2xl text-center">
           Drag and drop some files here, or click to select files
         </p>
+        <em className="text-center text-sm">
+          Only *.jpeg, *.png, and *.webp images will be accepted
+        </em>
         <div className="h-5 transition-opacity duration-200 ease-in-out">
           {isDragAccept && (
             <p className="text-green-500 opacity-100">
