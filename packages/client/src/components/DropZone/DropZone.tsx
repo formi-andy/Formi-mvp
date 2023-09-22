@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useDropzone } from "react-dropzone";
 import { formatBytes } from "@/utils/formatBytes";
 import { AiOutlineCheck } from "react-icons/ai";

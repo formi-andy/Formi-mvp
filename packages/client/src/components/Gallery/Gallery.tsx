@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "@/components/Image/Image";
 import { useMutation, useQuery } from "convex/react";
 import { Skeleton } from "antd";
@@ -22,7 +21,6 @@ const Gallery: React.FC = () => {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [selecting, setSelecting] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const router = useRouter();
   const toast = useNetworkToasts();
 
   const toggleSelection = (id: string) => {
@@ -100,35 +98,44 @@ const Gallery: React.FC = () => {
               return (
                 <div
                   className="flex flex-col relative cursor-pointer"
-                  onClick={(e) => {
-                    if (selecting) {
-                      toggleSelection(image._id);
-                    } else {
-                      e.preventDefault();
-                      router.push(`/image/${image._id}`);
-                    }
-                  }}
                   key={image._id}
                 >
-                  <div className="relative min-w-[200px] min-h-[200px] aspect-square">
-                    <Image url={image.url} alt={"Description"} />
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-lg truncate">{image.title || "Image"}</p>
-                    <p className="text-sm">
-                      {dayjs(image._creationTime).format("M/DD/YYYY")}
-                    </p>
-                  </div>
-                  {selectedImages.includes(image._id) && (
-                    <div className="absolute inset-0 bg-white opacity-50 h-full" />
-                  )}
-                  {selecting && selectedImages.includes(image._id) && (
-                    <div className="absolute bottom-2 right-2 w-6 h-6 rounded-full border border-white flex items-center justify-center bg-blue-500">
-                      <AiOutlineCheck
-                        size={12}
-                        className="border-white text-white stroke-2"
-                      />
+                  <div
+                    className={`${!selecting && "pointer-events-none"}`}
+                    onClick={() => {
+                      if (selecting) {
+                        toggleSelection(image._id);
+                      }
+                    }}
+                  >
+                    <div className="relative min-w-[200px] min-h-[200px] aspect-square">
+                      <Image url={image.url} alt={"Description"} />
                     </div>
+                    <div className="flex flex-col">
+                      <p className="text-lg truncate">
+                        {image.title || "Image"}
+                      </p>
+                      <p className="text-sm">
+                        {dayjs(image._creationTime).format("M/DD/YYYY")}
+                      </p>
+                    </div>
+                    {selectedImages.includes(image._id) && (
+                      <div className="absolute inset-0 bg-white opacity-50 h-full" />
+                    )}
+                    {selecting && selectedImages.includes(image._id) && (
+                      <div className="absolute bottom-2 right-2 w-6 h-6 rounded-full border border-white flex items-center justify-center bg-blue-500">
+                        <AiOutlineCheck
+                          size={12}
+                          className="border-white text-white stroke-2"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {!selecting && (
+                    <Link
+                      className="h-full w-full absolute"
+                      href={`/image/${image._id}`}
+                    ></Link>
                   )}
                 </div>
               );
