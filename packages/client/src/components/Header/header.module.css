@@ -28,7 +28,7 @@
     height: 100vh;
     z-index: 100;
     /* background-color: rgba(245, 191, 64, 0.9); */
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
     width: 100%;
     bottom: 0;
     left: 0;

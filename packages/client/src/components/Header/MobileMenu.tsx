@@ -18,7 +18,7 @@ function MobileNavLink({
   return (
     <Link
       href={to}
-      className={`px-4 text-xl h-fit transition hover:text-blue-500 items-center flex ${
+      className={`font-medium px-4 text-xl h-fit transition hover:text-blue-500 items-center flex ${
         pathname === to ? "text-white" : "text-brandBlack"
       }`}
       onClick={onClick}

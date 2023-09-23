@@ -15,17 +15,19 @@ export default defineSchema({
     clerkUser: v.any(),
     color: v.string(),
   }).index("by_clerk_id", ["clerkUser.id"]),
-  patientDoctors: defineTable({
+  patient_doctors: defineTable({
     patient_id: v.string(),
     doctor_id: v.string(),
+    doctor_role: v.string(),
   })
     .index("by_patient_id", ["patient_id"])
-    .index("by_doctor_id", ["doctor_id"]),
+    .index("by_doctor_id", ["doctor_id"])
+    .index("by_patinet_id_and_doctor_id", ["patient_id", "doctor_id"]),
   organizations: defineTable({
     name: v.string(),
     description: v.optional(v.string()),
   }),
-  organizationMembers: defineTable({
+  organization_members: defineTable({
     organization_id: v.string(),
     user_id: v.string(),
     role: v.string(),

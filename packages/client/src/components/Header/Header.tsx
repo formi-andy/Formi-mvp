@@ -29,19 +29,19 @@ export default async function Header() {
               <div className="flex gap-x-4 h-full">
                 <Link
                   href="/dashboard"
-                  className="h-full px-4 flex items-center hover:text-blue-500 transition"
+                  className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/record"
-                  className="h-full px-4 flex items-center hover:text-blue-500 transition"
+                  className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
                 >
                   Record
                 </Link>
                 <Link
                   href="/upload"
-                  className="h-full px-4 flex items-center hover:text-blue-500 transition"
+                  className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
                 >
                   Upload
                 </Link>
@@ -52,7 +52,7 @@ export default async function Header() {
             ) : (
               <Link
                 href="/login"
-                className="border rounded h-fit px-4 py-1 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
+                className="font-medium border rounded h-fit px-4 py-1 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
               >
                 Log In
               </Link>

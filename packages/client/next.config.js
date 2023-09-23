@@ -15,6 +15,8 @@ const nextConfig = {
       "firebasestorage.googleapis.com",
       "lh3.googleusercontent.com",
       "posh-crab-317.convex.cloud",
+      "img.clerk.com",
+      "notable-puffin-749.convex.cloud",
     ],
   },
   eslint: {

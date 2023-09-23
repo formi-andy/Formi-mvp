@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as http from "../http";
 import type * as images from "../images";
+import type * as patient_doctors from "../patient_doctors";
 import type * as users from "../users";
 import type * as waitlist from "../waitlist";
 
@@ -30,6 +31,7 @@ import type * as waitlist from "../waitlist";
 declare const fullApi: ApiFromModules<{
   http: typeof http;
   images: typeof images;
+  patient_doctors: typeof patient_doctors;
   users: typeof users;
   waitlist: typeof waitlist;
 }>;

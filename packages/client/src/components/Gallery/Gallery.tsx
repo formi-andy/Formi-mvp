@@ -92,7 +92,7 @@ const Gallery: React.FC = () => {
     return Object.entries(images).map(([date, images]) => {
       return (
         <div key={date} className="flex flex-col gap-y-2">
-          <p className="text-xl md:text-2xl font-light">{date}</p>
+          <p className="text-xl md:text-2xl">{date}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {images.map((image) => {
               return (
@@ -149,7 +149,7 @@ const Gallery: React.FC = () => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <p className="text-4xl font-light">Gallery</p>
+        <p className="text-4xl font-medium">Gallery</p>
         {selecting ? (
           <div className="flex items-center gap-x-4">
             <button
