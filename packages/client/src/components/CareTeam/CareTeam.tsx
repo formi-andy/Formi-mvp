@@ -8,7 +8,7 @@ import { LuUsers } from "react-icons/lu";
 import InviteDoctors from "./InviteDoctors";
 import CareTeamLoader from "./CareTeamLoader";
 
-type doctors = (typeof api.patient_doctors.getPatientDoctors)["_returnType"];
+type doctors = (typeof api.patient_doctor.getPatientDoctors)["_returnType"];
 
 function renderCareTeam(doctors: doctors) {
   if (doctors.length === 0) {
@@ -55,7 +55,7 @@ function renderCareTeam(doctors: doctors) {
 }
 
 export default function CareTeam() {
-  const doctors = useQuery(api.patient_doctors.getPatientDoctors);
+  const doctors = useQuery(api.patient_doctor.getPatientDoctors);
 
   return (
     <div className="flex flex-col border rounded-lg min-h-[200px] p-4 lg:p-8 gap-4">

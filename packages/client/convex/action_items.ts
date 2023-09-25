@@ -19,7 +19,7 @@ export const getActionItems = query({
     const { created_by, completed } = args;
 
     const actionItems = await ctx.db
-      .query("action_items")
+      .query("action_item")
       .withIndex("by_user_id", (q) => q.eq("user_id", identity.subject))
       .order("desc")
       .collect();
@@ -68,7 +68,7 @@ export const addActionItem = mutation({
     const { patientId, createdBy, title, description, completionTime } = args;
 
     const patientDoctor = await ctx.db
-      .query("patient_doctors")
+      .query("patient_doctor")
       .withIndex("by_patinet_id_and_doctor_id", (q) =>
         q.eq("patient_id", patientId).eq("doctor_id", createdBy)
       )
@@ -81,7 +81,7 @@ export const addActionItem = mutation({
       });
     }
 
-    return ctx.db.insert("action_items", {
+    return ctx.db.insert("action_item", {
       user_id: patientId,
       created_by: createdBy,
       title,
@@ -95,7 +95,7 @@ export const addActionItem = mutation({
 
 export const updateActionItem = mutation({
   args: {
-    id: v.id("action_items"),
+    id: v.id("action_item"),
     title: v.string(),
     description: v.optional(v.string()),
     completionTime: v.optional(v.number()),
@@ -140,7 +140,7 @@ export const updateActionItem = mutation({
 
 export const deleteActionItem = mutation({
   args: {
-    id: v.id("action_items"),
+    id: v.id("action_item"),
   },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();

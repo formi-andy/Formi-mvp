@@ -14,7 +14,7 @@ export const getPatientDoctors = query({
     }
 
     const patientDoctors = await ctx.db
-      .query("patient_doctors")
+      .query("patient_doctor")
       .withIndex("by_patient_id", (q) => q.eq("patient_id", identity.subject))
       .order("desc")
       .collect();
@@ -60,7 +60,7 @@ export const addPatientDoctor = mutation({
     const { patientId, doctorId, doctorRole } = args;
 
     const patientDoctor = await ctx.db
-      .query("patient_doctors")
+      .query("patient_doctor")
       .withIndex("by_patinet_id_and_doctor_id", (q) =>
         q.eq("patient_id", patientId).eq("doctor_id", doctorId)
       )
@@ -73,7 +73,7 @@ export const addPatientDoctor = mutation({
       });
     }
 
-    return ctx.db.insert("patient_doctors", {
+    return ctx.db.insert("patient_doctor", {
       patient_id: patientId,
       doctor_id: doctorId,
       doctor_role: doctorRole,
@@ -99,7 +99,7 @@ export const updatePatientDoctor = mutation({
     const { patientId, doctorId, doctorRole } = args;
 
     const patientDoctor = await ctx.db
-      .query("patient_doctors")
+      .query("patient_doctor")
       .withIndex("by_patinet_id_and_doctor_id", (q) =>
         q.eq("patient_id", patientId).eq("doctor_id", doctorId)
       )
@@ -142,7 +142,7 @@ export const deletePatientDoctor = mutation({
     const { patientId, doctorId } = args;
 
     const patientDoctor = await ctx.db
-      .query("patient_doctors")
+      .query("patient_doctor")
       .withIndex("by_patinet_id_and_doctor_id", (q) =>
         q.eq("patient_id", patientId).eq("doctor_id", doctorId)
       )

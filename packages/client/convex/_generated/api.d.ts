@@ -17,6 +17,7 @@ import type {
 import type * as action_items from "../action_items";
 import type * as http from "../http";
 import type * as images from "../images";
+import type * as invite from "../invite";
 import type * as migrations from "../migrations";
 import type * as patient_doctors from "../patient_doctors";
 import type * as users from "../users";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   action_items: typeof action_items;
   http: typeof http;
   images: typeof images;
+  invite: typeof invite;
   migrations: typeof migrations;
   patient_doctors: typeof patient_doctors;
   users: typeof users;

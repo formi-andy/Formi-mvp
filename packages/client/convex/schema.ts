@@ -16,7 +16,7 @@ export default defineSchema({
     color: v.string(),
     role: v.string(),
   }).index("by_clerk_id", ["clerkUser.id"]),
-  action_items: defineTable({
+  action_item: defineTable({
     user_id: v.string(),
     created_by: v.string(),
     title: v.string(),
@@ -31,7 +31,7 @@ export default defineSchema({
     .index("by_updated_at", ["updated_at"])
     .index("by_user_id_and_completed", ["user_id", "completed"])
     .index("by_user_id_and_created_by", ["user_id", "created_by"]),
-  patient_doctors: defineTable({
+  patient_doctor: defineTable({
     patient_id: v.string(),
     doctor_id: v.string(),
     doctor_role: v.string(),
@@ -50,11 +50,26 @@ export default defineSchema({
     .index("by_sent_by", ["sent_by"])
     .index("by_sent_to", ["sent_to"])
     .index("by_parent_id", ["parent_id"]),
-  organizations: defineTable({
+  invite: defineTable({
+    sent_by: v.string(),
+    sent_to: v.string(),
+    accepted: v.boolean(),
+    responded_at: v.optional(v.number()),
+  })
+    .index("by_sent_by", ["sent_by"])
+    .index("by_sent_to", ["sent_to"])
+    .index("by_accepted", ["accepted"]),
+  invite_code: defineTable({
+    code: v.string(),
+    user_id: v.string(),
+  })
+    .index("by_code", ["code"])
+    .index("by_user_id", ["user_id"]),
+  organization: defineTable({
     name: v.string(),
     description: v.optional(v.string()),
   }),
-  organization_members: defineTable({
+  organization_member: defineTable({
     organization_id: v.string(),
     user_id: v.string(),
     role: v.string(),

@@ -7,7 +7,7 @@ import { LuLayoutGrid } from "react-icons/lu";
 import { api } from "../../../convex/_generated/api";
 import ActionItemLoader from "./ActionItemLoader";
 
-type ActionItems = (typeof api.action_items.getActionItems)["_returnType"];
+type ActionItems = (typeof api.action_item.getActionItems)["_returnType"];
 
 function renderActionItems(actionItems: ActionItems) {
   if (actionItems.length === 0) {
@@ -53,7 +53,7 @@ function renderActionItems(actionItems: ActionItems) {
 }
 
 export default function ActionItems() {
-  const actionItems = useQuery(api.action_items.getActionItems, {});
+  const actionItems = useQuery(api.action_item.getActionItems, {});
 
   return (
     <div className="flex flex-col border rounded-lg min-h-[200px] p-4 lg:p-8 gap-4">
