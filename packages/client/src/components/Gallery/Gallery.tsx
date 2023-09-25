@@ -149,7 +149,7 @@ const Gallery: React.FC = () => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <p className="text-4xl font-medium">Gallery</p>
+        <p className="text-2xl font-medium">Gallery</p>
         {selecting ? (
           <div className="flex items-center gap-x-4">
             <button

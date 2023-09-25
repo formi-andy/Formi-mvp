@@ -3,9 +3,7 @@ import { mutation, internalMutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 
 export const getPatientDoctors = query({
-  args: {
-    patientId: v.string(),
-  },
+  args: {},
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -15,16 +13,15 @@ export const getPatientDoctors = query({
       });
     }
 
-    const { patientId } = args;
-
     const patientDoctors = await ctx.db
       .query("patient_doctors")
-      .withIndex("by_patient_id", (q) => q.eq("patient_id", patientId))
+      .withIndex("by_patient_id", (q) => q.eq("patient_id", identity.subject))
       .order("desc")
       .collect();
 
     return Promise.all(
       patientDoctors.map(async (doctor) => {
+        // TODO: abstract to helper function when join is supported
         let clerkUser = await ctx.db
           .query("users")
           .withIndex("by_clerk_id", (q) =>

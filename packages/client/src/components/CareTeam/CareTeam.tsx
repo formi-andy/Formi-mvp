@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useAuth } from "@clerk/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 
@@ -9,7 +8,9 @@ import { LuUsers } from "react-icons/lu";
 import InviteDoctors from "./InviteDoctors";
 import CareTeamLoader from "./CareTeamLoader";
 
-function renderCareTeam(doctors: any[]) {
+type doctors = (typeof api.patient_doctors.getPatientDoctors)["_returnType"];
+
+function renderCareTeam(doctors: doctors) {
   if (doctors.length === 0) {
     return (
       <div className="flex flex-col items-center">
@@ -54,10 +55,7 @@ function renderCareTeam(doctors: any[]) {
 }
 
 export default function CareTeam() {
-  const user = useAuth();
-  const doctors = useQuery(api.patient_doctors.getPatientDoctors, {
-    patientId: user.userId!,
-  });
+  const doctors = useQuery(api.patient_doctors.getPatientDoctors);
 
   return (
     <div className="flex flex-col border rounded-lg min-h-[200px] p-4 lg:p-8 gap-4">
