@@ -4,12 +4,16 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { IoIosSend } from "react-icons/io";
 import PatientInvite from "./PatientInvite";
+import PatientInviteLoader from "./PatientInviteLoader";
+import { INVITES_LOADERS } from "@/commons/constants/loaders";
 
 type Invites = (typeof api.invite.getPendingInvites)["_returnType"];
 
 function renderInvites(invites: Invites | undefined) {
   if (invites === undefined) {
-    return <div>Loading...</div>;
+    return [...Array(INVITES_LOADERS)].map((_, index) => {
+      return <PatientInviteLoader key={index} />;
+    });
   }
 
   if (invites.length === 0) {
