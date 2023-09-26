@@ -1,4 +1,10 @@
+"use client";
+
+import { useState } from "react";
+import InviteDoctorModal from "./InviteDoctorModal";
+
 export default function InviteTop({ role }: { role: string }) {
+  const [opened, setOpened] = useState(false);
   return (
     <div className="flex flex-col lg:flex-row justify-between gap-6 lg:gap-10">
       <div className="flex flex-col flex-1 gap-y-2">
@@ -15,10 +21,18 @@ export default function InviteTop({ role }: { role: string }) {
         )}
       </div>
       <div>
-        <button className="border rounded-lg px-4 py-2 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition">
+        <button
+          onClick={() => {
+            setOpened(true);
+          }}
+          className="border rounded-lg px-4 py-2 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
+        >
           {role === "doctor" ? "View your code" : "Invite a doctor"}
         </button>
       </div>
+      {role === "doctor" ? null : (
+        <InviteDoctorModal opened={opened} setOpened={setOpened} />
+      )}
     </div>
   );
 }

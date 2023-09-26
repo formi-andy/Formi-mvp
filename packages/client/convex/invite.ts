@@ -2,7 +2,6 @@ import { ConvexError, v } from "convex/values";
 import { internalQuery, mutation, query } from "./_generated/server";
 import { mustGetCurrentUser } from "./users";
 import { addPatientDoctor } from "./patient_doctor";
-import { GenericQueryCtx } from "convex/server";
 import { Id } from "./_generated/dataModel";
 
 export const generateInviteCode = mutation({
