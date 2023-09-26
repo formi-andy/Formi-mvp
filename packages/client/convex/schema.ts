@@ -53,12 +53,12 @@ export default defineSchema({
   invite: defineTable({
     sent_by: v.string(),
     sent_to: v.string(),
+    code: v.string(),
     accepted: v.boolean(),
-    responded_at: v.optional(v.number()),
+    responded_at: v.union(v.number(), v.null()),
   })
-    .index("by_sent_by", ["sent_by"])
-    .index("by_sent_to", ["sent_to"])
-    .index("by_accepted", ["accepted"]),
+    .index("by_sent_to", ["sent_to", "responded_at"])
+    .index("by_sent_by", ["sent_by", "responded_at"]),
   invite_code: defineTable({
     code: v.string(),
     user_id: v.string(),

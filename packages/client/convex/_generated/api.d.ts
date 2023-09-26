@@ -14,12 +14,12 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as action_items from "../action_items";
+import type * as action_item from "../action_item";
 import type * as http from "../http";
 import type * as images from "../images";
 import type * as invite from "../invite";
 import type * as migrations from "../migrations";
-import type * as patient_doctors from "../patient_doctors";
+import type * as patient_doctor from "../patient_doctor";
 import type * as users from "../users";
 import type * as waitlist from "../waitlist";
 
@@ -32,12 +32,12 @@ import type * as waitlist from "../waitlist";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  action_items: typeof action_items;
+  action_item: typeof action_item;
   http: typeof http;
   images: typeof images;
   invite: typeof invite;
   migrations: typeof migrations;
-  patient_doctors: typeof patient_doctors;
+  patient_doctor: typeof patient_doctor;
   users: typeof users;
   waitlist: typeof waitlist;
 }>;

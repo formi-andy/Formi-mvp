@@ -1,7 +1,9 @@
 import { ConvexError, v } from "convex/values";
-import { internalQuery, mutation } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { mustGetCurrentUser } from "./users";
-import { addPatientDoctor } from "./patient_doctors";
+import { addPatientDoctor } from "./patient_doctor";
+import { GenericQueryCtx } from "convex/server";
+import { Id } from "./_generated/dataModel";
 
 export const generateInviteCode = mutation({
   args: {},
@@ -47,7 +49,9 @@ export const createInvite = mutation({
     await ctx.db.insert("invite", {
       sent_by: user._id,
       sent_to: invite_code.user_id,
+      code: invite_code.code,
       accepted: false,
+      responded_at: null,
     });
   },
 });
@@ -74,7 +78,7 @@ export const updateInvite = mutation({
       });
     }
 
-    if (invite.sent_to !== user._id || invite.responded_at) {
+    if (invite.sent_to !== user._id || invite.responded_at !== null) {
       throw new ConvexError({
         message: "Invalid invite",
         code: 400,
@@ -92,5 +96,82 @@ export const updateInvite = mutation({
         doctorRole: "doctor",
       });
     }
+  },
+});
+
+// TODO: refactor later
+export const getPendingInvites = query({
+  args: {},
+  async handler(ctx) {
+    const user = await mustGetCurrentUser(ctx);
+
+    let index: "by_sent_by" | "by_sent_to" = "by_sent_by";
+    let key: "sent_by" | "sent_to" = "sent_by";
+
+    switch (user.role) {
+      case "doctor":
+        index = "by_sent_to";
+        key = "sent_to";
+        break;
+      default:
+        break;
+    }
+    const invites = await ctx.db
+      .query("invite")
+      .withIndex(index, (q) => q.eq(key, user._id).eq("responded_at", null))
+      .collect();
+
+    return Promise.all(
+      invites.map(async (invite) => {
+        const user = await ctx.db.get(invite.sent_by as Id<"users">);
+        return {
+          ...invite,
+          sent_by: {
+            id: user?._id,
+            imageUrl: user?.clerkUser.profile_image_url,
+            firstName: user?.clerkUser.first_name,
+            lastName: user?.clerkUser.last_name,
+          },
+        };
+      })
+    );
+  },
+});
+
+export const getPastInvites = query({
+  args: {},
+  async handler(ctx) {
+    const user = await mustGetCurrentUser(ctx);
+
+    let index: "by_sent_by" | "by_sent_to" = "by_sent_by";
+    let key: "sent_by" | "sent_to" = "sent_by";
+
+    switch (user.role) {
+      case "doctor":
+        index = "by_sent_to";
+        key = "sent_to";
+        break;
+      default:
+        break;
+    }
+    const invites = await ctx.db
+      .query("invite")
+      .withIndex(index, (q) => q.eq(key, user._id).gt("responded_at", 0))
+      .collect();
+
+    return Promise.all(
+      invites.map(async (invite) => {
+        const user = await ctx.db.get(invite.sent_by as Id<"users">);
+        return {
+          ...invite,
+          sent_by: {
+            id: user?._id,
+            imageUrl: user?.clerkUser.profile_image_url,
+            firstName: user?.clerkUser.first_name,
+            lastName: user?.clerkUser.last_name,
+          },
+        };
+      })
+    );
   },
 });
