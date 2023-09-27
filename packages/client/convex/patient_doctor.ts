@@ -2,6 +2,7 @@ import { mutation, internalMutation, query } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
 import { mustGetCurrentUser } from "./users";
+import { Id } from "./_generated/dataModel";
 
 export const getPatientDoctors = query({
   args: {},
@@ -14,16 +15,14 @@ export const getPatientDoctors = query({
       .order("desc")
       .collect();
 
-    console.log("patientDoctors", patientDoctors);
-
     return Promise.all(
       patientDoctors.map(async (doctor) => {
         // TODO: abstract to helper function when join is supported
-        let clerkUser = await ctx.db.get(user._id);
+        let clerkUser = await ctx.db.get(doctor.doctor_id as Id<"users">);
 
         return {
           ...doctor,
-          imageUrl: clerkUser?.clerkUser.profile_image_url,
+          imageUrl: clerkUser?.clerkUser.image_url,
           firstName: clerkUser?.clerkUser.first_name,
           lastName: clerkUser?.clerkUser.last_name,
           email: clerkUser?.clerkUser.email_addresses,

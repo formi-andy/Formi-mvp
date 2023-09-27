@@ -2,6 +2,7 @@ import { mutation, internalMutation, query, action } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
 import { mustGetCurrentUser } from "./users";
+import { Id } from "./_generated/dataModel";
 
 export const getActionItems = query({
   args: {
@@ -22,13 +23,13 @@ export const getActionItems = query({
     // TODO: replace with joins when supported, also add filters potentially
     return Promise.all(
       actionItems.map(async (item) => {
-        let clerkUser = await ctx.db.get(user._id);
+        let clerkUser = await ctx.db.get(item.created_by as Id<"users">);
 
         return {
           ...item,
           created_by: {
             _id: item.created_by,
-            imageUrl: clerkUser?.clerkUser.profile_image_url,
+            imageUrl: clerkUser?.clerkUser.image_url,
             firstName: clerkUser?.clerkUser.first_name,
             lastName: clerkUser?.clerkUser.last_name,
           },

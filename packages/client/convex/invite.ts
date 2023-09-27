@@ -168,7 +168,7 @@ export const getPendingInvites = query({
           ...invite,
           sent_by: {
             id: user?._id,
-            imageUrl: user?.clerkUser.profile_image_url,
+            imageUrl: user?.clerkUser.image_url,
             firstName: user?.clerkUser.first_name,
             lastName: user?.clerkUser.last_name,
           },
@@ -206,7 +206,7 @@ export const getPastInvites = query({
           ...invite,
           sent_by: {
             id: user?._id,
-            imageUrl: user?.clerkUser.profile_image_url,
+            imageUrl: user?.clerkUser.image_url,
             firstName: user?.clerkUser.first_name,
             lastName: user?.clerkUser.last_name,
           },
