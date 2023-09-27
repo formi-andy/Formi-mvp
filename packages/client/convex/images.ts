@@ -7,8 +7,8 @@ import { mustGetCurrentUser } from "./users";
 export const storeImage = internalMutation({
   args: {
     storageId: v.string(),
-    author: v.string(),
-    patientId: v.optional(v.string()),
+    author: v.id("users"),
+    patientId: v.id("users"),
     title: v.string(),
   },
   async handler(
@@ -18,7 +18,7 @@ export const storeImage = internalMutation({
       author,
       patientId,
       title,
-    }: { storageId: string; author: string; patientId?: string; title: string }
+    }: { storageId: string; author: string; patientId: string; title: string }
   ) {
     const storageRecord = await ctx.db.insert("images", {
       storage_id: storageId,
@@ -37,13 +37,7 @@ export const getImage = query({
     id: v.id("images"),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError({
-        message: "Unauthenticated call to get image",
-        code: 401,
-      });
-    }
+    const user = await mustGetCurrentUser(ctx);
 
     const { id } = args;
 
@@ -52,6 +46,25 @@ export const getImage = query({
       throw new ConvexError({
         message: "Image not found",
         code: 404,
+      });
+    }
+
+    const patientDoctors = await ctx.db
+      .query("patient_doctor")
+      .withIndex("by_patient_id", (q) =>
+        q.eq("patient_id", image.patient_id as string)
+      )
+      .collect();
+
+    const viewerSet = new Set([
+      image.user_id,
+      ...(patientDoctors.map((pd) => pd.doctor_id) as string[]),
+    ]);
+
+    if (!viewerSet.has(user._id)) {
+      throw new ConvexError({
+        message: "Unauthenticated call to get image",
+        code: 401,
       });
     }
 

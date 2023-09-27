@@ -5,6 +5,7 @@ import { api } from "./_generated/api";
 import type { WebhookEvent } from "@clerk/backend";
 import { Webhook } from "svix";
 import { Id } from "./_generated/dataModel";
+import { mustGetCurrentUser } from "./users";
 
 function ensureEnvironmentVariable(name: string): string {
   const value = process.env[name];
@@ -82,6 +83,7 @@ async function validateRequest(
   return evt as unknown as WebhookEvent;
 }
 
+// TODO: secure this route
 // This is a custom HTTP route that accepts a file upload and stores it
 http.route({
   path: "/send-image",
@@ -93,11 +95,15 @@ http.route({
 
     // Step 2: Save the storage ID to the database via a mutation
     const author = new URL(request.url).searchParams.get("userId")!;
+    const patientId = new URL(request.url).searchParams.get("patientId");
     const title = new URL(request.url).searchParams.get("title")!;
     await ctx.runMutation(internal.images.storeImage, {
       storageId,
-      author,
+      author: author as Id<"users">,
       title,
+      patientId: patientId
+        ? (patientId as Id<"users">)
+        : (author as Id<"users">),
     });
 
     // Step 3: Return a response with the correct CORS headers
