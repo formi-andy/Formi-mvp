@@ -1,4 +1,9 @@
-import { mutation, internalMutation, query } from "./_generated/server";
+import {
+  mutation,
+  internalMutation,
+  query,
+  QueryCtx,
+} from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
 import dayjs from "dayjs";
@@ -48,24 +53,7 @@ export const getImage = query({
       });
     }
 
-    const patientDoctors = await ctx.db
-      .query("patient_doctor")
-      .withIndex("by_patient_id", (q) =>
-        q.eq("patient_id", image.patient_id as string)
-      )
-      .collect();
-
-    const viewerSet = new Set([
-      image.user_id,
-      ...(patientDoctors.map((pd) => pd.doctor_id) as string[]),
-    ]);
-
-    if (!viewerSet.has(user._id)) {
-      throw new ConvexError({
-        message: "Unauthenticated call to get image",
-        code: 401,
-      });
-    }
+    await verifyCareTeam(ctx, user._id, image.patient_id);
 
     return {
       ...image,
@@ -119,12 +107,18 @@ export const updateImage = mutation({
 });
 
 export const listImages = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    patientId: v.optional(v.id("users")),
+  },
+  handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
+    const patientId = args.patientId || user._id;
+
+    await verifyCareTeam(ctx, user._id, patientId);
+
     const images = await ctx.db
       .query("images")
-      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .withIndex("by_patient_id", (q) => q.eq("patient_id", patientId))
       .order("desc")
       .collect();
 
@@ -164,7 +158,7 @@ export const deleteImages = mutation({
           throw new Error("Image not found");
         }
 
-        if (image.user_id !== user._id) {
+        if (image.patient_id !== user._id) {
           throw new Error("Unauthorized call to delete image");
         }
 
@@ -176,3 +170,30 @@ export const deleteImages = mutation({
     return ids;
   },
 });
+
+// Helpers
+
+export async function verifyCareTeam(
+  ctx: QueryCtx,
+  userId: string,
+  patientId: string
+): Promise<boolean | null> {
+  const patientDoctors = await ctx.db
+    .query("patient_doctor")
+    .withIndex("by_patient_id", (q) => q.eq("patient_id", patientId))
+    .collect();
+
+  const viewerSet = new Set([
+    patientId,
+    ...(patientDoctors.map((pd) => pd.doctor_id) as string[]),
+  ]);
+
+  if (!viewerSet.has(userId)) {
+    throw new ConvexError({
+      message: "Invalid permissions",
+      code: 401,
+    });
+  }
+
+  return true;
+}

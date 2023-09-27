@@ -9,7 +9,9 @@ export default defineSchema({
     description: v.optional(v.string()),
     patient_id: v.string(),
     tags: v.array(v.string()),
-  }).index("by_user_id", ["user_id"]),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_patient_id", ["patient_id"]),
   users: defineTable({
     // this is UserJSON from @clerk/backend
     clerkUser: v.any(),
