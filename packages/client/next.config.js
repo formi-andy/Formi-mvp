@@ -16,6 +16,7 @@ const nextConfig = {
       "lh3.googleusercontent.com",
       "posh-crab-317.convex.cloud",
       "img.clerk.com",
+      "images.clerk.dev",
       "notable-puffin-749.convex.cloud",
     ],
   },

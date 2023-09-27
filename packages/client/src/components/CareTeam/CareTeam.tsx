@@ -57,6 +57,8 @@ function renderCareTeam(doctors: doctors) {
 export default function CareTeam() {
   const doctors = useQuery(api.patient_doctor.getPatientDoctors);
 
+  console.log("DOCTORS", doctors);
+
   return (
     <div className="flex flex-col border rounded-lg min-h-[200px] p-4 lg:p-8 gap-4">
       <p className="text-2xl font-medium">Your Care Team</p>

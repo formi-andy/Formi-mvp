@@ -25,7 +25,7 @@ export default function Meeting() {
         />
         {!joined && (
           <button
-            className="border rounded px-4 py-1"
+            className="border border-black rounded-lg px-4 py-1"
             onClick={() => {
               if (
                 meetingRef.current?.value &&

@@ -3,18 +3,59 @@ import { internalQuery, mutation, query } from "./_generated/server";
 import { mustGetCurrentUser } from "./users";
 import { addPatientDoctor } from "./patient_doctor";
 import { Id } from "./_generated/dataModel";
+import generateRandomString from "../src/utils/generateRandomString";
 
 export const generateInviteCode = mutation({
   args: {},
   handler: async (ctx) => {
     const user = await mustGetCurrentUser(ctx);
-    const code = Math.random().toString(36).substring(2, 15);
+
+    if (user.role !== "doctor") {
+      throw new ConvexError({
+        message: "Invalid permissions",
+        code: 400,
+      });
+    }
+
+    const existingInvite = await ctx.db
+      .query("invite_code")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .first();
+
+    const code = generateRandomString();
+
+    if (existingInvite) {
+      await ctx.db.patch(existingInvite._id, { code });
+      return code;
+    }
+
     await ctx.db.insert("invite_code", {
       code,
       user_id: user._id,
     });
 
     return code;
+  },
+});
+
+export const getUserInviteCode = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== "doctor") {
+      throw new ConvexError({
+        message: "Invalid permissions",
+        code: 400,
+      });
+    }
+
+    const invite = await ctx.db
+      .query("invite_code")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .first();
+
+    return invite;
   },
 });
 
@@ -92,7 +133,7 @@ export const updateInvite = mutation({
       await addPatientDoctor(ctx, {
         patientId: invite.sent_by,
         doctorId: invite.sent_to,
-        doctorRole: "doctor",
+        doctorRole: "Doctor",
       });
     }
   },

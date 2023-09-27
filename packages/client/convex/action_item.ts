@@ -1,6 +1,7 @@
 import { mutation, internalMutation, query, action } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
+import { mustGetCurrentUser } from "./users";
 
 export const getActionItems = query({
   args: {
@@ -8,31 +9,20 @@ export const getActionItems = query({
     completed: v.optional(v.boolean()),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError({
-        message: "Not authenticated",
-        code: 401,
-      });
-    }
+    const user = await mustGetCurrentUser(ctx);
 
     const { created_by, completed } = args;
 
     const actionItems = await ctx.db
       .query("action_item")
-      .withIndex("by_user_id", (q) => q.eq("user_id", identity.subject))
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
       .order("desc")
       .collect();
 
     // TODO: replace with joins when supported, also add filters potentially
     return Promise.all(
       actionItems.map(async (item) => {
-        let clerkUser = await ctx.db
-          .query("users")
-          .withIndex("by_clerk_id", (q) =>
-            q.eq("clerkUser.id", item.created_by)
-          )
-          .first();
+        let clerkUser = await ctx.db.get(user._id);
 
         return {
           ...item,
@@ -57,24 +47,18 @@ export const addActionItem = mutation({
     completionTime: v.optional(v.number()),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError({
-        message: "Not authenticated",
-        code: 401,
-      });
-    }
+    const user = await mustGetCurrentUser(ctx);
 
     const { patientId, createdBy, title, description, completionTime } = args;
 
     const patientDoctor = await ctx.db
       .query("patient_doctor")
-      .withIndex("by_patinet_id_and_doctor_id", (q) =>
+      .withIndex("by_patient_id_and_doctor_id", (q) =>
         q.eq("patient_id", patientId).eq("doctor_id", createdBy)
       )
       .first();
 
-    if (!patientDoctor || patientDoctor.doctor_id !== identity.subject) {
+    if (!patientDoctor || patientDoctor.doctor_id !== user._id) {
       throw new ConvexError({
         message: "User does not have permission to add action item",
         code: 400,
@@ -102,13 +86,7 @@ export const updateActionItem = mutation({
     completed: v.boolean(),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError({
-        message: "Not authenticated",
-        code: 401,
-      });
-    }
+    const user = await mustGetCurrentUser(ctx);
 
     const { id, title, description, completionTime, completed } = args;
 
@@ -121,7 +99,7 @@ export const updateActionItem = mutation({
       });
     }
 
-    if (actionItem.created_by !== identity.subject) {
+    if (actionItem.created_by !== user._id) {
       throw new ConvexError({
         message: "User does not have permission to update",
         code: 403,
@@ -143,13 +121,7 @@ export const deleteActionItem = mutation({
     id: v.id("action_item"),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError({
-        message: "Not authenticated",
-        code: 401,
-      });
-    }
+    const user = await mustGetCurrentUser(ctx);
 
     const { id } = args;
 
@@ -162,7 +134,7 @@ export const deleteActionItem = mutation({
       });
     }
 
-    if (actionItem.created_by !== identity.subject) {
+    if (actionItem.created_by !== user._id) {
       throw new ConvexError({
         message: "User does not have permission to update",
         code: 403,

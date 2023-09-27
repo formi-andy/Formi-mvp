@@ -24,7 +24,7 @@ export default async function Header() {
       </Link>
       <HeaderContext>
         <nav className={styles.headerNav}>
-          <div className="hidden md:flex h-full items-center">
+          <div className="hidden lg:flex h-full items-center">
             {userId ? (
               <div className="flex gap-x-4 h-full">
                 <Link
@@ -58,7 +58,7 @@ export default async function Header() {
               </Link>
             )}
           </div>
-          <div className="flex h-full md:hidden justify-center items-center group">
+          <div className="flex h-full lg:hidden justify-center items-center group">
             <SideButton />
           </div>
         </nav>

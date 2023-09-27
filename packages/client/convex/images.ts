@@ -2,6 +2,7 @@ import { mutation, internalMutation, query } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
 import dayjs from "dayjs";
+import { mustGetCurrentUser } from "./users";
 
 export const storeImage = internalMutation({
   args: {
@@ -71,13 +72,7 @@ export const updateImage = mutation({
     tags: v.array(v.string()),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError({
-        message: "Unauthenticated call to get image",
-        code: 401,
-      });
-    }
+    const user = await mustGetCurrentUser(ctx);
 
     const { id, title, patient_id, description, tags } = args;
 
@@ -89,7 +84,7 @@ export const updateImage = mutation({
       });
     }
 
-    if (image.user_id !== identity.subject) {
+    if (image.user_id !== user._id) {
       throw new ConvexError({
         message: "Unauthenticated call to get image",
         code: 401,
@@ -150,10 +145,7 @@ export const deleteImages = mutation({
     ids: v.array(v.id("images")),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthenticated call to delete images");
-    }
+    const user = await mustGetCurrentUser(ctx);
 
     const { ids } = args;
 
@@ -164,7 +156,7 @@ export const deleteImages = mutation({
           throw new Error("Image not found");
         }
 
-        if (image.user_id !== identity.subject) {
+        if (image.user_id !== user._id) {
           throw new Error("Unauthorized call to delete image");
         }
 

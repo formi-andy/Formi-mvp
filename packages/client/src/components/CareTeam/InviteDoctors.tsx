@@ -6,7 +6,7 @@ export default function InviteDoctors() {
       <p className="mt-1 text-sm">Invite your doctors to join your care team</p>
       <Link
         href="/invite"
-        className="mt-4 font-medium border rounded-lg px-4 py-2 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
+        className="mt-4 font-medium border border-black rounded-lg px-4 py-2 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
       >
         Invite your doctors
       </Link>

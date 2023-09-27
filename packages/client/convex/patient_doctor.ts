@@ -1,33 +1,25 @@
 import { mutation, internalMutation, query } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
+import { mustGetCurrentUser } from "./users";
 
 export const getPatientDoctors = query({
   args: {},
-  async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError({
-        message: "Not authenticated",
-        code: 401,
-      });
-    }
+  async handler(ctx) {
+    const user = await mustGetCurrentUser(ctx);
 
     const patientDoctors = await ctx.db
       .query("patient_doctor")
-      .withIndex("by_patient_id", (q) => q.eq("patient_id", identity.subject))
+      .withIndex("by_patient_id", (q) => q.eq("patient_id", user._id))
       .order("desc")
       .collect();
+
+    console.log("patientDoctors", patientDoctors);
 
     return Promise.all(
       patientDoctors.map(async (doctor) => {
         // TODO: abstract to helper function when join is supported
-        let clerkUser = await ctx.db
-          .query("users")
-          .withIndex("by_clerk_id", (q) =>
-            q.eq("clerkUser.id", doctor.doctor_id)
-          )
-          .first();
+        let clerkUser = await ctx.db.get(user._id);
 
         return {
           ...doctor,
@@ -42,26 +34,18 @@ export const getPatientDoctors = query({
   },
 });
 
-export const addPatientDoctor = mutation({
+export const addPatientDoctor = internalMutation({
   args: {
     patientId: v.string(),
     doctorId: v.string(),
     doctorRole: v.string(),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError({
-        message: "Not authenticated",
-        code: 401,
-      });
-    }
-
     const { patientId, doctorId, doctorRole } = args;
 
     const patientDoctor = await ctx.db
       .query("patient_doctor")
-      .withIndex("by_patinet_id_and_doctor_id", (q) =>
+      .withIndex("by_patient_id_and_doctor_id", (q) =>
         q.eq("patient_id", patientId).eq("doctor_id", doctorId)
       )
       .first();
@@ -100,7 +84,7 @@ export const updatePatientDoctor = mutation({
 
     const patientDoctor = await ctx.db
       .query("patient_doctor")
-      .withIndex("by_patinet_id_and_doctor_id", (q) =>
+      .withIndex("by_patient_id_and_doctor_id", (q) =>
         q.eq("patient_id", patientId).eq("doctor_id", doctorId)
       )
       .first();
@@ -143,7 +127,7 @@ export const deletePatientDoctor = mutation({
 
     const patientDoctor = await ctx.db
       .query("patient_doctor")
-      .withIndex("by_patinet_id_and_doctor_id", (q) =>
+      .withIndex("by_patient_id_and_doctor_id", (q) =>
         q.eq("patient_id", patientId).eq("doctor_id", doctorId)
       )
       .first();

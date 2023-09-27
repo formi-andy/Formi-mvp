@@ -73,6 +73,7 @@ export default function InviteDoctorModal({
                 title: "Error creating invite",
                 message: "Check your code and please try again later",
               });
+            } finally {
               setUpdating(false);
             }
           }}

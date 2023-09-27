@@ -9,7 +9,7 @@
 }
 
 .mobileHeaderContainer {
-    @apply md:hidden;
+    @apply lg:hidden;
     z-index: 110;
     position: absolute;
     width: 100%;
@@ -18,13 +18,13 @@
 }
 
 .mobileHeader {
-    @apply flex transition md:hidden flex-col gap-y-4;
+    @apply flex transition lg:hidden flex-col gap-y-4;
     position: absolute;
     z-index: 110;
 }
 
 .mobileHeaderBackdrop {
-    @apply fixed transition md:hidden;
+    @apply fixed transition lg:hidden;
     height: 100vh;
     z-index: 100;
     /* background-color: rgba(245, 191, 64, 0.9); */

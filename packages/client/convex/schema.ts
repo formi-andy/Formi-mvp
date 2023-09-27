@@ -38,7 +38,7 @@ export default defineSchema({
   })
     .index("by_patient_id", ["patient_id"])
     .index("by_doctor_id", ["doctor_id"])
-    .index("by_patinet_id_and_doctor_id", ["patient_id", "doctor_id"]),
+    .index("by_patient_id_and_doctor_id", ["patient_id", "doctor_id"]),
   inbox: defineTable({
     sent_by: v.string(),
     sent_to: v.array(v.string()),

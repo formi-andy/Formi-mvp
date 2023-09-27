@@ -10,7 +10,7 @@ import WaitList from "@/components/WaitList/WaitList";
 export default async function Home() {
   const { userId } = auth();
   return (
-    <main className="flex min-h-screen flex-col items-center gap-y-8 px-24 py-40">
+    <main className="flex min-h-screen flex-col items-center gap-y-8 px-6 py-40">
       <div className="text-6xl font-bold text-center mb-8">
         <p>Built for</p>
         <LandingTypeWriter />
