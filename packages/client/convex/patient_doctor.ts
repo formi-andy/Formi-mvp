@@ -71,15 +71,15 @@ export const updatePatientDoctor = mutation({
     doctorRole: v.string(),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    const user = await mustGetCurrentUser(ctx);
+    const { patientId, doctorId, doctorRole } = args;
+
+    if (user._id !== doctorId) {
       throw new ConvexError({
-        message: "Not authenticated",
-        code: 401,
+        message: "User does not have permission to update",
+        code: 403,
       });
     }
-
-    const { patientId, doctorId, doctorRole } = args;
 
     const patientDoctor = await ctx.db
       .query("patient_doctor")
@@ -114,15 +114,15 @@ export const deletePatientDoctor = mutation({
     doctorId: v.string(),
   },
   async handler(ctx, args) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    const user = await mustGetCurrentUser(ctx);
+    const { patientId, doctorId } = args;
+
+    if (user._id !== patientId || user._id !== doctorId) {
       throw new ConvexError({
-        message: "Not authenticated",
-        code: 401,
+        message: "User does not have permission to delete",
+        code: 403,
       });
     }
-
-    const { patientId, doctorId } = args;
 
     const patientDoctor = await ctx.db
       .query("patient_doctor")

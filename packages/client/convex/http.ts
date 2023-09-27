@@ -94,16 +94,12 @@ http.route({
     const storageId = await ctx.storage.store(blob);
 
     // Step 2: Save the storage ID to the database via a mutation
-    const author = new URL(request.url).searchParams.get("userId")!;
     const patientId = new URL(request.url).searchParams.get("patientId");
     const title = new URL(request.url).searchParams.get("title")!;
     await ctx.runMutation(internal.images.storeImage, {
       storageId,
-      author: author as Id<"users">,
       title,
-      patientId: patientId
-        ? (patientId as Id<"users">)
-        : (author as Id<"users">),
+      patientId: patientId as Id<"users"> | null,
     });
 
     // Step 3: Return a response with the correct CORS headers

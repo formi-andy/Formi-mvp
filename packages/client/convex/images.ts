@@ -7,23 +7,22 @@ import { mustGetCurrentUser } from "./users";
 export const storeImage = internalMutation({
   args: {
     storageId: v.string(),
-    author: v.id("users"),
-    patientId: v.id("users"),
+    patientId: v.union(v.id("users"), v.null()),
     title: v.string(),
   },
   async handler(
     ctx,
     {
       storageId,
-      author,
       patientId,
       title,
-    }: { storageId: string; author: string; patientId: string; title: string }
+    }: { storageId: string; patientId: string | null; title: string }
   ) {
+    const user = await mustGetCurrentUser(ctx);
     const storageRecord = await ctx.db.insert("images", {
       storage_id: storageId,
-      user_id: author,
-      patient_id: patientId,
+      user_id: user._id,
+      patient_id: patientId || user._id,
       title,
       tags: [],
     });
@@ -122,14 +121,10 @@ export const updateImage = mutation({
 export const listImages = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthenticated call to get images");
-    }
-    const { subject } = identity;
+    const user = await mustGetCurrentUser(ctx);
     const images = await ctx.db
       .query("images")
-      .withIndex("by_user_id", (q) => q.eq("user_id", subject))
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
       .order("desc")
       .collect();
 
