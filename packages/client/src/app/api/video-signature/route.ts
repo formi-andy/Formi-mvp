@@ -1,4 +1,3 @@
-import authMiddleware from "@/utils/authMiddleware";
 import { generateVideoToken } from "@/utils/util";
 
 type Payload = {
@@ -12,7 +11,6 @@ type Payload = {
 };
 
 export async function POST(request: Request) {
-  const session = await authMiddleware();
   // get user role from middleware
   const requestData: Payload = await request.json();
 

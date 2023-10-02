@@ -1,29 +1,43 @@
 "use client";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useDropzone } from "react-dropzone";
 import { formatBytes } from "@/utils/formatBytes";
 import { AiOutlineCheck } from "react-icons/ai";
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { TextInput } from "@mantine/core";
 
-const maxSize = 1024 * 1024 * 10; // 10MB
+const maxSize = 1024 * 1024 * 5; // 5MB
 const maxFiles = 20;
 const acceptedFileTypes = {
-  "image/*": ["jpeg", "png"],
+  "image/png": [".png"],
+  "image/jpeg": [".jpeg", ".jpg"],
+  "image/webp": [".webp"],
 };
 
 type Props = {
   files: File[];
   setFiles: Dispatch<SetStateAction<File[]>>;
-  fileNameToPatientMap: Record<string, string>;
-  setFileNameToPatientMap: Dispatch<SetStateAction<Record<string, string>>>;
+  uploadData: {
+    file: File;
+    title: string;
+    patientId?: string;
+  }[];
+  setUploadData: Dispatch<
+    SetStateAction<
+      {
+        file: File;
+        title: string;
+        patientId?: string;
+      }[]
+    >
+  >;
 };
 
 export default function Dropzone({
   files,
   setFiles,
-  fileNameToPatientMap,
-  setFileNameToPatientMap,
+  uploadData,
+  setUploadData,
 }: Props) {
   const {
     getRootProps,
@@ -39,38 +53,49 @@ export default function Dropzone({
     onDrop: (acceptedFiles) => {
       setFiles((prev) => [...prev, ...acceptedFiles]);
 
-      setFileNameToPatientMap((prev) => {
-        const newMap = { ...prev };
-        acceptedFiles.forEach((file) => {
-          newMap[file.name] = "";
-        });
-        return newMap;
+      setUploadData((prev) => {
+        const parsedFiles = acceptedFiles.map((file) => ({
+          file,
+          title: file.name,
+          patientId: "",
+        }));
+        return [...prev, ...parsedFiles];
       });
     },
   });
 
-  const listedFiles = acceptedFiles.map((file, index) => (
-    <li key={file.name} className="flex items-center justify-between w-full">
-      <div className="flex items-center gap-x-4">
-        <AiOutlineCheck size={20} />
-        <p className="flex-shrink-0">
-          {file.name} - {formatBytes(file.size)} bytes
-        </p>
-      </div>
-      <div className="flex items-center gap-x-4">
+  const listedFiles = uploadData.map((data, index) => (
+    <li key={data.file.name} className="flex flex-col gap-y-2 w-full">
+      <p className="truncate">
+        {data.file.name} - {formatBytes(data.file.size)} bytes
+      </p>
+      <div className="flex w-full items-center gap-x-4">
         <TextInput
-          className="w-1/4 md:w-[400px]"
-          placeholder="Patient Name"
-          value={fileNameToPatientMap[file.name]}
+          className="w-full"
+          placeholder="Title"
+          value={data.title}
           onChange={(e) => {
-            setFileNameToPatientMap((prev) => ({
-              ...prev,
-              [file.name]: e.target.value,
-            }));
+            setUploadData((prev) => {
+              const newData = [...prev];
+              newData[index].title = e.target.value;
+              return newData;
+            });
+          }}
+        />
+        <TextInput
+          className="w-2/5 max-w-[400px]"
+          placeholder="Patient"
+          value={data.patientId}
+          onChange={(e) => {
+            setUploadData((prev) => {
+              const newData = [...prev];
+              newData[index].title = e.target.value;
+              return newData;
+            });
           }}
         />
         <button
-          className="cursor-pointer hover:opacity-80 transition-all opacity-100"
+          className="border hover:border-red-600 rounded cursor-pointer hover:text-red-600 hover:bg-red-50 w-9 h-9 min-w-[36px] flex items-center justify-center transition"
           onClick={() => {
             setFiles((prev) => prev.filter((_, i) => i !== index));
           }}
@@ -82,11 +107,11 @@ export default function Dropzone({
   ));
 
   return (
-    <div className="flex flex-col h-full items-center gap-y-4">
+    <>
       <div
         {...getRootProps()}
         className={`
-          w-full h-[400px] cursor-pointer border-2 rounded-md flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
+          w-full h-80 rounded-t-lg cursor-pointer flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
           ${isDragAccept ? "border-green-500 bg-green-100" : ""} 
           ${isDragReject ? "border-red-500 bg-red-100" : ""} 
           ${
@@ -97,32 +122,18 @@ export default function Dropzone({
         `}
       >
         <input {...getInputProps()} />
-        <p className="text-2xl">
+        <p className="text-2xl font-medium text-center">
           Drag and drop some files here, or click to select files
         </p>
-        <div className="h-5 transition-opacity duration-200 ease-in-out">
-          {isDragAccept && (
-            <p className="text-green-500 opacity-100">
-              All files will be accepted
-            </p>
-          )}
-          {!isDragAccept && (
-            <p className="opacity-0">All files will be accepted</p>
-          )}
-          {isDragReject && (
-            <p className="text-red-500 opacity-100">
-              Some files will be rejected
-            </p>
-          )}
-          {!isDragReject && (
-            <p className="opacity-0">Some files will be rejected</p>
-          )}
-        </div>
+        <em className="text-center text-sm max-w-[380px]">
+          Only *.jpeg, *.png, and *.webp images will be accepted. Max file size
+          is 5MB.
+        </em>
       </div>
       {files.length > 0 && (
-        <div className="flex flex-col items-center justify-center gap-y-2 w-full">
-          <p className="text-xl">Accepted Files</p>
-          <ul className="w-full px-8 flex flex-col gap-y-2">{listedFiles}</ul>
+        <div className="flex flex-col p-4 justify-center gap-y-2 w-full">
+          <p className="text-xl font-medium">Accepted Files</p>
+          <ul className="w-full flex flex-col gap-y-2">{listedFiles}</ul>
         </div>
       )}
       {fileRejections.length > 0 && (
@@ -132,7 +143,6 @@ export default function Dropzone({
             if (errors[0].code === "file-too-large") {
               errors[0].message = "File is too large";
             }
-
             return (
               <div key={file.name}>
                 <p>
@@ -143,6 +153,6 @@ export default function Dropzone({
           })}
         </div>
       )}
-    </div>
+    </>
   );
 }

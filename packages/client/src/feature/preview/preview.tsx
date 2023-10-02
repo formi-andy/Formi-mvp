@@ -244,8 +244,8 @@ const PreviewContainer = () => {
   return (
     <div className="js-preview-view">
       <div id="js-preview-view" className="container preview__root">
-        <div className="flex justify-center w-full text-xl font-light mb-4">
-          <h1>Audio and Video Preview</h1>
+        <div className="flex justify-center w-full text-xl font-medium mb-4">
+          <p>Audio and Video Preview</p>
         </div>
         <div className="container video-app">
           <video

@@ -1,6 +1,7 @@
 import { BsLightningCharge } from "react-icons/bs";
 import { TbArrowsJoin } from "react-icons/tb";
 import { TfiWorld } from "react-icons/tfi";
+import WaitList from "@/components/WaitList/WaitList";
 
 type Props = {};
 
@@ -56,6 +57,7 @@ const AboutPage = (props: Props) => {
           </div>
         </div>
       </div>
+      <WaitList />
       {/* <p className="tracking-wide text-blue-500 font-light text-lg text-center mt-24">
         OUR STORY
       </p> */}

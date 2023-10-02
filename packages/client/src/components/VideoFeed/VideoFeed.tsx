@@ -42,7 +42,7 @@ import {
 import SubsessionContext from "@/context/subsession-context";
 import { isAndroidBrowser } from "@/utils/platform";
 import PreviewContainer from "@/feature/preview/preview";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 
 interface VideoFeedProps {
   meetingArgs: {
@@ -132,7 +132,7 @@ function renderVideo(
 }
 
 function VideoFeed(props: VideoFeedProps) {
-  const { data } = useSession();
+  const { user } = useUser();
 
   const {
     meetingArgs: {
@@ -188,7 +188,12 @@ function VideoFeed(props: VideoFeedProps) {
         setIsLoading(true);
         setLoadingText("Joining the session...");
         await zmClient
-          .join(topic, signature, data?.user?.name ?? name, password)
+          .join(
+            topic,
+            signature,
+            user ? `${user.firstName} ${user.lastName}` : name,
+            password
+          )
           .catch((e) => {
             console.log(e);
           });
@@ -218,7 +223,7 @@ function VideoFeed(props: VideoFeedProps) {
       ZoomVideo.destroyClient();
     };
   }, [
-    data?.user?.name,
+    user,
     signature,
     zmClient,
     topic,

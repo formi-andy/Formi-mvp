@@ -11,7 +11,14 @@ const nextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    domains: ["firebasestorage.googleapis.com", "lh3.googleusercontent.com"],
+    domains: [
+      "firebasestorage.googleapis.com",
+      "lh3.googleusercontent.com",
+      "posh-crab-317.convex.cloud",
+      "img.clerk.com",
+      "images.clerk.dev",
+      "notable-puffin-749.convex.cloud",
+    ],
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if

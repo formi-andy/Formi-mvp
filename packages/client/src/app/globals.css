@@ -7,3 +7,11 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
 }
+
+.cl-formButtonPrimary {
+  @apply bg-blue-500 hover:bg-blue-600;
+}
+
+.cl-footerActionLink {
+  @apply text-blue-500 hover:text-blue-600;
+}
