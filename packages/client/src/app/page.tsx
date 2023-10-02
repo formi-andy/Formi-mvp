@@ -2,7 +2,6 @@ import Link from "next/link";
 import LandingTypeWriter from "@/components/Landing/Typewriter";
 import { auth } from "@clerk/nextjs";
 import LandingProviderInfo from "@/components/Landing/ProviderInfo";
-import LandingSteps from "@/components/Landing/Steps";
 
 import style from "./landing.module.css";
 import WaitList from "@/components/WaitList/WaitList";

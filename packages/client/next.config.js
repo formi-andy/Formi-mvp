@@ -12,7 +12,6 @@ const nextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     domains: [
-      "firebasestorage.googleapis.com",
       "lh3.googleusercontent.com",
       "posh-crab-317.convex.cloud",
       "img.clerk.com",
