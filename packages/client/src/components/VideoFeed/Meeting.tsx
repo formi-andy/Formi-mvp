@@ -11,7 +11,7 @@ export default function Meeting() {
   return (
     <div className="flex flex-col w-full items-center">
       <div className="flex flex-col items-center w-[400px]">
-        <p className="text-2xl mb-2 font-light">Meeting ID</p>
+        <p className="text-2xl mb-2 font-medium">Meeting ID</p>
         <TextInput
           disabled={joined}
           classNames={{ root: "w-full" }}
@@ -25,7 +25,7 @@ export default function Meeting() {
         />
         {!joined && (
           <button
-            className="border border-black rounded-lg px-4 py-1"
+            className="border border-black rounded-lg px-4 py-1 hover:bg-gray-100 transition"
             onClick={() => {
               if (
                 meetingRef.current?.value &&
