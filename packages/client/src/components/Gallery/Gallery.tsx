@@ -15,7 +15,7 @@ import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { Id } from "../../../convex/_generated/dataModel";
 
 const Gallery: React.FC = () => {
-  let images = useQuery(api.images.listImages);
+  let images = useQuery(api.images.listImages, {});
   const deleteMutation = useMutation(api.images.deleteImages);
 
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
