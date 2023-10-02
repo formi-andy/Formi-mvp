@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Dropzone from "@/components/DropZone/DropZone";
-import { Loader } from "@mantine/core";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
@@ -75,6 +74,7 @@ const Upload = () => {
         message: "Visit the dashboard to view your images",
       });
       setFiles([]);
+      setUploadData([]);
     } catch (error) {
       // console.log("error", error);
       toast.error({
@@ -87,31 +87,32 @@ const Upload = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-y-4">
-      <p className="text-2xl">Upload Pictures</p>
-      <Dropzone
-        files={files}
-        setFiles={setFiles}
-        uploadData={uploadData}
-        setUploadData={setUploadData}
-      />
-      <button
-        disabled={uploading || files.length === 0}
-        className={
-          "w-fit disabled:cursor-not-allowed disabled:bg-gray-300 text-xl px-8 py-2 rounded-md bg-blue-500 text-white transition-all hover:bg-blue-700 flex items-center justify-center gap-x-4"
-        }
-        onClick={upload}
-      >
-        {uploading && (
-          <Loader
-            color="rgba(255, 255, 255, 1)"
-            size="sm"
-            className="absolute left-4"
+    <>
+      <p className="text-2xl pb-12 sm:pb-20 lg:pb-24 font-medium">
+        Upload Pictures
+      </p>
+      <div className="w-full h-full flex flex-col items-center">
+        <div className="relative gap-y-4 divide-y flex flex-col items-center max-w-2xl w-full rounded-lg shadow-accent-2">
+          <Dropzone
+            files={files}
+            setFiles={setFiles}
+            uploadData={uploadData}
+            setUploadData={setUploadData}
           />
-        )}
-        <p>Upload</p>
-      </button>
-    </div>
+          <div className="py-4 rounded-b-lg bg-neutral-50 w-full flex justify-center items-center">
+            <button
+              disabled={uploading || files.length === 0}
+              className={
+                "w-fit disabled:cursor-not-allowed disabled:bg-gray-200 text-lg px-6 py-2 rounded-lg bg-blue-500 text-white disabled:text-gray-400 transition-all hover:bg-blue-600 flex items-center justify-center gap-x-4"
+              }
+              onClick={upload}
+            >
+              <p>Upload</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

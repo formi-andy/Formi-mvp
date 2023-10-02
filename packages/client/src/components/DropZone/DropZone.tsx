@@ -66,12 +66,9 @@ export default function Dropzone({
 
   const listedFiles = uploadData.map((data, index) => (
     <li key={data.file.name} className="flex flex-col gap-y-2 w-full">
-      <div className="flex w-full items-center gap-x-2 md:gap-x-4">
-        <AiOutlineCheck size={20} className="min-w-[20px]" />
-        <p className="truncate">
-          {data.file.name} - {formatBytes(data.file.size)} bytes
-        </p>
-      </div>
+      <p className="truncate">
+        {data.file.name} - {formatBytes(data.file.size)} bytes
+      </p>
       <div className="flex w-full items-center gap-x-4">
         <TextInput
           className="w-full"
@@ -110,11 +107,11 @@ export default function Dropzone({
   ));
 
   return (
-    <div className="flex flex-col h-full items-center gap-y-4">
+    <>
       <div
         {...getRootProps()}
         className={`
-          px-4 md:px-8 w-full h-[400px] cursor-pointer border-2 rounded-md flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
+          w-full h-80 rounded-t-lg cursor-pointer flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
           ${isDragAccept ? "border-green-500 bg-green-100" : ""} 
           ${isDragReject ? "border-red-500 bg-red-100" : ""} 
           ${
@@ -125,34 +122,17 @@ export default function Dropzone({
         `}
       >
         <input {...getInputProps()} />
-        <p className="text-2xl text-center">
+        <p className="text-2xl font-medium text-center">
           Drag and drop some files here, or click to select files
         </p>
-        <em className="text-center text-sm">
-          Only *.jpeg, *.png, and *.webp images will be accepted
+        <em className="text-center text-sm max-w-[380px]">
+          Only *.jpeg, *.png, and *.webp images will be accepted. Max file size
+          is 5MB.
         </em>
-        <div className="h-5 transition-opacity duration-200 ease-in-out">
-          {isDragAccept && (
-            <p className="text-green-500 opacity-100">
-              All files will be accepted
-            </p>
-          )}
-          {!isDragAccept && (
-            <p className="opacity-0">All files will be accepted</p>
-          )}
-          {isDragReject && (
-            <p className="text-red-500 opacity-100">
-              Some files will be rejected
-            </p>
-          )}
-          {!isDragReject && (
-            <p className="opacity-0">Some files will be rejected</p>
-          )}
-        </div>
       </div>
       {files.length > 0 && (
-        <div className="flex flex-col items-center justify-center gap-y-2 w-full">
-          <p className="text-xl">Accepted Files</p>
+        <div className="flex flex-col p-4 justify-center gap-y-2 w-full">
+          <p className="text-xl font-medium">Accepted Files</p>
           <ul className="w-full flex flex-col gap-y-2">{listedFiles}</ul>
         </div>
       )}
@@ -163,7 +143,6 @@ export default function Dropzone({
             if (errors[0].code === "file-too-large") {
               errors[0].message = "File is too large";
             }
-
             return (
               <div key={file.name}>
                 <p>
@@ -174,6 +153,6 @@ export default function Dropzone({
           })}
         </div>
       )}
-    </div>
+    </>
   );
 }
