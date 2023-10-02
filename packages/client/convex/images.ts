@@ -3,6 +3,7 @@ import {
   internalMutation,
   query,
   QueryCtx,
+  internalQuery,
 } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
@@ -32,7 +33,7 @@ export const storeImage = internalMutation({
       tags: [],
     });
 
-    return storageRecord;
+    return { storageRecord, patientId: patientId || user._id };
   },
 });
 
@@ -62,19 +63,42 @@ export const getImage = query({
   },
 });
 
+export const getImageByStorageId = internalQuery({
+  args: {
+    storageId: v.string(),
+  },
+  async handler(ctx, args) {
+    const { storageId } = args;
+
+    const image = await ctx.db
+      .query("images")
+      .withIndex("by_storage_id", (q) => q.eq("storage_id", storageId))
+      .first();
+    if (!image) {
+      throw new ConvexError({
+        message: "Image not found",
+        code: 404,
+      });
+    }
+
+    return image;
+  },
+});
+
 // TODO: use patient ID
 export const updateImage = mutation({
   args: {
     id: v.id("images"),
     title: v.string(),
     patient_id: v.optional(v.id("users")),
+    diagnosis: v.optional(v.string()),
     description: v.optional(v.string()),
     tags: v.array(v.string()),
   },
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const { id, title, patient_id, description, tags } = args;
+    const { id, title, patient_id, description, tags, diagnosis } = args;
 
     const image = await ctx.db.get(id);
     if (!image) {
@@ -94,12 +118,14 @@ export const updateImage = mutation({
     await ctx.db.patch(id, {
       title,
       description,
+      diagnosis,
       tags,
     });
 
     return {
       ...image,
       title,
+      diagnosis,
       description,
       tags,
     };

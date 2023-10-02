@@ -1,11 +1,9 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
-import { internal } from "./_generated/api";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { WebhookEvent } from "@clerk/backend";
 import { Webhook } from "svix";
 import { Id } from "./_generated/dataModel";
-import { mustGetCurrentUser } from "./users";
 
 function ensureEnvironmentVariable(name: string): string {
   const value = process.env[name];
@@ -103,15 +101,21 @@ http.route({
     });
 
     // Step 3: Return a response with the correct CORS headers
-    return new Response(null, {
-      status: 200,
-      // CORS headers
-      headers: new Headers({
-        // e.g. https://mywebsite.com
-        "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
-        Vary: "origin",
+    return new Response(
+      JSON.stringify({
+        patientId,
+        storageId,
       }),
-    });
+      {
+        status: 200,
+        // CORS headers
+        headers: new Headers({
+          // e.g. https://mywebsite.com
+          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          Vary: "origin",
+        }),
+      }
+    );
   }),
 });
 
@@ -133,13 +137,49 @@ http.route({
           // e.g. https://mywebsite.com
           "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
           "Access-Control-Allow-Methods": "POST",
-          "Access-Control-Allow-Headers": "Content-Type, Digest",
+          "Access-Control-Allow-Headers": "Content-Type, Digest, Authorization",
           "Access-Control-Max-Age": "86400",
         }),
       });
     } else {
       return new Response();
     }
+  }),
+});
+
+// Scale labeling callback route
+http.route({
+  path: "/scale-callback",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    const body = await request.json();
+    const headers = request.headers;
+
+    if (
+      headers.get("scale-callback-auth") !== process.env.SCALE_CALLBACK_AUTH_KEY
+    ) {
+      return new Response(null, {
+        status: 401,
+      });
+    }
+
+    const { task } = body;
+    console.log("SCALE DATA", task);
+    const { metadata, response } = task;
+    const { storageId } = metadata;
+    const image = await ctx.runQuery(internal.images.getImageByStorageId, {
+      storageId,
+    });
+    await ctx.runMutation(api.images.updateImage, {
+      id: image._id,
+      title: image.title,
+      tags: image.tags,
+      diagnosis: response.category,
+      description: response.notes,
+    });
+    return new Response(null, {
+      status: 200,
+    });
   }),
 });
 

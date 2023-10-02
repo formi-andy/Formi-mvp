@@ -6,10 +6,12 @@ export default defineSchema({
     storage_id: v.string(),
     user_id: v.string(),
     title: v.string(),
+    diagnosis: v.optional(v.string()),
     description: v.optional(v.string()),
     patient_id: v.string(),
     tags: v.array(v.string()),
   })
+    .index("by_storage_id", ["storage_id"])
     .index("by_user_id", ["user_id"])
     .index("by_patient_id", ["patient_id"]),
   users: defineTable({

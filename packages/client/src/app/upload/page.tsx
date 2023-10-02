@@ -5,6 +5,7 @@ import Dropzone from "@/components/DropZone/DropZone";
 import { Loader } from "@mantine/core";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAuth } from "@clerk/nextjs";
+import axios from "axios";
 
 const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -29,6 +30,9 @@ const Upload = () => {
       setUploading(true);
       const userId = user.userId;
       let promises: Promise<Response>[] = [];
+      const token = await user.getToken({
+        template: "convex",
+      });
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         // const patientName = fileNameToPatientMap[file.name] || "Unlabeled";
@@ -40,10 +44,28 @@ const Upload = () => {
           }`
         );
         promises.push(
-          fetch(sendImageUrl, {
-            method: "POST",
-            headers: { "Content-Type": file!.type },
-            body: file,
+          new Promise(async (resolve, reject) => {
+            try {
+              const res = await fetch(sendImageUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": file!.type,
+                  Authorization: `Bearer ${token}`,
+                },
+                body: file,
+              });
+
+              const data = await res.json();
+
+              await axios.post(
+                `/api/scale?patientId=${data.patientId}&storageId=${data.storageId}&title=${uploadData[i].title}`,
+                file
+              );
+
+              resolve(res);
+            } catch (error) {
+              reject(error);
+            }
           })
         );
       }
