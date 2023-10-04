@@ -85,11 +85,11 @@ const Gallery: React.FC = () => {
       );
     }
 
-    if (Object.keys(images).length === 0) {
+    if (images.length === 0) {
       return <NoImages />;
     }
 
-    return Object.entries(images).map(([date, images]) => {
+    return images.map(({ date, images }) => {
       return (
         <div key={date} className="flex flex-col gap-y-2">
           <p className="text-xl md:text-2xl">{date}</p>

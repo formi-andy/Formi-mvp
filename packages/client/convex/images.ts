@@ -182,13 +182,16 @@ export const listImages = query({
     const imagesByDay: Record<string, typeof imagesWithUrls> = {};
     imagesWithUrls.forEach((image) => {
       const date = dayjs(image._creationTime).format("M/DD/YYYY");
-      if (!imagesByDay[date]) {
-        imagesByDay[date] = [];
-      }
+      imagesByDay[date] = imagesByDay[date] || [];
       imagesByDay[date].push(image);
     });
 
-    return imagesByDay;
+    return Object.keys(imagesByDay)
+      .map((key) => ({
+        date: key,
+        images: imagesByDay[key],
+      }))
+      .sort((a, b) => b.images[0]._creationTime - a.images[0]._creationTime);
   },
 });
 
