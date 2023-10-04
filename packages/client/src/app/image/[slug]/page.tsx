@@ -169,7 +169,12 @@ function ImagePage({ params }: { params: { slug: string } }) {
           </div>
           <div className="w-full p-4">
             {editing ? (
-              <RTE />
+              <RTE
+                content={form.values.description}
+                onChange={(content) => {
+                  form.setFieldValue("description", content);
+                }}
+              />
             ) : (
               // <Textarea
               //   placeholder="Notes"
