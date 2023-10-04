@@ -94,7 +94,7 @@ const Gallery: React.FC = () => {
     return images.map(({ date, images }) => {
       return (
         <div key={date} className="flex flex-col gap-y-2">
-          <p className="text-xl md:text-2xl">
+          <p className="text-xl md:text-2xl font-medium">
             {dayjs(date).format("M/DD/YYYY")}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
