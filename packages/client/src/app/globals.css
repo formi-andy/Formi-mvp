@@ -73,3 +73,7 @@
 .rte-content-container p {
   margin-bottom: 0.4375rem;
 }
+
+.rte-content-container code {
+  background-color: #f8f9fa;
+}

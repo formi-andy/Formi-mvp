@@ -22,6 +22,8 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
+import { BsChevronDown } from "react-icons/bs";
+import style from "./image.module.css";
 
 function renderTags(tags: string[]) {
   if (tags.length === 0) {
@@ -52,8 +54,12 @@ function ImagePage({ params }: { params: { slug: string } }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const toast = useNetworkToasts();
   const router = useRouter();
-
   const [editing, setEditing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [notesContainer, setNotesContainer] = useState<HTMLElement | null>(
+    null
+  );
+
   const form = useForm({
     initialValues: {
       title: image?.title || "",
@@ -80,6 +86,17 @@ function ImagePage({ params }: { params: { slug: string } }) {
       form.setFieldValue("tags", image.tags);
     }
   }, [image]);
+
+  useEffect(() => {
+    if (image === undefined || editing) return;
+    setNotesContainer(document.getElementById("notes"));
+  }, [image, editing]);
+
+  useEffect(() => {
+    if (notesContainer && notesContainer.scrollHeight > 160) {
+      notesContainer.classList.add(style.hidden);
+    }
+  }, [notesContainer]);
 
   if (image === undefined) {
     return <AppLoader />;
@@ -162,7 +179,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
             <MdNotes size={24} /> Notes
           </div>
-          <div className="w-full p-4">
+          <div className="flex flex-col w-full p-4">
             {editing ? (
               <RTE
                 content={form.values.description}
@@ -172,14 +189,45 @@ function ImagePage({ params }: { params: { slug: string } }) {
                 maxLength={5000}
               />
             ) : (
-              <div
-                className="rte-content-container"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    image.description || "No notes yet"
-                  ),
-                }}
-              />
+              <>
+                <div
+                  id="notes"
+                  className={`rte-content-container ${style.notesContainer}`}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      image.description || "No notes yet"
+                    ),
+                  }}
+                />
+                {notesContainer && notesContainer.scrollHeight > 160 && (
+                  <button
+                    type="button"
+                    aria-label="Toggle notes"
+                    aria-expanded={expanded}
+                    className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
+                    onClick={() => {
+                      let icon = document.getElementById(
+                        "assetDescriptionIcon"
+                      );
+                      if (expanded) {
+                        notesContainer.style.maxHeight = "160px";
+                        notesContainer.classList.remove(style.expanded);
+                        icon?.classList.remove(style.rotate);
+                      } else {
+                        notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
+                        notesContainer.classList.add(style.expanded);
+                        icon?.classList.add(style.rotate);
+                      }
+                      setExpanded(!expanded);
+                    }}
+                  >
+                    <BsChevronDown
+                      id="assetDescriptionIcon"
+                      className="transition"
+                    />
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
