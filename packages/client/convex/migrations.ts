@@ -7,4 +7,10 @@ export const doMigration = internalMutation(async ({ db }) => {
   //     await db.patch(user._id, { role: "patient" });
   //   }
   // }
+  const images = await db.query("images").collect();
+  for (const image of images) {
+    if (!image.diagnosis) {
+      await db.patch(image._id, { diagnosis: [] });
+    }
+  }
 });

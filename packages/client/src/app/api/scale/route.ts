@@ -29,11 +29,9 @@ export async function POST(request: Request) {
   await axios.post(
     "https://api.scale.com/v1/batches",
     {
-      project: "Ear Infection Image Classification",
+      project: "Homescope Ear Infection",
       name: batchName,
-      callback: `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/scale-callback`,
-      calibration_batch: false,
-      self_label_batch: true,
+      //   callback: `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/scale-callback`,
     },
     {
       headers: {
@@ -51,11 +49,12 @@ export async function POST(request: Request) {
         "M/DD/YYYY"
       )}`,
       batch: batchName,
-      responses_required: 1,
+      responses_required: 3,
       metadata: {
         patientId,
         storageId,
       },
+      unique_id: storageId,
       callback_url: `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/scale-callback`,
       attachments: [
         {
