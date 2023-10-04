@@ -54,7 +54,7 @@
 }
 
 .rte-content-container ol {
-  @apply list-decimal pl-4 mb-4;
+  @apply list-decimal pl-6 mb-4;
 }
 
 .rte-content-container ul {
