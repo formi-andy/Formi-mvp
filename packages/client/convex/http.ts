@@ -164,18 +164,27 @@ http.route({
     }
 
     const { task } = body;
-    console.log("SCALE DATA", task);
-    const { metadata, response } = task;
-    const { storageId } = metadata;
+
+    if (!task) {
+      return new Response(null, {
+        status: 200,
+      });
+    }
+    const { attempts } = task;
+    const { storageId } = task.metadata;
+
     const image = await ctx.runQuery(internal.images.getImageByStorageId, {
       storageId,
     });
-    await ctx.runMutation(api.images.updateImage, {
+
+    const diagnosis = attempts.map((attempt: any) => ({
+      diagnosis: attempt.response.annotations.ear_infection.response[0][0],
+      notes: attempt.response.annotations["Notes"].response[0],
+    }));
+
+    await ctx.runMutation(internal.images.diagnosisCallback, {
       id: image._id,
-      title: image.title,
-      tags: image.tags,
-      diagnosis: response.category,
-      description: response.notes,
+      diagnosis,
     });
     return new Response(null, {
       status: 200,
