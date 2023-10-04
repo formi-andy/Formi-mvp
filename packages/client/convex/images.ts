@@ -8,6 +8,7 @@ import {
 
 import { ConvexError, v } from "convex/values";
 import { mustGetCurrentUser } from "./users";
+import sanitizeHtml from "sanitize-html";
 
 export const storeImage = internalMutation({
   args: {
@@ -114,6 +115,8 @@ export const updateImage = mutation({
       });
     }
 
+    const sanitizedDescription = sanitizeHtml(description || "");
+
     await ctx.db.patch(id, {
       title,
       description,
@@ -123,7 +126,7 @@ export const updateImage = mutation({
     return {
       ...image,
       title,
-      description,
+      description: sanitizedDescription,
       tags,
     };
   },

@@ -11,14 +11,9 @@ import Link from "next/link";
 import NextImage from "next/image";
 import { MdNotes } from "react-icons/md";
 import { LuPencil, LuTrash, LuTags } from "react-icons/lu";
-import {
-  Breadcrumbs,
-  TextInput,
-  TagsInput,
-  Modal,
-  Textarea,
-} from "@mantine/core";
+import { Breadcrumbs, TextInput, TagsInput, Modal } from "@mantine/core";
 import dayjs from "dayjs";
+import DOMPurify from "dompurify";
 
 import Image from "@/components/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
@@ -110,7 +105,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
         <Image url={image.url} alt={image.title} />
       </div>
       <div className="flex flex-col w-full lg:w-3/5 gap-y-4">
-        <div className="flex items-center flex-wrap justify-between">
+        <div className="flex items-center flex-wrap justify-between gap-y-4">
           <Breadcrumbs
             classNames={{
               separator: "!text-blue-500",
@@ -177,7 +172,13 @@ function ImagePage({ params }: { params: { slug: string } }) {
                 maxLength={5000}
               />
             ) : (
-              <p className="text-lg">{image.description || "No notes yet"}</p>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(
+                    image.description || "No notes yet"
+                  ),
+                }}
+              />
             )}
           </div>
         </div>
