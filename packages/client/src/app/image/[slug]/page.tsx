@@ -3,27 +3,27 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { useMutation, useQuery } from "convex/react";
 import { useForm } from "@mantine/form";
-import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import NotFoundPage from "@/app/not-found";
 
 import Link from "next/link";
 import NextImage from "next/image";
 import { MdNotes } from "react-icons/md";
-import { PiTagSimpleLight } from "react-icons/pi";
-import { GoPencil } from "react-icons/go";
+import { LuPencil, LuTrash, LuTags } from "react-icons/lu";
 import { Breadcrumbs, TextInput, TagsInput, Modal } from "@mantine/core";
 import dayjs from "dayjs";
+import DOMPurify from "dompurify";
 
 import Image from "@/components/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
+import RTE from "@/components/RTE/RTE";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
-import TextArea from "antd/es/input/TextArea";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
-import { BiSolidTrashAlt } from "react-icons/bi";
-import { useRouter } from "next/navigation";
 import { ConvexError } from "convex/values";
+import { BsChevronDown } from "react-icons/bs";
+import style from "./image.module.css";
 
 function renderTags(tags: string[]) {
   if (tags.length === 0) {
@@ -48,14 +48,18 @@ function ImagePage({ params }: { params: { slug: string } }) {
   const image = useQuery(api.images.getImage, {
     id: slug as Id<"images">,
   });
+  const user = useQuery(api.users.currentUser);
   const deleteImage = useMutation(api.images.deleteImages);
   const updateImage = useMutation(api.images.updateImage);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const toast = useNetworkToasts();
   const router = useRouter();
-
-  const { user, isLoaded } = useUser();
   const [editing, setEditing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [notesContainer, setNotesContainer] = useState<HTMLElement | null>(
+    null
+  );
+
   const form = useForm({
     initialValues: {
       title: image?.title || "",
@@ -83,6 +87,17 @@ function ImagePage({ params }: { params: { slug: string } }) {
     }
   }, [image]);
 
+  useEffect(() => {
+    if (image === undefined || editing) return;
+    setNotesContainer(document.getElementById("notes"));
+  }, [image, editing]);
+
+  useEffect(() => {
+    if (notesContainer && notesContainer.scrollHeight > 160) {
+      notesContainer.classList.add(style.hidden);
+    }
+  }, [notesContainer]);
+
   if (image === undefined) {
     return <AppLoader />;
   }
@@ -107,7 +122,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
         <Image url={image.url} alt={image.title} />
       </div>
       <div className="flex flex-col w-full lg:w-3/5 gap-y-4">
-        <div className="flex items-center flex-wrap justify-between">
+        <div className="flex items-center flex-wrap justify-between gap-y-4">
           <Breadcrumbs
             classNames={{
               separator: "!text-blue-500",
@@ -115,46 +130,47 @@ function ImagePage({ params }: { params: { slug: string } }) {
           >
             {items}
           </Breadcrumbs>
-          {isLoaded && user?.id === image.user_id && (
-            <div className="flex gap-x-2">
-              <button
-                className={`w-10 h-10 flex items-center justify-center border rounded hover:bg-blue-500 hover:text-white transition hover:border-blue-500
+          {user &&
+            (user?._id === image.user_id || user?._id === image.patient_id) && (
+              <div className="flex gap-x-2">
+                <button
+                  className={`w-10 h-10 flex items-center justify-center border border-black rounded hover:bg-blue-500 hover:text-white transition hover:border-blue-500
               ${editing ? "bg-blue-500 text-white border-blue-500" : "bg-white"}
               `}
-                disabled={updating}
-                onClick={() => {
-                  setEditing(!editing);
-                }}
-              >
-                <GoPencil size={20} />
-              </button>
-              <button
-                className="w-10 h-10 flex items-center justify-center border rounded hover:bg-red-500 hover:text-white transition hover:border-red-500"
-                disabled={updating}
-                onClick={() => {
-                  setConfirmDelete(true);
-                }}
-              >
-                <BiSolidTrashAlt size={20} />
-              </button>
-            </div>
-          )}
+                  disabled={updating}
+                  onClick={() => {
+                    setEditing(!editing);
+                  }}
+                >
+                  <LuPencil size={20} />
+                </button>
+                {user._id === image.patient_id && (
+                  <button
+                    className="w-10 h-10 flex items-center justify-center border border-black rounded hover:bg-red-500 hover:text-white transition hover:border-red-500"
+                    disabled={updating}
+                    onClick={() => {
+                      setConfirmDelete(true);
+                    }}
+                  >
+                    <LuTrash size={20} />
+                  </button>
+                )}
+              </div>
+            )}
         </div>
-        {editing ? (
-          <TextInput
-            variant="unstyled"
-            placeholder="Title"
-            value={form.values.title}
-            classNames={{
-              input: "!text-4xl font-medium !h-10 overflow-visible !border-0",
-            }}
-            onChange={(e) => {
-              form.setFieldValue("title", e.currentTarget.value);
-            }}
-          />
-        ) : (
-          <p className="text-4xl font-medium">{image.title || "No Title"}</p>
-        )}
+        <TextInput
+          variant="unstyled"
+          placeholder="Title"
+          value={form.values.title}
+          disabled={!editing}
+          classNames={{
+            input:
+              "!text-4xl font-medium !h-10 overflow-visible !border-0 disabled:bg-transparent disabled:opacity-100 disabled:text-black disabled:cursor-text",
+          }}
+          onChange={(e) => {
+            form.setFieldValue("title", e.currentTarget.value);
+          }}
+        />
         <p className="text-xl">{image.patient_id || "No patient"}</p>
         <p className="text-lg">
           Uploaded at {dayjs(image._creationTime).format("M/DD/YYYY h:mm A")}
@@ -163,24 +179,61 @@ function ImagePage({ params }: { params: { slug: string } }) {
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
             <MdNotes size={24} /> Notes
           </div>
-          <div className="w-full p-4">
+          <div className="flex flex-col w-full p-4">
             {editing ? (
-              <TextArea
-                placeholder="Notes"
-                value={form.values.description}
-                onChange={(e) => {
-                  form.setFieldValue("description", e.currentTarget.value);
+              <RTE
+                content={form.values.description}
+                onChange={(content) => {
+                  form.setFieldValue("description", content);
                 }}
                 maxLength={5000}
               />
             ) : (
-              <p className="text-lg">{image.description || "No notes yet"}</p>
+              <>
+                <div
+                  id="notes"
+                  className={`rte-content-container ${style.notesContainer}`}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      image.description || "No notes yet"
+                    ),
+                  }}
+                />
+                {notesContainer && notesContainer.scrollHeight > 160 && (
+                  <button
+                    type="button"
+                    aria-label="Toggle notes"
+                    aria-expanded={expanded}
+                    className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
+                    onClick={() => {
+                      let icon = document.getElementById(
+                        "assetDescriptionIcon"
+                      );
+                      if (expanded) {
+                        notesContainer.style.maxHeight = "160px";
+                        notesContainer.classList.remove(style.expanded);
+                        icon?.classList.remove(style.rotate);
+                      } else {
+                        notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
+                        notesContainer.classList.add(style.expanded);
+                        icon?.classList.add(style.rotate);
+                      }
+                      setExpanded(!expanded);
+                    }}
+                  >
+                    <BsChevronDown
+                      id="assetDescriptionIcon"
+                      className="transition"
+                    />
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="items-center flex w-full border-b p-4 text-xl font-medium gap-x-4">
-            <PiTagSimpleLight />
+            <LuTags />
             Tags
           </div>
           <div className="flex flex-row p-4 flex-wrap gap-4">
@@ -204,7 +257,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
         {editing && (
           <div className="flex gap-x-4 justify-end">
             <button
-              className="flex justify-center items-center w-[120px] h-12 rounded-lg text-xl bg-red-500 hover:bg-red-600 text-white transition"
+              className="flex justify-center items-center font-medium px-6 py-1.5 rounded-lg text-lg bg-red-500 hover:bg-red-600 text-white transition"
               onClick={() => {
                 setEditing(false);
               }}
@@ -214,7 +267,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
             </button>
             <button
               disabled={updating}
-              className="flex justify-center items-center w-[120px] h-12 text-xl rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
+              className="flex justify-center items-center font-medium px-6 py-1.5 text-lg rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
               onClick={async () => {
                 try {
                   setUpdating(true);
@@ -272,13 +325,13 @@ function ImagePage({ params }: { params: { slug: string } }) {
         </div>
         <div className="flex gap-x-4">
           <button
-            className="w-40 text-xl h-12 border rounded-lg hover:border-black transition"
+            className="w-32 text-lg font-medium h-10 border hover:bg-neutral-50 rounded-lg border-black transition"
             onClick={() => setConfirmDelete(false)}
           >
             Cancel
           </button>
           <button
-            className="w-40 text-xl bg-red-500 hover:bg-red-600 transition text-white rounded-lg"
+            className="w-32 text-lg font-medium bg-red-500 hover:bg-red-600 transition text-white rounded-lg"
             onClick={async () => {
               try {
                 setUpdating(true);

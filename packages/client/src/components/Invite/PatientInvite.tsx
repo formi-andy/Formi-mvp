@@ -18,7 +18,7 @@ export default function PatientInvite({ invite }: { invite: Invite }) {
         </p>
         <div className="flex gap-x-2 items-center mt-1 h-6">
           <button
-            className="p-1 hover:bg-slate-50 transition"
+            className="p-1 hover:bg-neutral-50 transition"
             onClick={() => {
               setShowCode(!showCode);
             }}

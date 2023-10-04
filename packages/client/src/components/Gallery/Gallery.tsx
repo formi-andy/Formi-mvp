@@ -15,7 +15,9 @@ import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { Id } from "../../../convex/_generated/dataModel";
 
 const Gallery: React.FC = () => {
-  let images = useQuery(api.images.listImages, {});
+  let images = useQuery(api.images.listImages, {
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  });
   const deleteMutation = useMutation(api.images.deleteImages);
 
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
@@ -85,14 +87,16 @@ const Gallery: React.FC = () => {
       );
     }
 
-    if (Object.keys(images).length === 0) {
+    if (images.length === 0) {
       return <NoImages />;
     }
 
-    return Object.entries(images).map(([date, images]) => {
+    return images.map(({ date, images }) => {
       return (
         <div key={date} className="flex flex-col gap-y-2">
-          <p className="text-xl md:text-2xl">{date}</p>
+          <p className="text-xl md:text-2xl font-medium">
+            {dayjs(date).format("M/DD/YYYY")}
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {images.map((image) => {
               return (
@@ -135,7 +139,7 @@ const Gallery: React.FC = () => {
                     <Link
                       className="h-full w-full absolute"
                       href={`/image/${image._id}`}
-                    ></Link>
+                    />
                   )}
                 </div>
               );

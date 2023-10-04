@@ -9,6 +9,7 @@ import { Inter } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import "@mantine/notifications/styles.css";
+import "@mantine/tiptap/styles.css";
 
 export const metadata = {
   title: "Homescope",

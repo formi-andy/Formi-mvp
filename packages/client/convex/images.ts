@@ -7,8 +7,8 @@ import {
 } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
-import dayjs from "dayjs";
 import { mustGetCurrentUser } from "./users";
+import sanitizeHtml from "sanitize-html";
 
 export const storeImage = internalMutation({
   args: {
@@ -115,6 +115,8 @@ export const updateImage = mutation({
       });
     }
 
+    const sanitizedDescription = sanitizeHtml(description || "");
+
     await ctx.db.patch(id, {
       title,
       description,
@@ -124,7 +126,7 @@ export const updateImage = mutation({
     return {
       ...image,
       title,
-      description,
+      description: sanitizedDescription,
       tags,
     };
   },
@@ -159,6 +161,7 @@ export const diagnosisCallback = internalMutation({
 export const listImages = query({
   args: {
     patientId: v.optional(v.id("users")),
+    timezone: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
@@ -181,14 +184,19 @@ export const listImages = query({
 
     const imagesByDay: Record<string, typeof imagesWithUrls> = {};
     imagesWithUrls.forEach((image) => {
-      const date = dayjs(image._creationTime).format("M/DD/YYYY");
-      if (!imagesByDay[date]) {
-        imagesByDay[date] = [];
-      }
+      const date = new Date(image._creationTime).toLocaleDateString("en-US", {
+        timeZone: args.timezone,
+      });
+      imagesByDay[date] = imagesByDay[date] || [];
       imagesByDay[date].push(image);
     });
 
-    return imagesByDay;
+    return Object.keys(imagesByDay)
+      .map((key) => ({
+        date: imagesByDay[key][0]._creationTime,
+        images: imagesByDay[key],
+      }))
+      .sort((a, b) => b.images[0]._creationTime - a.images[0]._creationTime);
   },
 });
 
