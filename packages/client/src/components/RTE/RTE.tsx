@@ -60,8 +60,6 @@ export default function RTE({
             <RichTextEditor.Hr />
             <RichTextEditor.BulletList />
             <RichTextEditor.OrderedList />
-            <RichTextEditor.Subscript />
-            <RichTextEditor.Superscript />
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>

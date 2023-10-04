@@ -257,7 +257,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
         {editing && (
           <div className="flex gap-x-4 justify-end">
             <button
-              className="flex justify-center items-center w-[120px] h-10 rounded-lg text-xl bg-red-500 hover:bg-red-600 text-white transition"
+              className="flex justify-center items-center font-medium px-6 py-1.5 rounded-lg text-lg bg-red-500 hover:bg-red-600 text-white transition"
               onClick={() => {
                 setEditing(false);
               }}
@@ -267,7 +267,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
             </button>
             <button
               disabled={updating}
-              className="flex justify-center items-center w-[120px] h-10 text-xl rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
+              className="flex justify-center items-center font-medium px-6 py-1.5 text-lg rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
               onClick={async () => {
                 try {
                   setUpdating(true);
