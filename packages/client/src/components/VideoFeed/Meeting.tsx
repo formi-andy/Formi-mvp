@@ -25,7 +25,7 @@ export default function Meeting() {
         />
         {!joined && (
           <button
-            className="border border-black rounded-lg px-4 py-1 hover:bg-gray-100 transition"
+            className="border border-black rounded-lg px-4 py-1 hover:bg-neutral-50 transition"
             onClick={() => {
               if (
                 meetingRef.current?.value &&

@@ -12,7 +12,7 @@ export default function PatientInviteLoader() {
           </div>
         </div>
         <div className="flex gap-x-2 items-center mt-1 h-6">
-          <div className="p-1 hover:bg-slate-50 transition">
+          <div className="p-1 hover:bg-neutral-50 transition">
             <p className="text-sm">
               <LuEye />
             </p>

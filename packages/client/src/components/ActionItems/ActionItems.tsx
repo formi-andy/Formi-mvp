@@ -32,7 +32,7 @@ function renderActionItems(actionItems: ActionItems) {
           <Link
             href={`/action-item/${item._id}`}
             key={item._id}
-            className="flex flex-col border rounded-lg p-4 hover:bg-slate-50 transition"
+            className="flex flex-col border rounded-lg p-4 hover:bg-neutral-50 transition"
           >
             <p className="font-medium">{item.title}</p>
             <div className="text-sm">

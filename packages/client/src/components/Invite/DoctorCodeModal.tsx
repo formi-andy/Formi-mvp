@@ -44,7 +44,7 @@ export default function DoctorCodeModal({
                 {({ copied, copy }) => (
                   <Tooltip label={copied ? "Copied" : "Copy"} withArrow>
                     <ActionIcon
-                      className="h-10 w-10 hover:bg-slate-50 transition rounded-lg"
+                      className="h-10 w-10 hover:bg-neutral-50 transition rounded-lg"
                       color={copied ? "teal" : "black"}
                       variant="subtle"
                       onClick={copy}
