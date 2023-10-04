@@ -22,6 +22,7 @@ import dayjs from "dayjs";
 
 import Image from "@/components/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
+import RTE from "@/components/RTE/RTE";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
@@ -168,16 +169,17 @@ function ImagePage({ params }: { params: { slug: string } }) {
           </div>
           <div className="w-full p-4">
             {editing ? (
-              <Textarea
-                placeholder="Notes"
-                value={form.values.description}
-                onChange={(e) => {
-                  form.setFieldValue("description", e.currentTarget.value);
-                }}
-                maxLength={5000}
-                minRows={5}
-              />
+              <RTE />
             ) : (
+              // <Textarea
+              //   placeholder="Notes"
+              //   value={form.values.description}
+              //   onChange={(e) => {
+              //     form.setFieldValue("description", e.currentTarget.value);
+              //   }}
+              //   maxLength={5000}
+              //   minRows={5}
+              // />
               <p className="text-lg">{image.description || "No notes yet"}</p>
             )}
           </div>
