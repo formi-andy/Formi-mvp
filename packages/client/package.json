@@ -20,6 +20,7 @@
     "@mantine/tiptap": "^7.1.2",
     "@svgr/webpack": "^8.0.1",
     "@tabler/icons-react": "^2.38.0",
+    "@tiptap/extension-character-count": "^2.1.11",
     "@tiptap/extension-highlight": "^2.1.11",
     "@tiptap/extension-link": "^2.1.11",
     "@tiptap/extension-text-align": "^2.1.11",

@@ -174,17 +174,9 @@ function ImagePage({ params }: { params: { slug: string } }) {
                 onChange={(content) => {
                   form.setFieldValue("description", content);
                 }}
+                maxLength={5000}
               />
             ) : (
-              // <Textarea
-              //   placeholder="Notes"
-              //   value={form.values.description}
-              //   onChange={(e) => {
-              //     form.setFieldValue("description", e.currentTarget.value);
-              //   }}
-              //   maxLength={5000}
-              //   minRows={5}
-              // />
               <p className="text-lg">{image.description || "No notes yet"}</p>
             )}
           </div>
