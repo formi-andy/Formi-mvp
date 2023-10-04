@@ -173,6 +173,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
               />
             ) : (
               <div
+                className="rte-content-container"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
                     image.description || "No notes yet"
