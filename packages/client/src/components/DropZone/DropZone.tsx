@@ -82,7 +82,7 @@ export default function Dropzone({
             });
           }}
         />
-        <TextInput
+        {/* <TextInput
           className="w-2/5 max-w-[400px]"
           placeholder="Patient"
           value={data.patientId}
@@ -93,7 +93,7 @@ export default function Dropzone({
               return newData;
             });
           }}
-        />
+        /> */}
         <button
           className="border hover:border-red-600 rounded cursor-pointer hover:text-red-600 hover:bg-red-50 w-9 h-9 min-w-[36px] flex items-center justify-center transition"
           onClick={() => {
