@@ -15,30 +15,21 @@ const acceptedFileTypes = {
 };
 
 type Props = {
-  files: File[];
-  setFiles: Dispatch<SetStateAction<File[]>>;
-  uploadData: {
+  data: {
     file: File;
     title: string;
-    patientId?: string;
   }[];
-  setUploadData: Dispatch<
+  setData: Dispatch<
     SetStateAction<
       {
         file: File;
         title: string;
-        patientId?: string;
       }[]
     >
   >;
 };
 
-export default function Dropzone({
-  files,
-  setFiles,
-  uploadData,
-  setUploadData,
-}: Props) {
+export default function Dropzone({ data, setData }: Props) {
   const {
     getRootProps,
     getInputProps,
@@ -51,31 +42,28 @@ export default function Dropzone({
     maxSize: maxSize,
     maxFiles: maxFiles,
     onDrop: (acceptedFiles) => {
-      setFiles((prev) => [...prev, ...acceptedFiles]);
-
-      setUploadData((prev) => {
+      setData((prev) => {
         const parsedFiles = acceptedFiles.map((file) => ({
           file,
           title: file.name,
-          patientId: "",
         }));
         return [...prev, ...parsedFiles];
       });
     },
   });
 
-  const listedFiles = uploadData.map((data, index) => (
-    <li key={data.file.name} className="flex flex-col gap-y-2 w-full">
+  const listedFiles = data.map((d, index) => (
+    <li key={d.file.name} className="flex flex-col gap-y-2 w-full">
       <p className="truncate">
-        {data.file.name} - {formatBytes(data.file.size)} bytes
+        {d.file.name} - {formatBytes(d.file.size)} bytes
       </p>
       <div className="flex w-full items-center gap-x-4">
         <TextInput
           className="flex-1"
           placeholder="Title"
-          value={data.title}
+          value={d.title}
           onChange={(e) => {
-            setUploadData((prev) => {
+            setData((prev) => {
               const newData = [...prev];
               newData[index].title = e.target.value;
               return newData;
@@ -98,7 +86,7 @@ export default function Dropzone({
           variant="outline-danger"
           size="icon"
           onClick={() => {
-            setFiles((prev) => prev.filter((_, i) => i !== index));
+            setData((prev) => prev.filter((_, i) => i !== index));
           }}
         >
           <LuTrash size={20} />
@@ -131,7 +119,7 @@ export default function Dropzone({
           is 5MB.
         </em>
       </div>
-      {files.length > 0 && (
+      {data.length > 0 && (
         <div className="flex flex-col p-4 justify-center gap-y-2 w-full">
           <p className="text-xl font-medium">Accepted Files</p>
           <ul className="w-full flex flex-col gap-y-2">{listedFiles}</ul>

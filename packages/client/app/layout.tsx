@@ -39,7 +39,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </head>
         <body className={`h-fit ${inter.className}`}>
           <NextTopLoader showSpinner={false} />
-          <MantineProvider>
+          <MantineProvider
+            theme={
+              {
+                // defaultRadius: "lg",
+              }
+            }
+          >
             <Notifications autoClose={3000} />
             <div className="w-full flex flex-col h-fit">
               <ConvexClientProvider>{children}</ConvexClientProvider>
