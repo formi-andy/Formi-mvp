@@ -7,7 +7,7 @@ import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import Link from "next/link";
 
-import { AiOutlineCheck } from "react-icons/ai";
+import { LuCheck } from "react-icons/lu";
 import NoImages from "./NoImages";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -128,10 +128,10 @@ const Gallery: React.FC = () => {
                       <div className="absolute inset-0 bg-white opacity-50 h-full" />
                     )}
                     {selecting && selectedImages.includes(image._id) && (
-                      <div className="absolute bottom-2 right-2 w-6 h-6 rounded-full border border-white flex items-center justify-center bg-blue-500">
-                        <AiOutlineCheck
+                      <div className="absolute bottom-2 right-2 w-6 h-6 rounded-full flex items-center justify-center bg-blue-500">
+                        <LuCheck
                           size={12}
-                          className="border-white text-white stroke-2"
+                          className="text-white stroke-2"
                         />
                       </div>
                     )}

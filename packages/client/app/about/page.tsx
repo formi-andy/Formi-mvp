@@ -1,6 +1,5 @@
-import { BsLightningCharge } from "react-icons/bs";
 import { TbArrowsJoin } from "react-icons/tb";
-import { TfiWorld } from "react-icons/tfi";
+import { LuGlobe, LuZap } from "react-icons/lu";
 import WaitList from "@/components/WaitList/WaitList";
 
 type Props = {};
@@ -25,7 +24,7 @@ const AboutPage = (props: Props) => {
       <div className="flex flex-col gap-8 lg:flex-row mt-12">
         <div className="flex gap-x-4 w-80">
           <div className="bg-black w-10 h-10 rounded-lg text-white items-center justify-center flex">
-            <BsLightningCharge size={20} />
+            <LuZap size={20} />
           </div>
           <div className="flex flex-col gap-y-1 text-left flex-1">
             <p className="text-2xl font-medium leading-none">Fast</p>
@@ -47,7 +46,7 @@ const AboutPage = (props: Props) => {
         </div>
         <div className="flex gap-x-4 w-80">
           <div className="bg-black w-10 h-10 rounded-lg text-white items-center justify-center flex">
-            <TfiWorld size={20} />
+            <LuGlobe size={20} />
           </div>
           <div className="flex flex-col gap-y-1 text-left flex-1">
             <p className="text-2xl font-medium leading-none">Accessible</p>

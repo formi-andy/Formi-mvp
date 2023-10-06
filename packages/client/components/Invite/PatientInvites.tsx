@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { IoIosSend } from "react-icons/io";
+import { LuSend } from "react-icons/lu";
 import PatientInvite from "./PatientInvite";
 import PatientInviteLoader from "./PatientInviteLoader";
 import { INVITES_LOADERS } from "@/commons/constants/loaders";
@@ -21,7 +21,7 @@ function renderInvites(invites: Invites | undefined) {
       <div className="flex flex-col p-4 lg:p-8">
         <div className="flex flex-col items-center p-8 lg:p-4">
           <div className="p-4 border rounded-lg">
-            <IoIosSend size={32} />
+            <LuSend size={32} />
           </div>
           <p className="text-base font-medium mt-6 text-center">
             No invites found

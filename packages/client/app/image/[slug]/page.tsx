@@ -22,7 +22,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
-import { BsChevronDown } from "react-icons/bs";
+import { LuChevronDown } from "react-icons/lu";
 import style from "./image.module.css";
 
 import { Button } from "@/components/ui/button";
@@ -228,7 +228,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
                       setExpanded(!expanded);
                     }}
                   >
-                    <BsChevronDown
+                    <LuChevronDown
                       id="assetDescriptionIcon"
                       className="transition"
                     />
