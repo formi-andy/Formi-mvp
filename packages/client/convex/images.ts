@@ -28,10 +28,8 @@ export const storeImage = internalMutation({
     const storageRecord = await ctx.db.insert("images", {
       storage_id: storageId,
       user_id: user._id,
-      patient_id: patientId || user._id,
       title,
-      tags: [],
-      diagnosis: [],
+      case_id: "",
     });
 
     return { storageRecord, patientId: patientId || user._id };
@@ -55,7 +53,7 @@ export const getImage = query({
       });
     }
 
-    await verifyCareTeam(ctx, user._id, image.patient_id);
+    await verifyCareTeam(ctx, user._id, image.user_id);
 
     return {
       ...image,
@@ -93,12 +91,11 @@ export const updateImage = mutation({
     title: v.string(),
     patient_id: v.optional(v.id("users")),
     description: v.optional(v.string()),
-    tags: v.array(v.string()),
   },
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const { id, title, patient_id, description, tags } = args;
+    const { id, title, patient_id, description } = args;
 
     const image = await ctx.db.get(id);
     if (!image) {
@@ -120,14 +117,12 @@ export const updateImage = mutation({
     await ctx.db.patch(id, {
       title,
       description,
-      tags,
     });
 
     return {
       ...image,
       title,
       description: sanitizedDescription,
-      tags,
     };
   },
 });
@@ -148,9 +143,9 @@ export const diagnosisCallback = internalMutation({
       });
     }
 
-    await ctx.db.patch(id, {
-      diagnosis,
-    });
+    // await ctx.db.patch(id, {
+    //   diagnosis,
+    // });
 
     return {
       ...image,
@@ -171,7 +166,7 @@ export const listImages = query({
 
     const images = await ctx.db
       .query("images")
-      .withIndex("by_patient_id", (q) => q.eq("patient_id", patientId))
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
       .order("desc")
       .collect();
 
@@ -216,7 +211,7 @@ export const deleteImages = mutation({
           throw new Error("Image not found");
         }
 
-        if (image.patient_id !== user._id) {
+        if (image.user_id !== user._id) {
           throw new Error("Unauthorized call to delete image");
         }
 
