@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import VideoContainer from "./VideoContainer";
 import { TextInput } from "@mantine/core";
 import { message } from "antd";
+import { Button } from "../ui/button";
 
 export default function Meeting() {
   const [joined, setJoined] = useState(false);
@@ -24,8 +25,8 @@ export default function Meeting() {
           joined={joined}
         />
         {!joined && (
-          <button
-            className="border border-black rounded-lg px-4 py-1 hover:bg-neutral-50 transition"
+          <Button
+            variant="outline"
             onClick={() => {
               if (
                 meetingRef.current?.value &&
@@ -38,7 +39,7 @@ export default function Meeting() {
             }}
           >
             Join Meeting
-          </button>
+          </Button>
         )}
       </div>
     </div>

@@ -1,10 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: [
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-	],
+  content: ["./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}"],
   theme: {
     container: {
       center: true,
@@ -68,7 +65,15 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      boxShadow: {
+        "accent-2": "0 8px 30px rgba(0,0,0,.12)",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic":
+          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

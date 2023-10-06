@@ -13,6 +13,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { GALLERY_LOADERS } from "@/commons/constants/loaders";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
+import { Button } from "../ui/button";
 
 const Gallery: React.FC = () => {
   let images = useQuery(api.images.listImages, {
@@ -156,31 +157,24 @@ const Gallery: React.FC = () => {
         <p className="text-2xl font-medium">Gallery</p>
         {selecting ? (
           <div className="flex items-center gap-x-4">
-            <button
-              className="px-6 py-2 text-white bg-red-500 hover:bg-red-600 transition-all rounded-lg"
-              onClick={deleteImages}
-              disabled={deleting}
-            >
+            <Button variant="danger" disabled={deleting} onClick={deleteImages}>
               Delete Selected Images
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="action"
               disabled={deleting}
-              className="px-6 py-2 text-white bg-blue-500 hover:bg-blue-600 transition-all rounded-lg"
               onClick={() => {
                 setSelecting(false);
                 setSelectedImages([]);
               }}
             >
               Cancel
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
-            className="px-6 py-2 text-white bg-blue-500 hover:bg-blue-600 transition-all rounded-lg"
-            onClick={() => setSelecting(true)}
-          >
+          <Button variant="action" onClick={() => setSelecting(true)}>
             Select
-          </button>
+          </Button>
         )}
       </div>
       {renderImages()}

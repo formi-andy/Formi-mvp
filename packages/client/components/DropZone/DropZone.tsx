@@ -2,9 +2,9 @@
 import { Dispatch, SetStateAction } from "react";
 import { useDropzone } from "react-dropzone";
 import { formatBytes } from "@/utils/formatBytes";
-import { AiOutlineCheck } from "react-icons/ai";
-import { BiSolidTrashAlt } from "react-icons/bi";
 import { TextInput } from "@mantine/core";
+import { Button } from "../ui/button";
+import { LuTrash } from "react-icons/lu";
 
 const maxSize = 1024 * 1024 * 5; // 5MB
 const maxFiles = 20;
@@ -71,7 +71,7 @@ export default function Dropzone({
       </p>
       <div className="flex w-full items-center gap-x-4">
         <TextInput
-          className="w-full"
+          className="flex-1"
           placeholder="Title"
           value={data.title}
           onChange={(e) => {
@@ -94,14 +94,15 @@ export default function Dropzone({
             });
           }}
         /> */}
-        <button
-          className="border hover:border-red-600 rounded cursor-pointer hover:text-red-600 hover:bg-red-50 w-9 h-9 min-w-[36px] flex items-center justify-center transition"
+        <Button
+          variant="outline-danger"
+          size="icon"
           onClick={() => {
             setFiles((prev) => prev.filter((_, i) => i !== index));
           }}
         >
-          <BiSolidTrashAlt size={20} />
-        </button>
+          <LuTrash size={20} />
+        </Button>
       </div>
     </li>
   ));

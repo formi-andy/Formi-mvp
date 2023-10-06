@@ -3,6 +3,7 @@
 import { useState } from "react";
 import InviteDoctorModal from "./InviteDoctorModal";
 import DoctorCodeModal from "./DoctorCodeModal";
+import { Button } from "../ui/button";
 
 export default function InviteTop({ role }: { role: string }) {
   const [opened, setOpened] = useState(false);
@@ -22,14 +23,14 @@ export default function InviteTop({ role }: { role: string }) {
         )}
       </div>
       <div>
-        <button
+        <Button
+          variant="outline-action"
           onClick={() => {
             setOpened(true);
           }}
-          className="border border-black rounded-lg px-4 py-2 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
         >
           {role === "doctor" ? "View your code" : "Invite a doctor"}
-        </button>
+        </Button>
       </div>
       {role === "doctor" ? (
         <DoctorCodeModal opened={opened} setOpened={setOpened} />

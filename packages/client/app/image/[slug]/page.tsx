@@ -25,6 +25,8 @@ import { ConvexError } from "convex/values";
 import { BsChevronDown } from "react-icons/bs";
 import style from "./image.module.css";
 
+import { Button } from "@/components/ui/button";
+
 function renderTags(tags: string[]) {
   if (tags.length === 0) {
     return "No tags yet";
@@ -133,27 +135,32 @@ function ImagePage({ params }: { params: { slug: string } }) {
           {user &&
             (user?._id === image.user_id || user?._id === image.patient_id) && (
               <div className="flex gap-x-2">
-                <button
-                  className={`w-10 h-10 flex items-center justify-center border border-black rounded hover:bg-blue-500 hover:text-white transition hover:border-blue-500
-              ${editing ? "bg-blue-500 text-white border-blue-500" : "bg-white"}
-              `}
+                <Button
+                  variant="outline-action"
+                  size="icon"
+                  className={`${
+                    editing
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white"
+                  }`}
                   disabled={updating}
                   onClick={() => {
                     setEditing(!editing);
                   }}
                 >
                   <LuPencil size={20} />
-                </button>
+                </Button>
                 {user._id === image.patient_id && (
-                  <button
-                    className="w-10 h-10 flex items-center justify-center border border-black rounded hover:bg-red-500 hover:text-white transition hover:border-red-500"
+                  <Button
+                    variant="outline-danger"
+                    size="icon"
                     disabled={updating}
                     onClick={() => {
                       setConfirmDelete(true);
                     }}
                   >
                     <LuTrash size={20} />
-                  </button>
+                  </Button>
                 )}
               </div>
             )}
@@ -256,18 +263,18 @@ function ImagePage({ params }: { params: { slug: string } }) {
         </div>
         {editing && (
           <div className="flex gap-x-4 justify-end">
-            <button
-              className="flex justify-center items-center font-medium px-6 py-1.5 rounded-lg text-lg bg-red-500 hover:bg-red-600 text-white transition"
+            <Button
+              variant="danger"
               onClick={() => {
                 setEditing(false);
               }}
               disabled={updating}
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="action"
               disabled={updating}
-              className="flex justify-center items-center font-medium px-6 py-1.5 text-lg rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
               onClick={async () => {
                 try {
                   setUpdating(true);
@@ -297,7 +304,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
               }}
             >
               Save
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -324,14 +331,16 @@ function ImagePage({ params }: { params: { slug: string } }) {
           <p className="text-opacity-50 text-center">This cannot be undone</p>
         </div>
         <div className="flex gap-x-4">
-          <button
-            className="w-32 text-lg font-medium h-10 border hover:bg-neutral-50 rounded-lg border-black transition"
+          <Button
+            variant="outline"
+            className="w-24"
             onClick={() => setConfirmDelete(false)}
           >
             Cancel
-          </button>
-          <button
-            className="w-32 text-lg font-medium bg-red-500 hover:bg-red-600 transition text-white rounded-lg"
+          </Button>
+          <Button
+            variant="danger"
+            className="w-24"
             onClick={async () => {
               try {
                 setUpdating(true);
@@ -357,7 +366,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
             }}
           >
             Delete
-          </button>
+          </Button>
         </div>
       </Modal>
     </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Dropzone from "@/components/DropZone/DropZone";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAuth } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
 
 const Upload = () => {
@@ -99,16 +100,15 @@ const Upload = () => {
             uploadData={uploadData}
             setUploadData={setUploadData}
           />
-          <div className="py-4 rounded-b-lg bg-neutral-50 w-full flex justify-center items-center">
-            <button
+          <div className="py-4 rounded-b-lg bg-zinc-50 w-full flex justify-center items-center">
+            <Button
+              variant="action"
               disabled={uploading || files.length === 0}
-              className={
-                "w-fit disabled:cursor-not-allowed disabled:bg-gray-200 text-lg px-6 py-2 rounded-lg bg-blue-500 text-white disabled:text-gray-400 transition-all hover:bg-blue-600 flex items-center justify-center gap-x-4"
-              }
+              className="px-6"
               onClick={upload}
             >
               <p>Upload</p>
-            </button>
+            </Button>
           </div>
         </div>
       </div>

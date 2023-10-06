@@ -6,6 +6,7 @@ import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { ConvexError } from "convex/values";
+import { Button } from "../ui/button";
 
 export default function WaitList() {
   const [email, setEmail] = useState("");
@@ -62,20 +63,20 @@ export default function WaitList() {
   return (
     <div className="flex flex-col gap-y-4 w-full md:w-3/4 mt-16">
       <p className="text-2xl font-semibold text-center">Join the waitlist</p>
-      <div className="flex flex-col md:flex-row gap-y-4 gap-x-8 items-center justify-center">
+      <div className="flex flex-col md:flex-row gap-y-4 gap-x-4 items-center justify-center">
         <TextInput
           placeholder="hello@homescope.us"
           className="w-full"
           value={email}
           onChange={(event) => setEmail(event.currentTarget.value)}
         />
-        <button
+        <Button
           onClick={submit}
           disabled={loading}
-          className="flex items-center text-center justify-center border border-black bg-black hover:bg-zinc-700 hover:border-zinc-700 text-white font-medium h-10 w-32 rounded-lg transition"
+          className="w-24"
         >
           Submit
-        </button>
+        </Button>
       </div>
     </div>
   );
