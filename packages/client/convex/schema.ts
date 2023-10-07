@@ -2,7 +2,9 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  case: defineTable({
+  // chief complaint should be high level field
+  // should also include field for status w/ respective enum
+  cases: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
     type: v.string(),
