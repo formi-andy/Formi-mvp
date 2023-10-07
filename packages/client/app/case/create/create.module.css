@@ -1,0 +1,37 @@
+.gridContainer {
+    @apply grid gap-x-4 gap-y-6;
+    grid-template-columns: 3fr 2fr; /* 3/5 and 2/5 of the container width */
+}
+
+.fileLabel, .areaLabel {
+    @apply flex items-center w-full border-b pb-4 text-xl font-medium gap-x-2
+}
+
+.dropzoneContainer {
+    @apply w-full relative gap-y-4 divide-y flex flex-col items-center rounded-lg border hover:border-blue-500 transition;
+}
+
+.bodyContainer {
+    @apply border rounded-lg p-4 w-full;
+}
+  
+/* Responsive design for smaller screens */
+@media (max-width: 640px) {
+    .gridContainer {
+      grid-template-columns: 1fr; /* 1 column layout */
+    }
+    
+    /* Change order of items */
+    .fileLabel { order: 1; }
+    .dropzoneContainer { order: 2; }
+    .areaLabel { order: 3; }
+    .bodyContainer { order: 4; }
+}
+  
+  /* Additional style for visualization */
+.item {
+    padding: 20px;
+    border: 1px solid black;
+    text-align: center;
+}
+  

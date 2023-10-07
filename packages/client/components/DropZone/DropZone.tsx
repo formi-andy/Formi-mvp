@@ -100,7 +100,7 @@ export default function Dropzone({ data, setData }: Props) {
       <div
         {...getRootProps()}
         className={`
-          w-full h-80 rounded-t-lg cursor-pointer flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out 
+          w-full h-full min-h-[20rem] rounded-t-lg cursor-pointer flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out p-4 
           ${isDragAccept ? "border-green-500 bg-green-100" : ""} 
           ${isDragReject ? "border-red-500 bg-red-100" : ""} 
           ${
