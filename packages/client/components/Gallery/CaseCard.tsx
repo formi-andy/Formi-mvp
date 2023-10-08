@@ -1,25 +1,13 @@
 import React from "react";
 import dayjs from "dayjs";
+import { api } from "@/convex/_generated/api";
 
-type Props = {
-  _id: string;
-  _creationTime: string;
-  title: string;
-  patient: any;
-  description: string;
-  medical_history: any;
-  tags: string[];
-  diagnosis: any;
-};
+type MedicalCase = (typeof api.medical_case.getMedicalCase)["_returnType"];
 
-const CaseCard = ({
-  _id,
-  _creationTime,
-  title,
-  patient,
-  medical_history,
-  tags,
-}: Props) => {
+const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
+  const { _id, _creationTime, title, patient, medical_history, tags } =
+    medicalCase;
+
   return (
     <div
       key={_id}
@@ -36,7 +24,8 @@ const CaseCard = ({
               Chief Complaint: {medical_history.chief_complaint}
             </p>
             <p className="text-sm md:text-base truncate">
-              Patient: {patient.first_name} {patient.last_name}
+              Patient: {patient.clerkUser.first_name}{" "}
+              {patient.clerkUser.last_name}
             </p>
           </div>
         </div>
