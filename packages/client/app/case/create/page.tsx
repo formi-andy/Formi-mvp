@@ -1,28 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Dropzone from "@/components/DropZone/DropZone";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { MultiSelect, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import RTE from "@/components/RTE/RTE";
-import { MdNotes } from "react-icons/md";
-import { LuFiles, LuLocate } from "react-icons/lu";
 
-import BodySelect from "@/components/BodySelect/BodySelect";
 import { INITIAL_PARTS_INPUT } from "@/components/BodySelect/BodySelect";
-import style from "./create.module.css";
-import AcceptedFiles from "@/components/DropZone/AcceptedFiles";
-import SelectedAreas from "@/components/BodySelect/SelectedParts";
+import StepOne from "@/components/CaseCreation/StepOne";
 
-const Upload = () => {
-  const user = useAuth();
-  const toast = useNetworkToasts();
-  const [active, setActive] = useState(0);
-
+function useCaseForm(active: number) {
   const form = useForm({
     initialValues: {
       title: "",
@@ -70,6 +58,18 @@ const Upload = () => {
     },
   });
 
+  return form;
+}
+
+export type CaseForm = ReturnType<typeof useCaseForm>;
+
+const Upload = () => {
+  const user = useAuth();
+  const toast = useNetworkToasts();
+  const [active, setActive] = useState(0);
+
+  const form = useCaseForm(active);
+
   const handleError = (errors: typeof form.errors) => {
     if (errors.title) {
       toast.error({ message: "Please fill the title field" });
@@ -90,102 +90,23 @@ const Upload = () => {
 
   return (
     <>
-      <p className="text-2xl font-medium mb-8">Create a Case</p>
-      <div className="w-full h-full flex flex-col gap-y-6">
-        <TextInput
-          label="Title"
-          placeholder="Case Title"
-          required
-          {...form.getInputProps("title")}
-        />
-        <div className="flex flex-col sm:flex-row gap-x-4">
-          <TextInput
-            className="w-full"
-            label="Patient"
-            placeholder="Patient"
-            required
-            {...form.getInputProps("patient")}
-          />
-        </div>
-        <div className={style.gridContainer}>
-          <div className={style.fileLabel}>
-            <LuFiles size={24} /> Images{" "}
-            <p className="text-[rgb(250,82,82)]">*</p>
-          </div>
-          <div className={style.areaLabel}>
-            <LuLocate size={24} /> Symptom Areas
-            <p className="text-[rgb(250,82,82)]">*</p>
-          </div>
-          <div
-            className={`${style.dropzoneContainer} ${
-              form.errors.files ? "border-[rgb(250,82,82)]" : ""
-            }`}
-          >
-            <Dropzone
-              data={form.values.files}
-              setData={(data) => {
-                form.setFieldValue("files", data);
-              }}
-            />
-          </div>
-          <div
-            className={`${style.bodyContainer} ${
-              form.errors.bodyParts ? "border-[rgb(250,82,82)]" : ""
-            }`}
-          >
-            <BodySelect
-              onClick={(bodyParts) => {
-                form.setFieldValue("bodyParts", bodyParts);
-              }}
-              partsInput={form.values.bodyParts}
-            />
-          </div>
-          <div className={style.acceptedFiles}>
-            <AcceptedFiles
-              data={form.values.files}
-              setData={(data) => {
-                form.setFieldValue("files", data);
-              }}
-            />
-          </div>
-          <div className={style.selectedParts}>
-            <SelectedAreas
-              bodyParts={form.values.bodyParts}
-              setData={(parts) => {
-                form.setFieldValue("bodyParts", parts);
-              }}
-            />
-          </div>
-        </div>
-        <div className="flex items-center w-full border-b pb-4 text-xl font-medium gap-x-2">
-          <MdNotes size={24} /> Notes
-        </div>
-        <div className="self-center w-full">
-          <RTE
-            content={form.values.description}
-            onChange={(content) => {
-              form.setFieldValue("description", content);
-            }}
-            maxLength={5000}
-          />
-        </div>
-        <Button
-          variant="action"
-          className="w-fit"
-          onClick={() => {
-            console.log(form.values);
-            setActive((current) => {
-              if (form.validate().hasErrors) {
-                handleError(form.errors);
-                return current;
-              }
-              return current < 3 ? current + 1 : current;
-            });
-          }}
-        >
-          Continue
-        </Button>
-      </div>
+      <p className="text-2xl font-medium mb-6">Create a Case</p>
+      <StepOne form={form} />
+      <Button
+        variant="action"
+        className="w-fit mt-6"
+        onClick={() => {
+          setActive((current) => {
+            if (form.validate().hasErrors) {
+              handleError(form.errors);
+              return current;
+            }
+            return current < 3 ? current + 1 : current;
+          });
+        }}
+      >
+        Continue
+      </Button>
     </>
   );
 };
