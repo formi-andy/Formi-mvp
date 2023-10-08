@@ -12,82 +12,13 @@
    @apply fill-blue-500;
 }
 
-.bodyContainer svg.selected path {
+.bodyPartSelected path {
     @apply fill-blue-500;
 }
+  
 
 .bodyContainer svg {
     @apply fill-zinc-400;
     position: absolute;
     left: 50%;
-}
-
-#head {
-    margin-left: -28.5px;
-    top: -6px;
-}
-
-#neck {
-    margin-left: -10.5px;
-    top: 30px;
-}
-
-#leftShoulder {
-    margin-left: -53.5px;
-    top: 69px;
-}
-
-#rightShoulder {
-    margin-left: 13.5px;
-    top: 69px;
-}
-
-#leftArm {
-    margin-left: -78px;
-    top: 112px;
-}
-
-#rightArm {
-    margin-left: 38px;
-    top: 112px;
-}
-
-#chest {
-    margin-left: -43.5px;
-    top: 88px;
-}
-
-#stomach {
-    margin-left: -37.5px;
-    top: 130px;
-}
-
-#leftLeg {
-    margin-left: -46.5px;
-    top: 205px;
-}
-
-#rightLeg {
-    margin-left: 1.5px;
-    top: 205px;
-}
-
-#leftHand {
-    margin-left: -102.5px;
-    top: 224px;
-}
-
-#rightHand {
-    margin-left: 66.5px;
-    top: 224px;
-}
-
-#leftFoot {
-    margin-left: -40.5px;
-    top: 455px;
-}
-
-#rightFoot {
-    margin-left: 5.5px;
-    top: 455px;
 }

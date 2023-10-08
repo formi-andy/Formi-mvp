@@ -75,9 +75,25 @@ export interface BodyComponentProps {
 }
 
 export interface PartSelect {
-  selected?: boolean;
-  show?: boolean;
+  selected: boolean;
+  show: boolean;
 }
+
+export const INITIAL_PARTS_INPUT = {
+  head: { selected: false, show: true },
+  leftShoulder: { selected: false, show: true },
+  rightShoulder: { selected: false, show: true },
+  leftArm: { selected: false, show: true },
+  rightArm: { selected: false, show: true },
+  chest: { selected: false, show: true },
+  stomach: { selected: false, show: true },
+  leftLeg: { selected: false, show: true },
+  rightLeg: { selected: false, show: true },
+  rightHand: { selected: false, show: true },
+  leftHand: { selected: false, show: true },
+  leftFoot: { selected: false, show: true },
+  rightFoot: { selected: false, show: true },
+};
 
 const MaleBodyModel: PartsModel = {
   head: (
@@ -124,27 +140,17 @@ const MaleBodyModel: PartsModel = {
   ),
 };
 
-export default function BodyComponent({ onClick, onChange, partsInput }) {
+export default function BodyComponent({
+  onClick,
+  partsInput,
+}: {
+  onClick: (parts: PartsInput) => void;
+  partsInput: PartsInput;
+}) {
   let currentBodyModel = MaleBodyModel;
 
-  const partsInputInitial = {
-    head: { selected: false },
-    leftShoulder: { selected: false },
-    rightShoulder: { selected: false },
-    leftArm: { selected: false },
-    rightArm: { selected: false },
-    chest: { selected: false },
-    stomach: { selected: false },
-    leftLeg: { selected: false },
-    rightLeg: { selected: false },
-    rightHand: { selected: false },
-    leftHand: { selected: false },
-    leftFoot: { selected: false },
-    rightFoot: { selected: false },
-  };
-
   partsInput = {
-    ...partsInputInitial,
+    ...INITIAL_PARTS_INPUT,
     ...partsInput,
   };
 
@@ -152,11 +158,11 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
 
   const setValue = function (value: boolean | PartSelect): PartSelect {
     if (value === true || value === false) {
-      value = { selected: !value };
+      value = { selected: !value, show: !value };
     } else if (value) {
       value.selected = !value.selected;
     } else {
-      value = { selected: true };
+      value = { selected: true, show: true };
     }
     return value;
   };
@@ -184,8 +190,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
 
     const partsChanged = { ...parts };
     setParts(partsChanged);
-    if (onChange) onChange(partsChanged);
-    if (onClick) onClick(id);
+    if (onClick) {
+      onClick(partsChanged);
+    }
   };
 
   const svgElements = {
@@ -209,7 +216,7 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="head"
           key="head"
           id="head"
-          className={(selected ? "selected " : "") + "head"}
+          className={(selected ? `${style.bodyPartSelected} ` : "") + "head"}
           xmlns="http://www.w3.org/2000/svg"
           width="56.594"
           height="95.031"
@@ -226,7 +233,7 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="neck"
           key="neck"
           id="neck"
-          className={(selected ? "selected " : "") + "neck"}
+          className={(selected ? `${style.bodyPartSelected} ` : "") + "neck"}
           xmlns="http://www.w3.org/2000/svg"
           width="27.594"
           height="21.5"
@@ -243,7 +250,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="leftShoulder"
           key="leftShoulder"
           id="leftShoulder"
-          className={(selected ? "selected " : "") + "leftShoulder"}
+          className={
+            (selected ? `${style.bodyPartSelected} ` : "") + "leftShoulder"
+          }
           xmlns="http://www.w3.org/2000/svg"
           width="109.532"
           height="46.594"
@@ -260,7 +269,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="rightShoulder"
           key="rightShoulder"
           id="rightShoulder"
-          className={(selected ? "selected " : "") + "rightShoulder"}
+          className={
+            (selected ? `${style.bodyPartSelected} ` : "") + "rightShoulder"
+          }
           xmlns="http://www.w3.org/2000/svg"
           width="109.532"
           height="46.594"
@@ -277,7 +288,7 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="leftArm"
           key="leftArm"
           id="leftArm"
-          className={(selected ? "selected " : "") + "leftArm"}
+          className={(selected ? `${style.bodyPartSelected} ` : "") + "leftArm"}
           xmlns="http://www.w3.org/2000/svg"
           width="156.344"
           height="119.25"
@@ -294,7 +305,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="rightArm"
           key="rightArm"
           id="rightArm"
-          className={(selected ? "selected " : "") + "rightArm"}
+          className={
+            (selected ? `${style.bodyPartSelected} ` : "") + "rightArm"
+          }
           xmlns="http://www.w3.org/2000/svg"
           width="156.344"
           height="119.25"
@@ -311,7 +324,7 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="chest"
           key="chest"
           id="chest"
-          className={(selected ? "selected " : "") + "chest"}
+          className={(selected ? `${style.bodyPartSelected} ` : "") + "chest"}
           xmlns="http://www.w3.org/2000/svg"
           width="86.594"
           height="45.063"
@@ -328,7 +341,7 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="stomach"
           key="stomach"
           id="stomach"
-          className={(selected ? "selected " : "") + "stomach"}
+          className={(selected ? `${style.bodyPartSelected} ` : "") + "stomach"}
           xmlns="http://www.w3.org/2000/svg"
           width="75.25"
           height="107.594"
@@ -345,7 +358,7 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="leftLeg"
           key="leftLeg"
           id="leftLeg"
-          className={(selected ? "selected " : "") + "leftLeg"}
+          className={(selected ? `${style.bodyPartSelected} ` : "") + "leftLeg"}
           xmlns="http://www.w3.org/2000/svg"
           width="93.626"
           height="250.625"
@@ -362,7 +375,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="rightLeg"
           key="rightLeg"
           id="rightLeg"
-          className={(selected ? "selected " : "") + "rightLeg"}
+          className={
+            (selected ? `${style.bodyPartSelected} ` : "") + "rightLeg"
+          }
           xmlns="http://www.w3.org/2000/svg"
           width="80"
           height="250.625"
@@ -379,7 +394,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="leftHand"
           key="leftHand"
           id="leftHand"
-          className={(selected ? "selected " : "") + "leftHand"}
+          className={
+            (selected ? `${style.bodyPartSelected} ` : "") + "leftHand"
+          }
           xmlns="http://www.w3.org/2000/svg"
           width="90"
           height="38.938"
@@ -396,7 +413,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="rightHand"
           key="rightHand"
           id="rightHand"
-          className={(selected ? "selected " : "") + "rightHand"}
+          className={
+            (selected ? `${style.bodyPartSelected} ` : "") + "rightHand"
+          }
           xmlns="http://www.w3.org/2000/svg"
           width="90"
           height="38.938"
@@ -413,7 +432,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="leftFoot"
           key="leftFoot"
           id="leftFoot"
-          className={(selected ? "selected " : "") + "leftFoot"}
+          className={
+            (selected ? `${style.bodyPartSelected} ` : "") + "leftFoot"
+          }
           xmlns="http://www.w3.org/2000/svg"
           width="30"
           height="30"
@@ -430,7 +451,9 @@ export default function BodyComponent({ onClick, onChange, partsInput }) {
           data-position="rightFoot"
           key="rightFoot"
           id="rightFoot"
-          className={(selected ? "selected " : "") + "rightFoot"}
+          className={
+            (selected ? `${style.bodyPartSelected} ` : "") + "rightFoot"
+          }
           xmlns="http://www.w3.org/2000/svg"
           width="90"
           height="38.938"

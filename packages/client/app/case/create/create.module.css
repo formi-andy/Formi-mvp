@@ -24,14 +24,9 @@
     /* Change order of items */
     .fileLabel { order: 1; }
     .dropzoneContainer { order: 2; }
-    .areaLabel { order: 3; }
-    .bodyContainer { order: 4; }
-}
-  
-  /* Additional style for visualization */
-.item {
-    padding: 20px;
-    border: 1px solid black;
-    text-align: center;
+    .acceptedFiles { order: 3; }
+    .areaLabel { order: 4; }
+    .bodyContainer { order: 5; }
+    .selectedParts { order: 6; }
 }
   

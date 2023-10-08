@@ -189,7 +189,6 @@
 #rightArm {
   margin-left: 38px;
   top: 112px;
-  z-index: 10001;
 }
 
 #chest {
@@ -205,13 +204,11 @@
 #leftLeg {
   margin-left: -46.5px;
   top: 205px;
-  z-index: 9999;
 }
 
 #rightLeg {
   margin-left: 1.5px;
   top: 205px;
-  z-index: 9999;
 }
 
 #leftHand {
@@ -222,7 +219,6 @@
 #rightHand {
   margin-left: 66.5px;
   top: 224px;
-  z-index: 10000;
 }
 
 #leftFoot {
