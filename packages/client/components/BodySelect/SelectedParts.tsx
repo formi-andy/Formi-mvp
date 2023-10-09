@@ -1,5 +1,5 @@
 import React from "react";
-import { INITIAL_PARTS_INPUT } from "./BodySelect";
+import { INITIAL_PARTS_INPUT } from "@/commons/constants/bodyParts";
 import { Badge } from "../ui/badge";
 
 function renderSelectedParts(

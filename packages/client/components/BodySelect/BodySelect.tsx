@@ -2,6 +2,7 @@
 
 import { MouseEventHandler, useState } from "react";
 import style from "./bodyselect.module.css";
+import { INITIAL_PARTS_INPUT } from "@/commons/constants/bodyParts";
 
 export const SVG_PARTS: Array<string> = [
   "head",
@@ -18,21 +19,6 @@ export const SVG_PARTS: Array<string> = [
   "leftFoot",
   "rightFoot",
 ];
-
-export interface PartsGroups {
-  head: { head: boolean };
-  trunk: {
-    leftShoulder: boolean;
-    rightShoulder: boolean;
-    leftArm: boolean;
-    rightArm: boolean;
-    chest: boolean;
-    stomach: boolean;
-  };
-  legs: { leftLeg: boolean; rightLeg: boolean };
-  hands: { rightHand: boolean; leftHand: boolean };
-  foots: { leftFoot: boolean; rightFoot: boolean };
-}
 
 export interface PartsInput {
   head: PartSelect;
@@ -78,22 +64,6 @@ export interface PartSelect {
   selected: boolean;
   show: boolean;
 }
-
-export const INITIAL_PARTS_INPUT = {
-  head: { selected: false, show: true },
-  leftShoulder: { selected: false, show: true },
-  rightShoulder: { selected: false, show: true },
-  leftArm: { selected: false, show: true },
-  rightArm: { selected: false, show: true },
-  chest: { selected: false, show: true },
-  stomach: { selected: false, show: true },
-  leftLeg: { selected: false, show: true },
-  rightLeg: { selected: false, show: true },
-  rightHand: { selected: false, show: true },
-  leftHand: { selected: false, show: true },
-  leftFoot: { selected: false, show: true },
-  rightFoot: { selected: false, show: true },
-};
 
 const MaleBodyModel: PartsModel = {
   head: (
