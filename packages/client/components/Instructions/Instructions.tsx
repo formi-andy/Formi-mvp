@@ -1,3 +1,5 @@
+import TutorialCard from "../Tutorials/TutorialCard";
+
 export const Instructions = () => {
   return (
     <div>
@@ -24,6 +26,7 @@ export const Instructions = () => {
         <li>Click &quot;stop&quot; to stop the video feed.</li>
         <li>Click &quot;upload&quot; to upload the images to the cloud.</li>
       </ol>
+      <TutorialCard />
     </div>
   );
 };
