@@ -2,19 +2,15 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  case: defineTable({
+  // chief complaint should be high level field
+  // should also include field for status w/ respective enum
+  medical_case: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
     type: v.string(),
     medical_history: v.any(),
-    user_id: v.string(),
-    patient: v.union(
-      v.string(),
-      v.object({
-        first_name: v.string(),
-        last_name: v.string(),
-      })
-    ),
+    user_id: v.id("users"),
+    patient_id: v.id("users"),
     tags: v.array(v.string()),
     diagnosis: v.array(
       v.any()
