@@ -61,15 +61,15 @@ export default function Review({ form }: { form: CaseForm }) {
             if (question.type === "text") {
               return (
                 <div key={`case_info_${index}`}>
-                  <p className="text-lg">{question.question}</p>
-                  <p>{question.answer}</p>
+                  <p>{question.question}</p>
+                  <p className="text-sm">{question.answer}</p>
                 </div>
               );
             }
             return (
               <div key={`case_info_${index}`}>
-                <p className="font-medium text-lg mb-2">{question.question}</p>
-                <p className="capitalize">{question.answer}</p>
+                <p>{question.question}</p>
+                <p className="capitalize text-sm">{question.answer}</p>
               </div>
             );
           })}
