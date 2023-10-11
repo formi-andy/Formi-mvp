@@ -19,8 +19,8 @@ export default function AcceptedFiles({
   ) => void;
 }) {
   const listedFiles = data.map((d, index) => (
-    <li key={d.file.name} className="flex flex-col gap-y-2 w-full">
-      <p className="truncate">
+    <div key={d.file.name} className="flex flex-col gap-y-2">
+      <p className="truncate max-w-[calc(100vw-56px)] sm:max-w-[calc(60vw-64px)]">
         {d.file.name} - {formatBytes(d.file.size)} bytes
       </p>
       <div className="flex w-full items-center gap-x-4">
@@ -34,18 +34,6 @@ export default function AcceptedFiles({
             setData(newData);
           }}
         />
-        {/* <TextInput
-              className="w-2/5 max-w-[400px]"
-              placeholder="Patient"
-              value={data.patientId}
-              onChange={(e) => {
-                setUploadData((prev) => {
-                  const newData = [...prev];
-                  newData[index].title = e.target.value;
-                  return newData;
-                });
-              }}
-            /> */}
         <Button
           variant="outline-danger"
           size="icon"
@@ -58,10 +46,10 @@ export default function AcceptedFiles({
           <LuTrash size={20} />
         </Button>
       </div>
-    </li>
+    </div>
   ));
   return (
-    <div className="flex flex-col gap-y-4 w-full">
+    <div className="flex flex-col gap-y-4">
       <p className="text-lg font-medium border-b pb-4">Accepted Files</p>
       {listedFiles.length === 0 ? (
         <p>No accepted file(s)</p>
