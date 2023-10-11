@@ -4,8 +4,8 @@ import { ReactNode, useState } from "react";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { useForm } from "@mantine/form";
+import axios from "axios";
 
 import {
   LuCheckCircle,
@@ -19,6 +19,9 @@ import CaseInfo from "@/components/CaseCreation/CaseInfo";
 import Review from "@/components/CaseCreation/Review";
 import { BASE_QUESTIONS } from "@/commons/constants/questions";
 import { Stepper } from "@mantine/core";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 function useCaseForm(active: number) {
   const form = useForm({
@@ -109,7 +112,9 @@ export type CaseForm = ReturnType<typeof useCaseForm>;
 const Upload = () => {
   const user = useAuth();
   const toast = useNetworkToasts();
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const createCase = useMutation(api.medical_case.createMedicalCase);
 
   const form = useCaseForm(active);
 
@@ -134,6 +139,92 @@ const Upload = () => {
       });
     }
   };
+
+  async function submitCase() {
+    try {
+      setUploading(true);
+
+      const symptomAreas: string[] = [];
+      let promises: Promise<string | null>[] = [];
+      const token = await user.getToken({
+        template: "convex",
+      });
+
+      for (const key in form.values.bodyParts) {
+        if (form.values.bodyParts[key].selected) {
+          const split = key.split(/(?=[A-Z])/);
+          symptomAreas.push(split.join(" "));
+        }
+      }
+
+      const { caseRecord } = await createCase({
+        title: form.values.title,
+        patient_id: "3525k093cxye8mnq8whw6h2g9jvetzr" as Id<"users">,
+        // patient_id: form.values.patient as Id<"users">,
+        description: form.values.description,
+        symptom_areas: symptomAreas,
+        medical_history: Object.keys(form.values.questions).map((key) => {
+          return {
+            question: form.values.questions[key].question,
+            answer: form.values.questions[key].answer,
+          };
+        }),
+        tags: [],
+      });
+
+      // upload images to convex
+      for (let i = 0; i < form.values.files.length; i++) {
+        const file = form.values.files[i];
+        const sendImageUrl = new URL(
+          `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/send-image?&caseId=${caseRecord}&title=${file.title}`
+        );
+        promises.push(
+          new Promise(async (resolve, reject) => {
+            try {
+              const res = await fetch(sendImageUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": file.file!.type,
+                  Authorization: `Bearer ${token}`,
+                },
+                body: file.file,
+              });
+
+              const data = await res.json();
+              resolve(data.url);
+            } catch (error) {
+              reject(error);
+            }
+          })
+        );
+      }
+      const attachments = await Promise.all(promises);
+
+      let instructions =
+        "## ***Instructions*** \n\n You will be given a group of images and a set of questions and answers. Using this information, you will be asked to diagnose the patient. \n\n";
+      instructions += Object.keys(form.values.questions)
+        .map((key) => {
+          return `- ### ${form.values.questions[key].question}\n${form.values.questions[key].answer} \n`;
+        })
+        .join("");
+      instructions += "\n\n ***Additional Information*** \n\n";
+      instructions += form.values.description;
+
+      // create scale batch and task
+      await axios.post(`/api/scale?caseId=${caseRecord}?batchName=${""}`, {
+        attachments,
+        instructions,
+      });
+    } catch (error) {
+      toast.error({
+        title: "Failed to create case",
+        message: "Something went wrong while creating your case",
+      });
+      console.log("ERROR", error);
+    } finally {
+      setUploading(false);
+    }
+  }
 
   return (
     <>
@@ -168,6 +259,7 @@ const Upload = () => {
       {active === 1 && <CaseInfo form={form} />}
       {active === 2 && <Review form={form} />}
       <Button
+        disabled={uploading}
         variant="action"
         className="w-fit mt-6"
         onClick={() => {
@@ -177,7 +269,7 @@ const Upload = () => {
           }
 
           if (active === 2) {
-            // submit form
+            submitCase();
           } else {
             setActive((current) => {
               return current + 1;

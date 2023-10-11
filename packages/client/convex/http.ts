@@ -96,17 +96,22 @@ http.route({
     // Step 2: Save the storage ID to the database via a mutation
     const patientId = new URL(request.url).searchParams.get("patientId");
     const title = new URL(request.url).searchParams.get("title")!;
+    const caseId = new URL(request.url).searchParams.get("caseId");
     await ctx.runMutation(internal.images.storeImage, {
       storageId,
       title,
       patientId: patientId as Id<"users"> | null,
+      caseId: caseId as Id<"medical_case"> | null,
     });
+
+    const url = await ctx.storage.getUrl(storageId);
 
     // Step 3: Return a response with the correct CORS headers
     return new Response(
       JSON.stringify({
         patientId,
         storageId,
+        url,
       }),
       {
         status: 200,

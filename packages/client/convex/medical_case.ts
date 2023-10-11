@@ -37,7 +37,6 @@ export const updateMedicalCase = mutation({
     id: v.id("medical_case"),
     title: v.optional(v.string()),
     description: v.optional(v.string()),
-    type: v.optional(v.string()),
     medical_history: v.optional(v.any()),
     tags: v.optional(v.array(v.string())),
     diagnosis: v.optional(v.array(v.any())),
@@ -45,8 +44,7 @@ export const updateMedicalCase = mutation({
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const { id, title, description, type, medical_history, tags, diagnosis } =
-      args;
+    const { id, title, description, medical_history, tags, diagnosis } = args;
 
     const medicalCase = await ctx.db.get(id);
     if (!medicalCase) {
@@ -68,7 +66,6 @@ export const updateMedicalCase = mutation({
     await ctx.db.patch(id, {
       title,
       description,
-      type,
       medical_history,
       tags,
       diagnosis,
@@ -78,7 +75,6 @@ export const updateMedicalCase = mutation({
       ...medicalCase,
       title,
       description: sanitizedDescription,
-      type,
       medical_history,
       tags,
       diagnosis,
@@ -90,7 +86,7 @@ export const createMedicalCase = mutation({
   args: {
     title: v.string(),
     description: v.optional(v.string()),
-    type: v.string(),
+    symptom_areas: v.array(v.string()),
     medical_history: v.any(),
     patient_id: v.id("users"),
     tags: v.optional(v.array(v.string())),
@@ -98,21 +94,28 @@ export const createMedicalCase = mutation({
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const { title, description, type, patient_id, medical_history, tags } =
-      args;
+    const {
+      title,
+      description,
+      patient_id,
+      medical_history,
+      tags,
+      symptom_areas,
+    } = args;
 
     const sanitizedDescription = sanitizeHtml(description || "");
 
-    return ctx.db.insert("medical_case", {
+    const caseRecord = await ctx.db.insert("medical_case", {
       title,
+      symptom_areas,
       description: sanitizedDescription,
-      type,
       medical_history,
       tags: tags || [],
       patient_id,
       diagnosis: [],
       user_id: user._id,
     });
+    return { caseRecord };
   },
 });
 

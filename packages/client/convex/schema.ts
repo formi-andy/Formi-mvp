@@ -7,7 +7,7 @@ export default defineSchema({
   medical_case: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
-    type: v.string(),
+    symptom_areas: v.array(v.string()),
     medical_history: v.any(),
     user_id: v.id("users"),
     patient_id: v.id("users"),
