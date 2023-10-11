@@ -66,8 +66,6 @@ function ImagePage({ params }: { params: { slug: string } }) {
     initialValues: {
       title: image?.title || "",
       description: image?.description || "",
-      patientId: image?.patient_id || "",
-      tags: image?.tags || [],
     },
 
     validate: {
@@ -84,8 +82,6 @@ function ImagePage({ params }: { params: { slug: string } }) {
     if (image !== undefined) {
       form.setFieldValue("title", image.title);
       form.setFieldValue("description", image.description || "");
-      form.setFieldValue("patientId", image.patient_id || "");
-      form.setFieldValue("tags", image.tags);
     }
   }, [image]);
 
@@ -132,38 +128,35 @@ function ImagePage({ params }: { params: { slug: string } }) {
           >
             {items}
           </Breadcrumbs>
-          {user &&
-            (user?._id === image.user_id || user?._id === image.patient_id) && (
-              <div className="flex gap-x-2">
-                <Button
-                  variant="outline-action"
-                  size="icon"
-                  className={`${
-                    editing
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white"
-                  }`}
-                  disabled={updating}
-                  onClick={() => {
-                    setEditing(!editing);
-                  }}
-                >
-                  <LuPencil size={20} />
-                </Button>
-                {user._id === image.patient_id && (
-                  <Button
-                    variant="outline-danger"
-                    size="icon"
-                    disabled={updating}
-                    onClick={() => {
-                      setConfirmDelete(true);
-                    }}
-                  >
-                    <LuTrash size={20} />
-                  </Button>
-                )}
-              </div>
-            )}
+          {user && user?._id === image.user_id && (
+            <div className="flex gap-x-2">
+              <Button
+                variant="outline-action"
+                size="icon"
+                className={`${
+                  editing
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white"
+                }`}
+                disabled={updating}
+                onClick={() => {
+                  setEditing(!editing);
+                }}
+              >
+                <LuPencil size={20} />
+              </Button>
+              <Button
+                variant="outline-danger"
+                size="icon"
+                disabled={updating}
+                onClick={() => {
+                  setConfirmDelete(true);
+                }}
+              >
+                <LuTrash size={20} />
+              </Button>
+            </div>
+          )}
         </div>
         <TextInput
           variant="unstyled"
@@ -178,7 +171,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
             form.setFieldValue("title", e.currentTarget.value);
           }}
         />
-        <p className="text-xl">{image.patient_id || "No patient"}</p>
+        {/* <p className="text-xl">{image.user_id || "No patient"}</p> */}
         <p className="text-lg">
           Uploaded at {dayjs(image._creationTime).format("M/DD/YYYY h:mm A")}
         </p>
@@ -238,7 +231,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
             )}
           </div>
         </div>
-        <div className="flex flex-col border rounded-lg">
+        {/* <div className="flex flex-col border rounded-lg">
           <div className="items-center flex w-full border-b p-4 text-xl font-medium gap-x-4">
             <LuTags />
             Tags
@@ -257,10 +250,10 @@ function ImagePage({ params }: { params: { slug: string } }) {
                 }}
               />
             ) : (
-              renderTags(image.tags)
+              renderTags(case.tags)
             )}
           </div>
-        </div>
+        </div> */}
         {editing && (
           <div className="flex gap-x-4 justify-end">
             <Button
@@ -286,7 +279,6 @@ function ImagePage({ params }: { params: { slug: string } }) {
                     id: image._id,
                     title: form.values.title,
                     description: form.values.description,
-                    tags: form.values.tags,
                   });
                   toast.success({
                     title: "Successfully updated image",

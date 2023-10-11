@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 
 const Upload = () => {
-  const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadData, setUploadData] = useState<
     {
@@ -21,7 +20,7 @@ const Upload = () => {
   const toast = useNetworkToasts();
 
   const upload = async () => {
-    if (uploading || files.length === 0) {
+    if (uploading || uploadData.length === 0) {
       return;
     }
 
@@ -33,8 +32,8 @@ const Upload = () => {
       const token = await user.getToken({
         template: "convex",
       });
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+      for (let i = 0; i < uploadData.length; i++) {
+        const file = uploadData[i].file;
         // const patientName = fileNameToPatientMap[file.name] || "Unlabeled";
         const sendImageUrl = new URL(
           `${
@@ -74,7 +73,6 @@ const Upload = () => {
         title: "Successfully uploaded images",
         message: "Visit the dashboard to view your images",
       });
-      setFiles([]);
       setUploadData([]);
     } catch (error) {
       // console.log("error", error);
@@ -95,15 +93,13 @@ const Upload = () => {
       <div className="w-full h-full flex flex-col items-center">
         <div className="relative gap-y-4 divide-y flex flex-col items-center max-w-2xl w-full rounded-lg shadow-accent-2">
           <Dropzone
-            files={files}
-            setFiles={setFiles}
-            uploadData={uploadData}
-            setUploadData={setUploadData}
+            data={uploadData}
+            setData={setUploadData}
           />
           <div className="py-4 rounded-b-lg bg-zinc-50 w-full flex justify-center items-center">
             <Button
               variant="action"
-              disabled={uploading || files.length === 0}
+              disabled={uploading || uploadData.length === 0}
               className="px-6"
               onClick={upload}
             >

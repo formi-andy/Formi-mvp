@@ -2,10 +2,16 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  images: defineTable({
-    storage_id: v.string(),
-    user_id: v.string(),
+  // chief complaint should be high level field
+  // should also include field for status w/ respective enum
+  medical_case: defineTable({
     title: v.string(),
+    description: v.optional(v.string()),
+    type: v.string(),
+    medical_history: v.any(),
+    user_id: v.id("users"),
+    patient_id: v.id("users"),
+    tags: v.array(v.string()),
     diagnosis: v.array(
       v.any()
       // v.object({
@@ -13,13 +19,18 @@ export default defineSchema({
       //   notes: v.string(),
       // })
     ),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_tags", ["tags"]),
+  images: defineTable({
+    storage_id: v.string(),
+    user_id: v.string(),
+    title: v.string(),
+    case_id: v.string(),
     description: v.optional(v.string()),
-    patient_id: v.string(),
-    tags: v.array(v.string()),
   })
     .index("by_storage_id", ["storage_id"])
-    .index("by_user_id", ["user_id"])
-    .index("by_patient_id", ["patient_id"]),
+    .index("by_user_id", ["user_id"]),
   users: defineTable({
     // this is UserJSON from @clerk/backend
     clerkUser: v.any(),

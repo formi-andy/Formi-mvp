@@ -93,6 +93,17 @@
   margin-bottom: 7px;
 }
 
+.mantine-RichTextEditor-root {
+  @apply !rounded-lg;
+}
+
+.mantine-RichTextEditor-toolbar {
+  @apply !rounded-t-lg;
+}
+
+.mantine-RichTextEditor-content {
+  @apply !rounded-b-lg;
+}
 
 .rte-content-container a {
   @apply text-blue-500 hover:underline
@@ -149,4 +160,8 @@
 
 .rte-content-container code {
   background-color: #f8f9fa;
+}
+
+.ProseMirror {
+  min-height: 128px;
 }

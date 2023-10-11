@@ -42,8 +42,16 @@ export const userLoginStatus = query(
 /** The current user, containing user preferences and Clerk user info. */
 export const currentUser = query((ctx: QueryCtx) => getCurrentUser(ctx));
 
-/** Get user by Clerk use id (AKA "subject" on auth)  */
+/** Get user by convex id */
 export const getUser = internalQuery({
+  args: { id: v.id("users") },
+  async handler(ctx, args) {
+    return ctx.db.get(args.id);
+  },
+});
+
+/** Get user by Clerk use id (AKA "subject" on auth)  */
+export const getClerkUser = internalQuery({
   args: { subject: v.string() },
   async handler(ctx, args) {
     return await userQuery(ctx, args.subject);
@@ -122,6 +130,19 @@ export async function mustGetCurrentUser(ctx: QueryCtx): Promise<Doc<"users">> {
     throw new ConvexError({
       message: "Not authenticated",
       code: 401,
+    });
+  return userRecord;
+}
+
+export async function mustGetUserById(
+  ctx: QueryCtx,
+  id: Id<"users">
+): Promise<Doc<"users">> {
+  const userRecord = await getUser(ctx, { id });
+  if (!userRecord)
+    throw new ConvexError({
+      message: "User not found",
+      code: 404,
     });
   return userRecord;
 }
