@@ -40,11 +40,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <body className={`h-fit ${inter.className}`}>
           <NextTopLoader showSpinner={false} />
           <MantineProvider
-            theme={
-              {
-                // defaultRadius: "lg",
-              }
-            }
+            theme={{
+              fontFamily: "var(--inter-font)",
+            }}
           >
             <Notifications autoClose={3000} />
             <div className="w-full flex flex-col h-fit">

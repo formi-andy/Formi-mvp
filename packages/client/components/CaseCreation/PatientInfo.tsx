@@ -1,16 +1,14 @@
 import { TextInput } from "@mantine/core";
-import { MdNotes } from "react-icons/md";
 import { LuFiles, LuLocate } from "react-icons/lu";
 
 import Dropzone from "../DropZone/DropZone";
 import BodySelect from "../BodySelect/BodySelect";
 import AcceptedFiles from "../DropZone/AcceptedFiles";
 import SelectedParts from "../BodySelect/SelectedParts";
-import RTE from "../RTE/RTE";
 import style from "./create.module.css";
 import { CaseForm } from "@/app/case/create/page";
 
-export default function StepOne({ form }: { form: CaseForm }) {
+export default function PatientInfo({ form }: { form: CaseForm }) {
   return (
     <div className="w-full h-full flex flex-col gap-y-6">
       <TextInput
@@ -30,11 +28,11 @@ export default function StepOne({ form }: { form: CaseForm }) {
       </div>
       <div className={style.gridContainer}>
         <div className={style.fileLabel}>
-          <LuFiles size={24} /> Images{" "}
+          <LuFiles size={20} /> Images{" "}
           <p className="text-[rgb(250,82,82)]">*</p>
         </div>
         <div className={style.areaLabel}>
-          <LuLocate size={24} /> Symptom Areas
+          <LuLocate size={20} /> Symptom Areas
           <p className="text-[rgb(250,82,82)]">*</p>
         </div>
         <div
@@ -77,18 +75,6 @@ export default function StepOne({ form }: { form: CaseForm }) {
             }}
           />
         </div>
-      </div>
-      <div className="flex items-center w-full border-b pb-4 text-xl font-medium gap-x-2">
-        <MdNotes size={24} /> Notes
-      </div>
-      <div className="self-center w-full">
-        <RTE
-          content={form.values.description}
-          onChange={(content) => {
-            form.setFieldValue("description", content);
-          }}
-          maxLength={5000}
-        />
       </div>
     </div>
   );
