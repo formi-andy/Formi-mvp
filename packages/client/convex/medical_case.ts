@@ -9,6 +9,7 @@ import { ConvexError, v } from "convex/values";
 import { getUser, mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
 import { Id } from "./_generated/dataModel";
+import { getImageByCaseId } from "./images";
 
 export const getMedicalCase = query({
   args: {
@@ -155,9 +156,13 @@ export const listMedicalCases = query({
     const medicalCasesWithPatient = await Promise.all(
       medicalCases.map(async (medicalCase) => {
         const patient = await mustGetUserById(ctx, medicalCase.patient_id);
+        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
+        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+
         return {
           ...medicalCase,
           patient,
+          image_url: url,
         };
       })
     );

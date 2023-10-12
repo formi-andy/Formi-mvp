@@ -30,6 +30,7 @@ export default defineSchema({
     description: v.optional(v.string()),
   })
     .index("by_storage_id", ["storage_id"])
+    .index("by_case_id", ["case_id"])
     .index("by_user_id", ["user_id"]),
   users: defineTable({
     // this is UserJSON from @clerk/backend

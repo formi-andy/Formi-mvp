@@ -69,6 +69,28 @@ export const getImage = query({
   },
 });
 
+export const getImageByCaseId = internalQuery({
+  args: {
+    case_id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { case_id } = args;
+
+    const image = await ctx.db
+      .query("images")
+      .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
+      .first();
+    if (!image) {
+      throw new ConvexError({
+        message: "Image not found",
+        code: 404,
+      });
+    }
+
+    return image;
+  },
+});
+
 export const getImageByStorageId = internalQuery({
   args: {
     storageId: v.string(),
