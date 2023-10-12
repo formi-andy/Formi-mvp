@@ -143,6 +143,10 @@ const Upload = () => {
   async function submitCase() {
     try {
       setUploading(true);
+      toast.loading({
+        title: "Creating case",
+        message: "Please wait while we create your case",
+      });
 
       const symptomAreas: string[] = [];
       let promises: Promise<string | null>[] = [];
@@ -159,8 +163,7 @@ const Upload = () => {
 
       const { caseRecord } = await createCase({
         title: form.values.title,
-        patient_id: "3525k093cxye8mnq8whw6h2g9jvetzr" as Id<"users">,
-        // patient_id: form.values.patient as Id<"users">,
+        patient_id: form.values.patient,
         description: form.values.description,
         symptom_areas: symptomAreas,
         medical_history: Object.keys(form.values.questions).map((key) => {
@@ -201,13 +204,14 @@ const Upload = () => {
       const attachments = await Promise.all(promises);
 
       let instructions =
-        "## ***Instructions*** \n\n You will be given a group of images and a set of questions and answers. Using this information, you will be asked to diagnose the patient. \n\n";
+        "## **Instructions** \n\n You will be given a group of images and a set of questions and answers. Using this information, you will be asked to diagnose the patient. \n\n";
+      instructions += `### Symptom Areas \n\n ${symptomAreas.join(", ")} \n\n`;
       instructions += Object.keys(form.values.questions)
         .map((key) => {
-          return `- ### ${form.values.questions[key].question}\n${form.values.questions[key].answer} \n`;
+          return `### ${form.values.questions[key].question}\n${form.values.questions[key].answer} \n`;
         })
         .join("");
-      instructions += "\n\n ***Additional Information*** \n\n";
+      instructions += "\n\n### **Additional Information** \n\n";
       instructions += form.values.description;
 
       // create scale batch and task
@@ -215,12 +219,15 @@ const Upload = () => {
         attachments,
         instructions,
       });
+      toast.success({
+        title: "Case created",
+        message: "Your case has been created successfully",
+      });
     } catch (error) {
       toast.error({
         title: "Failed to create case",
         message: "Something went wrong while creating your case",
       });
-      console.log("ERROR", error);
     } finally {
       setUploading(false);
     }

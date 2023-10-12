@@ -134,32 +134,6 @@ export const updateImage = mutation({
   },
 });
 
-export const diagnosisCallback = internalMutation({
-  args: {
-    id: v.id("images"),
-    diagnosis: v.array(v.any()),
-  },
-  async handler(ctx, args) {
-    const { id, diagnosis } = args;
-
-    const image = await ctx.db.get(id);
-    if (!image) {
-      throw new ConvexError({
-        message: "Image not found",
-        code: 404,
-      });
-    }
-
-    // await ctx.db.patch(id, {
-    //   diagnosis,
-    // });
-
-    return {
-      ...image,
-    };
-  },
-});
-
 export const listImages = query({
   args: {
     patientId: v.optional(v.id("users")),

@@ -1,8 +1,14 @@
-import { mutation, query, QueryCtx } from "./_generated/server";
+import {
+  internalMutation,
+  mutation,
+  query,
+  QueryCtx,
+} from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
 import { getUser, mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
+import { Id } from "./_generated/dataModel";
 
 export const getMedicalCase = query({
   args: {
@@ -22,6 +28,13 @@ export const getMedicalCase = query({
     }
 
     const patient = await mustGetUserById(ctx, medicalCase.patient_id);
+
+    if (medicalCase.user_id !== user._id || patient._id !== user._id) {
+      throw new ConvexError({
+        message: "Unauthenticated call to get medical case",
+        code: 401,
+      });
+    }
 
     // await verifyCareTeam(ctx, user._id, medicalCase.user_id);
 
@@ -88,7 +101,8 @@ export const createMedicalCase = mutation({
     description: v.optional(v.string()),
     symptom_areas: v.array(v.string()),
     medical_history: v.any(),
-    patient_id: v.id("users"),
+    // patient_id: v.id("users"),
+    patient_id: v.string(),
     tags: v.optional(v.array(v.string())),
   },
   async handler(ctx, args) {
@@ -105,13 +119,15 @@ export const createMedicalCase = mutation({
 
     const sanitizedDescription = sanitizeHtml(description || "");
 
+    const patient = await getUser(ctx, { id: patient_id as Id<"users"> });
+
     const caseRecord = await ctx.db.insert("medical_case", {
       title,
       symptom_areas,
       description: sanitizedDescription,
       medical_history,
       tags: tags || [],
-      patient_id,
+      patient_id: patient ? patient._id : user._id,
       diagnosis: [],
       user_id: user._id,
     });
@@ -203,6 +219,28 @@ export const deleteCases = mutation({
     );
 
     return ids;
+  },
+});
+
+export const diagnosisCallback = internalMutation({
+  args: {
+    id: v.id("medical_case"),
+    diagnosis: v.array(v.any()),
+  },
+  async handler(ctx, args) {
+    const { id, diagnosis } = args;
+
+    const medicalCase = await ctx.db.get(id);
+    if (!medicalCase) {
+      throw new ConvexError({
+        message: "Medical case not found",
+        code: 404,
+      });
+    }
+
+    return ctx.db.patch(id, {
+      diagnosis,
+    });
   },
 });
 

@@ -178,10 +178,11 @@ http.route({
       });
     }
     const { attempts } = task;
-    const { storageId } = task.metadata;
+    console.log("TASK", attempts, task.metadata);
+    const { caseId } = task.metadata;
 
-    const image = await ctx.runQuery(internal.images.getImageByStorageId, {
-      storageId,
+    const medicalCase = await ctx.runQuery(api.medical_case.getMedicalCase, {
+      id: caseId as Id<"medical_case">,
     });
 
     const diagnosis = attempts.map((attempt: any) => ({
@@ -189,8 +190,8 @@ http.route({
       notes: attempt.response.annotations["Notes"].response[0],
     }));
 
-    await ctx.runMutation(internal.images.diagnosisCallback, {
-      id: image._id,
+    await ctx.runMutation(internal.medical_case.diagnosisCallback, {
+      id: medicalCase._id,
       diagnosis,
     });
     return new Response(null, {
