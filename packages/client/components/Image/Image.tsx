@@ -31,7 +31,9 @@ export function CircleImage({ url, alt }: { url: string; alt: string }) {
 
   return (
     <>
-      {loading && <Skeleton.Avatar active className="!w-full !h-full z-100" />}
+      {!loading && (
+        <Skeleton.Avatar active className="max-w-full max-h-full z-100" />
+      )}
       <NextImage
         onLoadingComplete={() => {
           setLoading(false);

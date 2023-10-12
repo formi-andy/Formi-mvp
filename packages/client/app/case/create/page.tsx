@@ -223,6 +223,9 @@ const Upload = () => {
         title: "Case created",
         message: "Your case has been created successfully",
       });
+
+      setActive(0);
+      form.reset();
     } catch (error) {
       toast.error({
         title: "Failed to create case",

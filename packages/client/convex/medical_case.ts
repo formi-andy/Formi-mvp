@@ -119,8 +119,7 @@ export const createMedicalCase = mutation({
     } = args;
 
     const sanitizedDescription = sanitizeHtml(description || "");
-
-    const patient = await getUser(ctx, { id: patient_id as Id<"users"> });
+    const normaliedId = ctx.db.normalizeId("users", patient_id);
 
     const caseRecord = await ctx.db.insert("medical_case", {
       title,
@@ -128,7 +127,7 @@ export const createMedicalCase = mutation({
       description: sanitizedDescription,
       medical_history,
       tags: tags || [],
-      patient_id: patient ? patient._id : user._id,
+      patient_id: normaliedId ? normaliedId : user._id,
       diagnosis: [],
       user_id: user._id,
     });

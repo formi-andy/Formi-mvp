@@ -230,3 +230,8 @@
   margin-left: 5.5px;
   top: 455px;
 }
+
+.ant-skeleton-avatar-circle {
+  width: 24px !important;
+  height: 24px !important;
+}
