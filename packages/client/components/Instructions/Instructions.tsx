@@ -4,7 +4,7 @@ export const Instructions = () => {
   return (
     <div>
       <p className="text-xl font-medium">Instructions</p>
-      <ol className="list-decimal list-inside">
+      <ol className="list-decimal list-inside mb-8">
         <li>Plug in your HomeScope device to the computer</li>
         <li>
           Enable permissions for microphone and camera if prompted and needed
