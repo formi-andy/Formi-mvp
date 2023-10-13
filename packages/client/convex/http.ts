@@ -25,7 +25,7 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
   switch (event.type) {
     case "user.created": // intentional fallthrough
     case "user.updated": {
-      const existingUser = await ctx.runQuery(internal.users.getUser, {
+      const existingUser = await ctx.runQuery(internal.users.getClerkUser, {
         subject: event.data.id,
       });
       if (existingUser && event.type === "user.created") {
@@ -40,7 +40,9 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
     case "user.deleted": {
       // Clerk docs say this is required, but the types say optional?
       const id = event.data.id!;
-      await ctx.runMutation(internal.users.deleteUser, { id });
+      await ctx.runMutation(internal.users.deleteUser, {
+        id,
+      });
       break;
     }
     default: {
@@ -94,17 +96,22 @@ http.route({
     // Step 2: Save the storage ID to the database via a mutation
     const patientId = new URL(request.url).searchParams.get("patientId");
     const title = new URL(request.url).searchParams.get("title")!;
+    const caseId = new URL(request.url).searchParams.get("caseId");
     await ctx.runMutation(internal.images.storeImage, {
       storageId,
       title,
       patientId: patientId as Id<"users"> | null,
+      caseId: caseId as Id<"medical_case"> | null,
     });
+
+    const url = await ctx.storage.getUrl(storageId);
 
     // Step 3: Return a response with the correct CORS headers
     return new Response(
       JSON.stringify({
         patientId,
         storageId,
+        url,
       }),
       {
         status: 200,
@@ -170,20 +177,26 @@ http.route({
         status: 200,
       });
     }
-    const { attempts } = task;
-    const { storageId } = task.metadata;
+    const { attempts, response } = task;
+    console.log("TASK", attempts, task.metadata);
+    const { caseId } = task.metadata;
+    console.log("RESPONSE", response.annotations);
 
-    const image = await ctx.runQuery(internal.images.getImageByStorageId, {
-      storageId,
+    const medicalCase = await ctx.runQuery(
+      internal.medical_case.internalGetMedicalCase,
+      {
+        id: caseId as Id<"medical_case">,
+      }
+    );
+
+    const diagnosis = attempts.map((attempt: any) => {
+      return {
+        diagnosis: attempt.response.annotations.diagnosis.response[0],
+      };
     });
 
-    const diagnosis = attempts.map((attempt: any) => ({
-      diagnosis: attempt.response.annotations.ear_infection.response[0][0],
-      notes: attempt.response.annotations["Notes"].response[0],
-    }));
-
-    await ctx.runMutation(internal.images.diagnosisCallback, {
-      id: image._id,
+    await ctx.runMutation(internal.medical_case.diagnosisCallback, {
+      id: medicalCase._id,
       diagnosis,
     });
     return new Response(null, {

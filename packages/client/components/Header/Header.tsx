@@ -40,10 +40,10 @@ export default async function Header() {
                   Record
                 </Link>
                 <Link
-                  href="/upload"
+                  href="/case/create"
                   className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
                 >
-                  Upload
+                  Create Case
                 </Link>
                 <div className="h-full flex items-center relative">
                   <UserButton afterSignOutUrl="/login" />

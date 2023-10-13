@@ -93,6 +93,17 @@
   margin-bottom: 7px;
 }
 
+.mantine-RichTextEditor-root {
+  @apply !rounded-lg;
+}
+
+.mantine-RichTextEditor-toolbar {
+  @apply !rounded-t-lg;
+}
+
+.mantine-RichTextEditor-content {
+  @apply !rounded-b-lg;
+}
 
 .rte-content-container a {
   @apply text-blue-500 hover:underline
@@ -149,4 +160,78 @@
 
 .rte-content-container code {
   background-color: #f8f9fa;
+}
+
+.ProseMirror {
+  min-height: 128px;
+}
+
+#head {
+  margin-left: -28.5px;
+  top: -6px;
+}
+
+#leftShoulder {
+  margin-left: -53.5px;
+  top: 69px;
+}
+
+#rightShoulder {
+  margin-left: 13.5px;
+  top: 69px;
+}
+
+#leftArm {
+  margin-left: -78px;
+  top: 112px;
+}
+
+#rightArm {
+  margin-left: 38px;
+  top: 112px;
+}
+
+#chest {
+  margin-left: -43.5px;
+  top: 88px;
+}
+
+#stomach {
+  margin-left: -37.5px;
+  top: 130px;
+}
+
+#leftLeg {
+  margin-left: -46.5px;
+  top: 205px;
+}
+
+#rightLeg {
+  margin-left: 1.5px;
+  top: 205px;
+}
+
+#leftHand {
+  margin-left: -102.5px;
+  top: 224px;
+}
+
+#rightHand {
+  margin-left: 66.5px;
+  top: 224px;
+}
+
+#leftFoot {
+  margin-left: -40.5px;
+  top: 455px;
+}
+
+#rightFoot {
+  margin-left: 5.5px;
+  top: 455px;
+}
+
+.ant-skeleton-avatar-circle {
+  width: 24px !important;
+  height: 24px !important;
 }

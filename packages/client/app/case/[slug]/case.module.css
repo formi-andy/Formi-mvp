@@ -1,0 +1,20 @@
+.notesContainer {
+    @apply text-lg md:text-xl break-words overflow-y-hidden w-full font-light;
+    max-height: 160px;
+    transition: 0.25s ease-in;
+  }
+  
+  .hidden {
+    mask: linear-gradient(rgb(255, 255, 255) 45%, transparent);
+  }
+  
+  .expanded {
+    mask: none !important;
+    -webkit-mask: none !important;
+    transition: 0.25s ease-in;
+  }
+  
+  .rotate {
+    transform: rotate(180deg);
+  }
+  

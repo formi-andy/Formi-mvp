@@ -10,6 +10,7 @@ import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "@mantine/notifications/styles.css";
 import "@mantine/tiptap/styles.css";
+import "@mantine/carousel/styles.css";
 
 export const metadata = {
   title: "Homescope",
@@ -39,7 +40,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </head>
         <body className={`h-fit ${inter.className}`}>
           <NextTopLoader showSpinner={false} />
-          <MantineProvider>
+          <MantineProvider
+            theme={{
+              fontFamily: "var(--inter-font)",
+            }}
+          >
             <Notifications autoClose={3000} />
             <div className="w-full flex flex-col h-fit">
               <ConvexClientProvider>{children}</ConvexClientProvider>

@@ -58,8 +58,8 @@ export default function RTE({
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Blockquote />
             <RichTextEditor.Hr />
-            <RichTextEditor.BulletList />
-            <RichTextEditor.OrderedList />
+            {/* <RichTextEditor.BulletList />
+            <RichTextEditor.OrderedList /> */}
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>

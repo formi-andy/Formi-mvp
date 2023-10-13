@@ -7,10 +7,16 @@ export const doMigration = internalMutation(async ({ db }) => {
   //     await db.patch(user._id, { role: "patient" });
   //   }
   // }
-  const images = await db.query("images").collect();
-  for (const image of images) {
-    if (!image.diagnosis) {
-      await db.patch(image._id, { diagnosis: [] });
-    }
-  }
+  // const images = await db.query("images").collect();
+  // for (const image of images) {
+  //   await db.patch(image._id, {
+  //     case_id: "621bdta1bawhjh2s2bbhepgw9jtd2p8" as any,
+  //   });
+  // }
+  // const medicalCases = await db.query("medical_case").collect();
+  // for (const medicalCase of medicalCases) {
+  //   await db.patch(medicalCase._id, {
+  //     chief_complaint: "migrated complaint",
+  //   });
+  // }
 });

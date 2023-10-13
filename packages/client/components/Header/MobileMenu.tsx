@@ -51,8 +51,8 @@ export default function MobileMenu() {
         <MobileNavLink to={`/record`} onClick={() => setOpened(false)}>
           Record
         </MobileNavLink>
-        <MobileNavLink to={`/upload`} onClick={() => setOpened(false)}>
-          Upload
+        <MobileNavLink to={`/case/create`} onClick={() => setOpened(false)}>
+          Create Case
         </MobileNavLink>
         <SignedIn>
           <div className="relative left-4 md:left-8">

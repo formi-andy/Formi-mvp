@@ -15,6 +15,7 @@ export const storeImage = internalMutation({
     storageId: v.string(),
     patientId: v.union(v.id("users"), v.null()),
     title: v.string(),
+    caseId: v.union(v.id("medical_case"), v.null()),
   },
   async handler(
     ctx,
@@ -22,16 +23,20 @@ export const storeImage = internalMutation({
       storageId,
       patientId,
       title,
-    }: { storageId: string; patientId: string | null; title: string }
+      caseId,
+    }: {
+      storageId: string;
+      patientId: string | null;
+      title: string;
+      caseId: string | null;
+    }
   ) {
     const user = await mustGetCurrentUser(ctx);
     const storageRecord = await ctx.db.insert("images", {
       storage_id: storageId,
       user_id: user._id,
-      patient_id: patientId || user._id,
       title,
-      tags: [],
-      diagnosis: [],
+      case_id: caseId || "",
     });
 
     return { storageRecord, patientId: patientId || user._id };
@@ -55,12 +60,57 @@ export const getImage = query({
       });
     }
 
-    await verifyCareTeam(ctx, user._id, image.patient_id);
+    await verifyCareTeam(ctx, user._id, image.user_id);
 
     return {
       ...image,
       url: (await ctx.storage.getUrl(image.storage_id)) || "",
     };
+  },
+});
+
+export const getImageByCaseId = internalQuery({
+  args: {
+    case_id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { case_id } = args;
+
+    const image = await ctx.db
+      .query("images")
+      .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
+      .first();
+    if (!image) {
+      throw new ConvexError({
+        message: "Image not found",
+        code: 404,
+      });
+    }
+
+    return image;
+  },
+});
+
+export const getImagesByCaseId = internalQuery({
+  args: {
+    case_id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { case_id } = args;
+
+    const images = await ctx.db
+      .query("images")
+      .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
+      .collect();
+
+    if (images.length === 0) {
+      throw new ConvexError({
+        message: "Image not found",
+        code: 404,
+      });
+    }
+
+    return images;
   },
 });
 
@@ -93,12 +143,11 @@ export const updateImage = mutation({
     title: v.string(),
     patient_id: v.optional(v.id("users")),
     description: v.optional(v.string()),
-    tags: v.array(v.string()),
   },
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const { id, title, patient_id, description, tags } = args;
+    const { id, title, patient_id, description } = args;
 
     const image = await ctx.db.get(id);
     if (!image) {
@@ -120,40 +169,12 @@ export const updateImage = mutation({
     await ctx.db.patch(id, {
       title,
       description,
-      tags,
     });
 
     return {
       ...image,
       title,
       description: sanitizedDescription,
-      tags,
-    };
-  },
-});
-
-export const diagnosisCallback = internalMutation({
-  args: {
-    id: v.id("images"),
-    diagnosis: v.array(v.any()),
-  },
-  async handler(ctx, args) {
-    const { id, diagnosis } = args;
-
-    const image = await ctx.db.get(id);
-    if (!image) {
-      throw new ConvexError({
-        message: "Image not found",
-        code: 404,
-      });
-    }
-
-    await ctx.db.patch(id, {
-      diagnosis,
-    });
-
-    return {
-      ...image,
     };
   },
 });
@@ -171,7 +192,7 @@ export const listImages = query({
 
     const images = await ctx.db
       .query("images")
-      .withIndex("by_patient_id", (q) => q.eq("patient_id", patientId))
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
       .order("desc")
       .collect();
 
@@ -216,7 +237,7 @@ export const deleteImages = mutation({
           throw new Error("Image not found");
         }
 
-        if (image.patient_id !== user._id) {
+        if (image.user_id !== user._id) {
           throw new Error("Unauthorized call to delete image");
         }
 
