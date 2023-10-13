@@ -28,7 +28,8 @@ export default defineSchema({
     storage_id: v.string(),
     user_id: v.string(),
     title: v.string(),
-    case_id: v.string(),
+    case_id: v.optional(v.string()),
+    // case_id: v.string(),
     description: v.optional(v.string()),
   })
     .index("by_storage_id", ["storage_id"])
