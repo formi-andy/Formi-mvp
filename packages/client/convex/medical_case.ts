@@ -1,15 +1,15 @@
 import {
   internalMutation,
+  internalQuery,
   mutation,
   query,
   QueryCtx,
 } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
-import { getUser, mustGetCurrentUser, mustGetUserById } from "./users";
+import { mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
-import { Id } from "./_generated/dataModel";
-import { getImageByCaseId } from "./images";
+import { getImageByCaseId, getImagesByCaseId } from "./images";
 
 export const getMedicalCase = query({
   args: {
@@ -37,11 +37,49 @@ export const getMedicalCase = query({
       });
     }
 
+    // get all images for this case
+    const images = await getImagesByCaseId(ctx, { case_id: medicalCase._id });
+
+    // get urls for all images
+    const imagesWithUrls = await Promise.all(
+      images.map(async (image) => {
+        const url = await ctx.storage.getUrl(image.storage_id);
+        return {
+          ...image,
+          url,
+        };
+      })
+    );
+
     // await verifyCareTeam(ctx, user._id, medicalCase.user_id);
 
     return {
       ...medicalCase,
+      images: imagesWithUrls,
       patient,
+    };
+  },
+});
+
+export const internalGetMedicalCase = internalQuery({
+  args: {
+    id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { id } = args;
+
+    const medicalCase = await ctx.db.get(id);
+    if (!medicalCase) {
+      throw new ConvexError({
+        message: "Medical case not found",
+        code: 404,
+      });
+    }
+
+    // await verifyCareTeam(ctx, user._id, medicalCase.user_id);
+
+    return {
+      ...medicalCase,
     };
   },
 });
@@ -102,6 +140,7 @@ export const createMedicalCase = mutation({
     description: v.optional(v.string()),
     symptom_areas: v.array(v.string()),
     medical_history: v.any(),
+    chief_complaint: v.string(),
     // patient_id: v.id("users"),
     patient_id: v.string(),
     tags: v.optional(v.array(v.string())),
@@ -116,6 +155,7 @@ export const createMedicalCase = mutation({
       medical_history,
       tags,
       symptom_areas,
+      chief_complaint,
     } = args;
 
     const sanitizedDescription = sanitizeHtml(description || "");
@@ -128,6 +168,7 @@ export const createMedicalCase = mutation({
       medical_history,
       tags: tags || [],
       patient_id: normaliedId ? normaliedId : user._id,
+      chief_complaint,
       diagnosis: [],
       user_id: user._id,
     });
@@ -244,6 +285,7 @@ export const diagnosisCallback = internalMutation({
 
     return ctx.db.patch(id, {
       diagnosis,
+      reviewed_at: Date.now(),
     });
   },
 });

@@ -77,7 +77,7 @@ export async function POST(request: Request) {
           title: "Diagnosis",
           min_responses_required: 1,
           max_responses_required: 1,
-          max_characters: 2000,
+          max_characters: 5000,
           required: true,
           hint: "Please enter the diagnosis for this case. Use your best judgement, remember that this is purely for training and research purposes.",
         },

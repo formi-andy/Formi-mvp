@@ -28,6 +28,7 @@ function useCaseForm(active: number) {
     initialValues: {
       title: "",
       patient: "",
+      chiefComplaint: "",
       description: "",
       files: [] as {
         file: File;
@@ -164,6 +165,7 @@ const Upload = () => {
       const { caseRecord } = await createCase({
         title: form.values.title,
         patient_id: form.values.patient,
+        chief_complaint: form.values.chiefComplaint,
         description: form.values.description,
         symptom_areas: symptomAreas,
         medical_history: Object.keys(form.values.questions).map((key) => {
@@ -215,7 +217,7 @@ const Upload = () => {
       instructions += form.values.description;
 
       // create scale batch and task
-      await axios.post(`/api/scale?caseId=${caseRecord}?batchName=${""}`, {
+      await axios.post(`/api/scale?caseId=${caseRecord}&batchName=${""}`, {
         attachments,
         instructions,
       });

@@ -1,4 +1,4 @@
-import { TextInput } from "@mantine/core";
+import { Select, TextInput } from "@mantine/core";
 import { LuFiles, LuLocate } from "react-icons/lu";
 
 import Dropzone from "../DropZone/DropZone";
@@ -24,6 +24,79 @@ export default function PatientInfo({ form }: { form: CaseForm }) {
           placeholder="Patient"
           required
           {...form.getInputProps("patient")}
+        />
+        <Select
+          className="w-full"
+          label="Chief Complaint"
+          placeholder="Chief Complaint"
+          required
+          data={[
+            {
+              label: "Abdominal Pain",
+              value: "Abdominal Pain",
+            },
+            {
+              label: "General Questions",
+              value: "General Questions",
+            },
+            {
+              label: "Cough",
+              value: "Cough",
+            },
+            {
+              label: "Diarrhea",
+              value: "Diarrhea",
+            },
+            {
+              label: "Earache",
+              value: "Earache",
+            },
+            {
+              label: "Fever",
+              value: "Fever",
+            },
+            {
+              label: "Headache",
+              value: "Headache",
+            },
+            {
+              label: "Injury",
+              value: "Injury",
+            },
+            {
+              label: "Muscle/Joint Pain",
+              value: "Muscle/Joint Pain",
+            },
+            {
+              label: "Rash",
+              value: "Rash",
+            },
+            {
+              label: "Runny Nose",
+              value: "Runny Nose",
+            },
+            {
+              label: "Sleep/Behavioral",
+              value: "Sleep/Behavioral",
+            },
+            {
+              label: "Sore Throat",
+              value: "Sore Throat",
+            },
+            {
+              label: "Urination Issue",
+              value: "Urination Issue",
+            },
+            {
+              label: "Vomiting",
+              value: "Vomiting",
+            },
+            {
+              label: "Other",
+              value: "Other",
+            },
+          ]}
+          {...form.getInputProps("chiefComplaint")}
         />
       </div>
       <div className={style.gridContainer}>

@@ -12,6 +12,7 @@ export default defineSchema({
     user_id: v.id("users"),
     patient_id: v.id("users"),
     tags: v.array(v.string()),
+    chief_complaint: v.string(),
     diagnosis: v.array(
       v.any()
       // v.object({
@@ -19,6 +20,7 @@ export default defineSchema({
       //   notes: v.string(),
       // })
     ),
+    reviewed_at: v.optional(v.number()),
   })
     .index("by_user_id", ["user_id"])
     .index("by_tags", ["tags"]),

@@ -177,18 +177,23 @@ http.route({
         status: 200,
       });
     }
-    const { attempts } = task;
+    const { attempts, response } = task;
     console.log("TASK", attempts, task.metadata);
     const { caseId } = task.metadata;
+    console.log("RESPONSE", response.annotations);
 
-    const medicalCase = await ctx.runQuery(api.medical_case.getMedicalCase, {
-      id: caseId as Id<"medical_case">,
+    const medicalCase = await ctx.runQuery(
+      internal.medical_case.internalGetMedicalCase,
+      {
+        id: caseId as Id<"medical_case">,
+      }
+    );
+
+    const diagnosis = attempts.map((attempt: any) => {
+      return {
+        diagnosis: attempt.response.annotations.diagnosis.response[0],
+      };
     });
-
-    const diagnosis = attempts.map((attempt: any) => ({
-      diagnosis: attempt.response.annotations.ear_infection.response[0][0],
-      notes: attempt.response.annotations["Notes"].response[0],
-    }));
 
     await ctx.runMutation(internal.medical_case.diagnosisCallback, {
       id: medicalCase._id,

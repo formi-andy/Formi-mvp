@@ -24,6 +24,10 @@ export default function Review({ form }: { form: CaseForm }) {
         <p>{form.values.patient}</p>
       </div>
       <div>
+        <p className="font-medium text-xl mb-2">Chief Complaint</p>
+        <p>{form.values.chiefComplaint}</p>
+      </div>
+      <div>
         <p className="font-medium text-xl mb-2">Files</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
           {form.values.files.map((file, index) => (

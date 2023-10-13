@@ -17,26 +17,17 @@ const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
     symptom_areas,
     diagnosis,
     image_url,
+    chief_complaint,
   } = medicalCase;
 
   return (
     <div
       key={_id}
-      className="flex flex-col gap-y-4 relative min-w-[200px] min-h-[200px] aspect-square border p-6 rounded-lg hover:bg-slate-50"
+      className="flex flex-col gap-y-4 relative min-w-[200px] min-h-[200px] aspect-square border p-6 rounded-lg transition hover:bg-slate-50"
     >
-      <div className="w-full relative flex flex-col gap-y-2">
+      <div className="w-full relative flex flex-col gap-y-1">
         <p className="text-lg md:text-xl truncate font-medium">{title}</p>
-        <div className="flex gap-x-2 items-center">
-          <div className="relative h-6 w-6">
-            <CircleImage
-              url={patient.clerkUser.image_url}
-              alt={"First case image"}
-            />
-          </div>
-          <p className="text-sm">
-            {`${patient.clerkUser.first_name} ${patient.clerkUser.last_name}`}
-          </p>
-        </div>
+        <p>{chief_complaint}</p>
       </div>
       <div className="relative w-full h-full rounded-lg blur-sm">
         <Image url={image_url} alt={"First case image"} />
