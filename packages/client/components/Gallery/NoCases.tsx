@@ -16,7 +16,7 @@ export default function NoCases() {
         <p className="text-3xl font-light">No cases created yet</p>
       </div>
       <Link
-        href="/record"
+        href="/case/create"
         className="flex w-fit text-blue-500 items-center gap-x-2 text-2xl font-light hover:underline"
       >
         Click here to create a case
