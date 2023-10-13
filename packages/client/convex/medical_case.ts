@@ -1,8 +1,15 @@
-import { mutation, query, QueryCtx } from "./_generated/server";
+import {
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+  QueryCtx,
+} from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
-import { getUser, mustGetCurrentUser, mustGetUserById } from "./users";
+import { mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
+import { getImageByCaseId, getImagesByCaseId } from "./images";
 
 export const getMedicalCase = query({
   args: {
@@ -23,11 +30,56 @@ export const getMedicalCase = query({
 
     const patient = await mustGetUserById(ctx, medicalCase.patient_id);
 
+    if (medicalCase.user_id !== user._id || patient._id !== user._id) {
+      throw new ConvexError({
+        message: "Unauthenticated call to get medical case",
+        code: 401,
+      });
+    }
+
+    // get all images for this case
+    const images = await getImagesByCaseId(ctx, { case_id: medicalCase._id });
+
+    // get urls for all images
+    const imagesWithUrls = await Promise.all(
+      images.map(async (image) => {
+        const url = await ctx.storage.getUrl(image.storage_id);
+        return {
+          ...image,
+          url,
+        };
+      })
+    );
+
     // await verifyCareTeam(ctx, user._id, medicalCase.user_id);
 
     return {
       ...medicalCase,
+      images: imagesWithUrls,
       patient,
+    };
+  },
+});
+
+export const internalGetMedicalCase = internalQuery({
+  args: {
+    id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { id } = args;
+
+    const medicalCase = await ctx.db.get(id);
+    if (!medicalCase) {
+      throw new ConvexError({
+        message: "Medical case not found",
+        code: 404,
+      });
+    }
+
+    // await verifyCareTeam(ctx, user._id, medicalCase.user_id);
+
+    return {
+      ...medicalCase,
     };
   },
 });
@@ -37,7 +89,6 @@ export const updateMedicalCase = mutation({
     id: v.id("medical_case"),
     title: v.optional(v.string()),
     description: v.optional(v.string()),
-    type: v.optional(v.string()),
     medical_history: v.optional(v.any()),
     tags: v.optional(v.array(v.string())),
     diagnosis: v.optional(v.array(v.any())),
@@ -45,8 +96,7 @@ export const updateMedicalCase = mutation({
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const { id, title, description, type, medical_history, tags, diagnosis } =
-      args;
+    const { id, title, description, medical_history, tags, diagnosis } = args;
 
     const medicalCase = await ctx.db.get(id);
     if (!medicalCase) {
@@ -68,7 +118,6 @@ export const updateMedicalCase = mutation({
     await ctx.db.patch(id, {
       title,
       description,
-      type,
       medical_history,
       tags,
       diagnosis,
@@ -78,7 +127,6 @@ export const updateMedicalCase = mutation({
       ...medicalCase,
       title,
       description: sanitizedDescription,
-      type,
       medical_history,
       tags,
       diagnosis,
@@ -90,29 +138,41 @@ export const createMedicalCase = mutation({
   args: {
     title: v.string(),
     description: v.optional(v.string()),
-    type: v.string(),
+    symptom_areas: v.array(v.string()),
     medical_history: v.any(),
-    patient_id: v.id("users"),
+    chief_complaint: v.string(),
+    // patient_id: v.id("users"),
+    patient_id: v.string(),
     tags: v.optional(v.array(v.string())),
   },
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const { title, description, type, patient_id, medical_history, tags } =
-      args;
+    const {
+      title,
+      description,
+      patient_id,
+      medical_history,
+      tags,
+      symptom_areas,
+      chief_complaint,
+    } = args;
 
     const sanitizedDescription = sanitizeHtml(description || "");
+    const normaliedId = ctx.db.normalizeId("users", patient_id);
 
-    return ctx.db.insert("medical_case", {
+    const caseRecord = await ctx.db.insert("medical_case", {
       title,
+      symptom_areas,
       description: sanitizedDescription,
-      type,
       medical_history,
       tags: tags || [],
-      patient_id,
+      patient_id: normaliedId ? normaliedId : user._id,
+      chief_complaint,
       diagnosis: [],
       user_id: user._id,
     });
+    return { caseRecord };
   },
 });
 
@@ -136,9 +196,13 @@ export const listMedicalCases = query({
     const medicalCasesWithPatient = await Promise.all(
       medicalCases.map(async (medicalCase) => {
         const patient = await mustGetUserById(ctx, medicalCase.patient_id);
+        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
+        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+
         return {
           ...medicalCase,
           patient,
+          image_url: url,
         };
       })
     );
@@ -200,6 +264,29 @@ export const deleteCases = mutation({
     );
 
     return ids;
+  },
+});
+
+export const diagnosisCallback = internalMutation({
+  args: {
+    id: v.id("medical_case"),
+    diagnosis: v.array(v.any()),
+  },
+  async handler(ctx, args) {
+    const { id, diagnosis } = args;
+
+    const medicalCase = await ctx.db.get(id);
+    if (!medicalCase) {
+      throw new ConvexError({
+        message: "Medical case not found",
+        code: 404,
+      });
+    }
+
+    return ctx.db.patch(id, {
+      diagnosis,
+      reviewed_at: Date.now(),
+    });
   },
 });
 

@@ -15,6 +15,7 @@ export const storeImage = internalMutation({
     storageId: v.string(),
     patientId: v.union(v.id("users"), v.null()),
     title: v.string(),
+    caseId: v.union(v.id("medical_case"), v.null()),
   },
   async handler(
     ctx,
@@ -22,14 +23,20 @@ export const storeImage = internalMutation({
       storageId,
       patientId,
       title,
-    }: { storageId: string; patientId: string | null; title: string }
+      caseId,
+    }: {
+      storageId: string;
+      patientId: string | null;
+      title: string;
+      caseId: string | null;
+    }
   ) {
     const user = await mustGetCurrentUser(ctx);
     const storageRecord = await ctx.db.insert("images", {
       storage_id: storageId,
       user_id: user._id,
       title,
-      case_id: "",
+      case_id: caseId || "",
     });
 
     return { storageRecord, patientId: patientId || user._id };
@@ -59,6 +66,51 @@ export const getImage = query({
       ...image,
       url: (await ctx.storage.getUrl(image.storage_id)) || "",
     };
+  },
+});
+
+export const getImageByCaseId = internalQuery({
+  args: {
+    case_id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { case_id } = args;
+
+    const image = await ctx.db
+      .query("images")
+      .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
+      .first();
+    if (!image) {
+      throw new ConvexError({
+        message: "Image not found",
+        code: 404,
+      });
+    }
+
+    return image;
+  },
+});
+
+export const getImagesByCaseId = internalQuery({
+  args: {
+    case_id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { case_id } = args;
+
+    const images = await ctx.db
+      .query("images")
+      .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
+      .collect();
+
+    if (images.length === 0) {
+      throw new ConvexError({
+        message: "Image not found",
+        code: 404,
+      });
+    }
+
+    return images;
   },
 });
 
@@ -123,32 +175,6 @@ export const updateImage = mutation({
       ...image,
       title,
       description: sanitizedDescription,
-    };
-  },
-});
-
-export const diagnosisCallback = internalMutation({
-  args: {
-    id: v.id("images"),
-    diagnosis: v.array(v.any()),
-  },
-  async handler(ctx, args) {
-    const { id, diagnosis } = args;
-
-    const image = await ctx.db.get(id);
-    if (!image) {
-      throw new ConvexError({
-        message: "Image not found",
-        code: 404,
-      });
-    }
-
-    // await ctx.db.patch(id, {
-    //   diagnosis,
-    // });
-
-    return {
-      ...image,
     };
   },
 });

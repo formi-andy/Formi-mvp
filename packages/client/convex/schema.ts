@@ -7,11 +7,12 @@ export default defineSchema({
   medical_case: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
-    type: v.string(),
+    symptom_areas: v.array(v.string()),
     medical_history: v.any(),
     user_id: v.id("users"),
     patient_id: v.id("users"),
     tags: v.array(v.string()),
+    chief_complaint: v.string(),
     diagnosis: v.array(
       v.any()
       // v.object({
@@ -19,6 +20,7 @@ export default defineSchema({
       //   notes: v.string(),
       // })
     ),
+    reviewed_at: v.optional(v.number()),
   })
     .index("by_user_id", ["user_id"])
     .index("by_tags", ["tags"]),
@@ -26,10 +28,12 @@ export default defineSchema({
     storage_id: v.string(),
     user_id: v.string(),
     title: v.string(),
-    case_id: v.string(),
+    case_id: v.optional(v.string()),
+    // case_id: v.string(),
     description: v.optional(v.string()),
   })
     .index("by_storage_id", ["storage_id"])
+    .index("by_case_id", ["case_id"])
     .index("by_user_id", ["user_id"]),
   users: defineTable({
     // this is UserJSON from @clerk/backend

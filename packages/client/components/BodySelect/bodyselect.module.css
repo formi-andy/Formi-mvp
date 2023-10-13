@@ -1,0 +1,24 @@
+.bodyContainer {
+    @apply relative w-full;
+    height: 500px;
+}
+
+.bodyContainer svg:hover {
+    @apply transition;
+    cursor: pointer;
+}
+  
+.bodyContainer svg:hover path {
+   @apply fill-blue-500;
+}
+
+.bodyPartSelected path {
+    @apply fill-blue-500;
+}
+  
+
+.bodyContainer svg {
+    @apply fill-zinc-400;
+    position: absolute;
+    left: 50%;
+}
