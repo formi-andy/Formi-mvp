@@ -13,9 +13,9 @@ const FinishedCall = () => {
       <div className="w-fit flex flex-col sm:flex-row gap-4">
         <Link
           className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white rounded-lg transition h-12 w-52"
-          href="/upload"
+          href="/case/create"
         >
-          Upload Images
+          Create a Case
         </Link>
         <Link
           className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white rounded-lg transition w-52 h-12"
