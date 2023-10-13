@@ -4,9 +4,8 @@ import { Badge } from "../ui/badge";
 import { CircleImage } from "../Image/Image";
 import Image from "../Image/Image";
 
-type MedicalCase = (typeof api.medical_case.getMedicalCase)["_returnType"] & {
-  image_url: string;
-};
+type MedicalCase =
+  (typeof api.medical_case.listMedicalCases)["_returnType"][number]["medicalCases"][number];
 
 const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
   const {
