@@ -2,7 +2,6 @@
 
 import { MouseEventHandler, useState } from "react";
 import style from "./bodyselect.module.css";
-import { INITIAL_PARTS_INPUT } from "@/commons/constants/bodyParts";
 
 export const SVG_PARTS: Array<string> = [
   "head",
@@ -119,13 +118,6 @@ export default function BodyComponent({
 }) {
   let currentBodyModel = MaleBodyModel;
 
-  partsInput = {
-    ...INITIAL_PARTS_INPUT,
-    ...partsInput,
-  };
-
-  const [parts, setParts] = useState<PartsInput>(partsInput);
-
   const setValue = function (value: boolean | PartSelect): PartSelect {
     if (value === true || value === false) {
       value = { selected: !value, show: !value };
@@ -147,19 +139,19 @@ export default function BodyComponent({
       return;
     }
 
-    let property: keyof typeof parts;
-    for (property in parts) {
+    let partsChanged = structuredClone(partsInput);
+
+    let property: keyof typeof partsChanged;
+    for (property in partsChanged) {
       if (
         id !== property ||
-        (parts[property] && parts[property].show === false)
+        (partsChanged[property] && partsChanged[property].show === false)
       ) {
         continue;
       }
-      parts[property] = setValue(parts[property]);
+      partsChanged[property] = setValue(partsChanged[property]);
     }
 
-    const partsChanged = { ...parts };
-    setParts(partsChanged);
     if (onClick) {
       onClick(partsChanged);
     }
@@ -167,14 +159,18 @@ export default function BodyComponent({
 
   const svgElements = {
     render: (): Array<JSX.Element> => {
-      let property: keyof typeof parts;
+      let partsChanged = structuredClone(partsInput);
+
+      let property: keyof typeof partsChanged;
       const elements: Array<JSX.Element> = [];
-      for (property in parts) {
-        if (parts[property] && parts[property].show === false) {
+      for (property in partsChanged) {
+        if (partsChanged[property] && partsChanged[property].show === false) {
           continue;
         }
         const svg = svgElements[property];
-        const selected: boolean = parts[property].selected ? true : false;
+        const selected: boolean = partsChanged[property].selected
+          ? true
+          : false;
         elements.push(svg(selected));
       }
       return elements;
