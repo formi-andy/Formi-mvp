@@ -1,7 +1,10 @@
 import React from "react";
 
+// https://www.youtube.com/watch?v=WkQwctC_XhY
+
 const TutorialCard = () => {
-  const embedCode = "dQw4w9WgXcQ";
+  // const embedCode = "dQw4w9WgXcQ";
+  const embedCode = "WkQwctC_XhY";
 
   return (
     <div className="p-8 rounded-lg flex flex-col justify-center gap-y-4 md:gap-y-6 lg:gap-y-8 border">
@@ -19,7 +22,8 @@ const TutorialCard = () => {
         <iframe
           className="relative h-full w-full rounded-lg"
           src={`https://www.youtube.com/embed/${embedCode}`}
-          title="Rick Astley - Never Gonna Give You Up (Official Music Video)"
+          title="How to Use the HomeScope Otoscope"
+          // title="Rick Astley - Never Gonna Give You Up (Official Music Video)"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         />
       </div>
