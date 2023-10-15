@@ -9,6 +9,7 @@ export default authMiddleware({
   publicRoutes: [
     "/",
     "/about",
+    "/contact",
     "/not-found",
     "/api/auth/signin",
     "/api/auth/signout",
