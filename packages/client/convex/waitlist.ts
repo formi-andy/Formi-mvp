@@ -7,16 +7,10 @@ export const joinWaitlist = mutation({
     email: v.string(),
     name: v.optional(v.string()),
     phone: v.optional(v.string()),
-    message: v.optional(v.string()),
   },
   async handler(
     ctx,
-    {
-      email,
-      name,
-      phone,
-      message,
-    }: { email: string; name?: string; phone?: string; message?: string }
+    { email, name, phone }: { email: string; name?: string; phone?: string }
   ) {
     const existing = await ctx.db
       .query("waitlist")
@@ -32,7 +26,6 @@ export const joinWaitlist = mutation({
       email,
       name,
       phone,
-      message,
     });
   },
 });
