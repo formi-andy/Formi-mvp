@@ -5,7 +5,6 @@ import { TextInput, Textarea, SimpleGrid, Group, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-import { ConvexError } from "convex/values";
 import { validateEmail } from "@/utils/validateEmail";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { Button } from "../ui/button";
@@ -66,14 +65,10 @@ export function ContactForm() {
 
   return (
     <form
-      className="w-full md:w-3/4 lg:w-1/2"
+      className="w-full md:w-3/4 lg:w-1/2 mt-12"
       onSubmit={form.onSubmit(() => submit())}
     >
-      <Title order={2} size="h1" fw={900} ta="center">
-        Get in touch
-      </Title>
-
-      <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+      <SimpleGrid cols={{ base: 1, sm: 2 }}>
         <TextInput
           label="Name"
           placeholder="Your name"
