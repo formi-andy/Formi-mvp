@@ -50,12 +50,26 @@ export default async function Header() {
                 </div>
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="font-medium border rounded h-fit px-4 py-1 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
-              >
-                Log In
-              </Link>
+              <div className="flex gap-x-4 h-full items-center">
+                <Link
+                  href="/about"
+                  className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
+                >
+                  About
+                </Link>
+                <Link
+                  href="/contact"
+                  className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="/login"
+                  className="font-medium border rounded h-fit px-4 py-1 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition"
+                >
+                  Log In
+                </Link>
+              </div>
             )}
           </div>
           <div className="flex h-full lg:hidden justify-center items-center group">

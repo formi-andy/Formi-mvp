@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TextInput, Textarea, SimpleGrid, Group, Title } from "@mantine/core";
+import { TextInput, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
@@ -65,10 +65,10 @@ export function ContactForm() {
 
   return (
     <form
-      className="w-full md:w-3/4 lg:w-1/2 mt-12"
+      className="grid gap-4 w-full max-w-xl border p-4 sm:p-8 rounded-lg"
       onSubmit={form.onSubmit(() => submit())}
     >
-      <SimpleGrid cols={{ base: 1, sm: 2 }}>
+      <div className="grid gap-4 sm:grid-cols-2">
         <TextInput
           label="Name"
           placeholder="Your name"
@@ -77,35 +77,30 @@ export function ContactForm() {
         />
         <TextInput
           label="Email"
-          placeholder="Your email"
+          placeholder="hello@homescape.us"
           name="email"
           {...form.getInputProps("email")}
         />
-      </SimpleGrid>
-
+      </div>
       <TextInput
         label="Subject"
         placeholder="Subject"
-        mt="md"
         name="subject"
         {...form.getInputProps("subject")}
       />
       <Textarea
-        mt="md"
-        label="Message"
+        label="How Can We Help You?"
         placeholder="Your message"
         maxRows={10}
         minRows={5}
         autosize
+        maxLength={1000}
         name="message"
         {...form.getInputProps("message")}
       />
-
-      <Group justify="center" mt="lg">
-        <Button type="submit" disabled={loading} size="lg">
-          Send
-        </Button>
-      </Group>
+      <Button type="submit" disabled={loading}>
+        Send
+      </Button>
     </form>
   );
 }
