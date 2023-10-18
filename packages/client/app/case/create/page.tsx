@@ -118,7 +118,7 @@ export type CaseForm = ReturnType<typeof useCaseForm>;
 const Upload = () => {
   const user = useAuth();
   const toast = useNetworkToasts();
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(0);
   const [uploading, setUploading] = useState(false);
   const createCase = useMutation(api.medical_case.createMedicalCase);
 
