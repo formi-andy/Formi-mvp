@@ -54,7 +54,7 @@ export default function SelectedParts({
 }) {
   return (
     <div className="flex flex-col gap-y-2">
-      <p className="font-medium text-lg border-b pb-2">Selected Areas</p>
+      <p className="font-medium text-lg">Selected Areas</p>
       {renderSelectedParts(bodyParts, setData)}
     </div>
   );

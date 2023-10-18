@@ -3,16 +3,16 @@
     grid-template-columns: 3fr 2fr; /* 3/5 and 2/5 of the container width */
 }
 
-.fileLabel, .areaLabel {
-    @apply flex items-center w-full text-lg font-medium gap-x-2
+.containerLabel {
+    @apply flex items-center w-full text-lg font-medium whitespace-pre mb-2;
 }
 
 .dropzoneContainer {
     @apply w-full relative gap-y-4 divide-y flex flex-col items-center rounded-lg border hover:border-blue-500 transition;
 }
 
-.bodyContainer {
-    @apply border rounded-lg p-4 w-full;
+.bodySelectContainer {
+    @apply border rounded-lg p-4 w-full overflow-x-hidden;
 }
   
 /* Responsive design for smaller screens */
@@ -22,11 +22,9 @@
     }
     
     /* Change order of items */
-    .fileLabel { order: 1; }
-    .fileContainer { order: 2; }
-    .areaLabel { order: 3; }
-    .bodyContainer { order: 4; }
-    .selectedParts { order: 5; }
-    .symptoms { order: 6; }
+    .fileContainer { order: 1; }
+    .bodyContainer { order: 2; }
+    .selectedParts { order: 3; }
+    .symptoms { order: 4; }
 }
   

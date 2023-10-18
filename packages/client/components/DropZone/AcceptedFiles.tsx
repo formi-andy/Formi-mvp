@@ -50,7 +50,7 @@ export default function AcceptedFiles({
   ));
   return (
     <div className="flex flex-col gap-y-2 mt-4">
-      <p className="text-lg font-medium border-b pb-2">Accepted Files</p>
+      <p className="text-lg font-medium">Accepted Files</p>
       {listedFiles.length === 0 ? (
         <p>No accepted file(s)</p>
       ) : (

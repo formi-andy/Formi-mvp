@@ -30,6 +30,7 @@ function useCaseForm(active: number) {
       patient: "",
       chiefComplaint: "",
       description: "",
+      symptoms: "",
       files: [] as {
         file: File;
         title: string;
@@ -68,16 +69,20 @@ function useCaseForm(active: number) {
         }
         return {
           title:
-            values.title.trim().length === 0 ? "Case must have title" : null,
+            values.title.trim().length === 0 ? "Case must have a title" : null,
           patient:
             values.patient.trim().length === 0
-              ? "Case must have patient"
+              ? "Case must have a patient"
               : null,
           files:
             values.files.length === 0
               ? "Case must have at least one image"
               : null,
           bodyParts: selected ? null : "Case must have at least one body part",
+          symptoms:
+            values.symptoms.trim().length === 0
+              ? "Symptoms cannot be empty"
+              : null,
         };
       }
 
@@ -168,6 +173,7 @@ const Upload = () => {
         chief_complaint: form.values.chiefComplaint,
         description: form.values.description,
         symptom_areas: symptomAreas,
+        symptoms: form.values.symptoms,
         medical_history: Object.keys(form.values.questions).map((key) => {
           return {
             question: form.values.questions[key].question,
@@ -208,6 +214,7 @@ const Upload = () => {
       let instructions =
         "## **Instructions** \n\n You will be given a group of images and a set of questions and answers. Using this information, you will be asked to diagnose the patient. \n\n";
       instructions += `### Symptom Areas \n\n ${symptomAreas.join(", ")} \n\n`;
+      instructions +=  `### Symptoms \n\n ${form.values.symptoms} \n\n`;
       instructions += Object.keys(form.values.questions)
         .map((key) => {
           return `### ${form.values.questions[key].question}\n${form.values.questions[key].answer} \n`;

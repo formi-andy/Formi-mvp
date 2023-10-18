@@ -1,5 +1,4 @@
-import { Select, TextInput } from "@mantine/core";
-import { LuFiles, LuLocate } from "react-icons/lu";
+import { Select, TextInput, Textarea } from "@mantine/core";
 
 import Dropzone from "../DropZone/DropZone";
 import BodySelect from "../BodySelect/BodySelect";
@@ -36,13 +35,10 @@ export default function PatientInfo({ form }: { form: CaseForm }) {
         />
       </div>
       <div className={style.gridContainer}>
-        <div className={style.fileLabel}>
-          Images <p className="text-[rgb(250,82,82)]">*</p>
-        </div>
-        <div className={style.areaLabel}>
-          Symptom Areas <p className="text-[rgb(250,82,82)]">*</p>
-        </div>
         <div className={style.fileContainer}>
+          <div className={style.containerLabel}>
+            Images <p className="text-[rgb(250,82,82)]">*</p>
+          </div>
           <div
             className={`${style.dropzoneContainer} ${
               form.errors.files ? "border-[rgb(250,82,82)]" : ""
@@ -62,22 +58,36 @@ export default function PatientInfo({ form }: { form: CaseForm }) {
             }}
           />
         </div>
-        <div
-          className={`${style.bodyContainer} ${
-            form.errors.bodyParts ? "border-[rgb(250,82,82)]" : ""
-          }`}
-        >
-          <BodySelect
-            onClick={(bodyParts) => {
-              form.setFieldValue("bodyParts", bodyParts);
-            }}
-            partsInput={form.values.bodyParts}
-          />
+        <div className={style.bodyContainer}>
+          <div className={style.containerLabel}>
+            Symptom Areas <p className="text-[rgb(250,82,82)]">*</p>
+          </div>
+          <div
+            className={`${style.bodySelectContainer} ${
+              form.errors.bodyParts ? "border-[rgb(250,82,82)]" : ""
+            }`}
+          >
+            <BodySelect
+              onClick={(bodyParts) => {
+                form.setFieldValue("bodyParts", bodyParts);
+              }}
+              partsInput={form.values.bodyParts}
+            />
+          </div>
         </div>
         <div className={style.symptoms}>
-          <div className="flex flex-col gap-y-2">
-            <p className="font-medium text-lg border-b pb-2">Symptoms *</p>
+          <div className="flex whitespace-pre font-medium text-lg">
+            Symptoms <p className="text-[rgb(250,82,82)]">*</p>
           </div>
+          <Textarea
+            className="w-full mt-2"
+            placeholder="Describe the symptoms, be as detailed as possible"
+            minRows={4}
+            maxLength={5000}
+            autosize
+            required
+            {...form.getInputProps("symptoms")}
+          />
         </div>
         <div className={style.selectedParts}>
           <SelectedParts
