@@ -20,7 +20,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
-import { LuChevronDown } from "react-icons/lu";
+import { LuChevronDown, LuClipboard, LuWorkflow } from "react-icons/lu";
 import style from "./case.module.css";
 import { Badge } from "@/components/ui/badge";
 
@@ -136,7 +136,7 @@ function CasePage({ params }: { params: { slug: string } }) {
               className={`rte-content-container ${style.notesContainer}`}
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(
-                  medicalCase.description || "No notes yet"
+                  medicalCase.description || "No notes yet."
                 ),
               }}
             />
@@ -170,11 +170,11 @@ function CasePage({ params }: { params: { slug: string } }) {
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <MdNotes size={24} /> Medical Information
+            <LuWorkflow size={24} /> Medical Assessment
           </div>
           <div className="flex flex-col w-full p-4">
             {medicalCase.diagnosis.length === 0 ? (
-              <p className="text-lg">No medical information yet.</p>
+              <p className="text-lg">No medical assessment yet.</p>
             ) : (
               <div className="text-lg">
                 {
@@ -183,6 +183,14 @@ function CasePage({ params }: { params: { slug: string } }) {
                 }
               </div>
             )}
+          </div>
+        </div>
+        <div className="flex flex-col border rounded-lg">
+          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
+            <LuClipboard size={24} /> Symptoms
+          </div>
+          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+            <p className="text-lg">{medicalCase.symptoms}</p>
           </div>
         </div>
         <div className="flex flex-col border rounded-lg">
