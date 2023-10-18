@@ -118,7 +118,7 @@ export type CaseForm = ReturnType<typeof useCaseForm>;
 const Upload = () => {
   const user = useAuth();
   const toast = useNetworkToasts();
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(1);
   const [uploading, setUploading] = useState(false);
   const createCase = useMutation(api.medical_case.createMedicalCase);
 
@@ -146,6 +146,7 @@ const Upload = () => {
     }
   };
 
+  // TODO: make this a queue job
   async function submitCase() {
     try {
       setUploading(true);
@@ -214,7 +215,7 @@ const Upload = () => {
       let instructions =
         "## **Instructions** \n\n You will be given a group of images and a set of questions and answers. Using this information, you will be asked to diagnose the patient. \n\n";
       instructions += `### Symptom Areas \n\n ${symptomAreas.join(", ")} \n\n`;
-      instructions +=  `### Symptoms \n\n ${form.values.symptoms} \n\n`;
+      instructions += `### Symptoms \n\n ${form.values.symptoms} \n\n`;
       instructions += Object.keys(form.values.questions)
         .map((key) => {
           return `### ${form.values.questions[key].question}\n${form.values.questions[key].answer} \n`;
@@ -296,7 +297,7 @@ const Upload = () => {
           }
         }}
       >
-        {active === 2 ? "Submit" : "Continue"}
+        {active === 2 ? "Create Case" : "Continue"}
       </Button>
     </>
   );

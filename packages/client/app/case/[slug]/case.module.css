@@ -1,5 +1,5 @@
 .notesContainer {
-    @apply text-lg md:text-xl break-words overflow-y-hidden w-full font-light;
+    @apply text-lg break-words overflow-y-hidden w-full;
     max-height: 160px;
     transition: 0.25s ease-in;
   }

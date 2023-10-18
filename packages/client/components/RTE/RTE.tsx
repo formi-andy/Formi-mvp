@@ -36,7 +36,14 @@ export default function RTE({
 
   return (
     <div className="flex flex-col gap-y-4">
-      <RichTextEditor editor={editor}>
+      <RichTextEditor
+        editor={editor}
+        classNames={{
+          toolbar: "!px-2 !py-1",
+          controlsGroup: "border-none",
+          control: "!border-none hover:bg-sky-100",
+        }}
+      >
         <RichTextEditor.Toolbar sticky stickyOffset={0}>
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Bold />
