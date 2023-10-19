@@ -86,9 +86,9 @@ function useCaseForm(active: number) {
               ? "Symptoms cannot be empty"
               : null,
           age: values.age === "" ? "Age cannot be empty" : null,
-          ethinicity:
+          ethnicity:
             values.ethnicity.trim().length === 0
-              ? "Ethinicity cannot be empty"
+              ? "Ethnicity cannot be empty"
               : null,
         };
       }
