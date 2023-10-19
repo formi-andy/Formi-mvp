@@ -7,6 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { ConvexError } from "convex/values";
 import { Button } from "../ui/button";
+import { validateEmail } from "@/utils/validateEmail";
 
 export default function WaitList() {
   const [email, setEmail] = useState("");
@@ -52,14 +53,6 @@ export default function WaitList() {
     }
   };
 
-  const validateEmail = (email: string) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-  };
-
   return (
     <div className="flex flex-col gap-y-4 w-full md:w-3/4 mt-16">
       <p className="text-2xl font-semibold text-center">Join the waitlist</p>
@@ -70,11 +63,7 @@ export default function WaitList() {
           value={email}
           onChange={(event) => setEmail(event.currentTarget.value)}
         />
-        <Button
-          onClick={submit}
-          disabled={loading}
-          className="w-24"
-        >
+        <Button onClick={submit} disabled={loading} className="w-24">
           Submit
         </Button>
       </div>

@@ -45,21 +45,27 @@ export default function MobileMenu() {
           pointerEvents: opened ? "all" : "none",
         }}
       >
-        <MobileNavLink to={`/dashboard`} onClick={() => setOpened(false)}>
-          Dashboard
-        </MobileNavLink>
-        <MobileNavLink to={`/record`} onClick={() => setOpened(false)}>
-          Record
-        </MobileNavLink>
-        <MobileNavLink to={`/case/create`} onClick={() => setOpened(false)}>
-          Create Case
-        </MobileNavLink>
         <SignedIn>
+          <MobileNavLink to={`/dashboard`} onClick={() => setOpened(false)}>
+            Dashboard
+          </MobileNavLink>
+          <MobileNavLink to={`/record`} onClick={() => setOpened(false)}>
+            Record
+          </MobileNavLink>
+          <MobileNavLink to={`/case/create`} onClick={() => setOpened(false)}>
+            Create Case
+          </MobileNavLink>
           <div className="relative left-4 md:left-8">
             <UserButton afterSignOutUrl="/login" />
           </div>
         </SignedIn>
         <SignedOut>
+          <MobileNavLink to={`/about`} onClick={() => setOpened(false)}>
+            About
+          </MobileNavLink>
+          <MobileNavLink to={`/contact`} onClick={() => setOpened(false)}>
+            Contact
+          </MobileNavLink>
           <MobileNavLink to={`/login`} onClick={() => setOpened(false)}>
             Log In
           </MobileNavLink>

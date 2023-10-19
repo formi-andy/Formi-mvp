@@ -53,8 +53,8 @@ export default function SelectedParts({
   setData: (parts: typeof INITIAL_PARTS_INPUT) => void;
 }) {
   return (
-    <div className="flex flex-col gap-y-4">
-      <p className="font-medium text-lg border-b pb-4">Selected Areas</p>
+    <div className="flex flex-col gap-y-2">
+      <p className="font-medium text-lg">Selected Areas</p>
       {renderSelectedParts(bodyParts, setData)}
     </div>
   );

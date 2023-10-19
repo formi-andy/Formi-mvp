@@ -8,6 +8,7 @@ export default defineSchema({
     title: v.string(),
     description: v.optional(v.string()),
     symptom_areas: v.array(v.string()),
+    symptoms: v.string(),
     medical_history: v.any(),
     user_id: v.id("users"),
     patient_id: v.id("users"),
@@ -105,6 +106,12 @@ export default defineSchema({
     email: v.string(),
     name: v.optional(v.string()),
     phone: v.optional(v.string()),
-    message: v.optional(v.string()),
   }).index("by_email", ["email"]),
+  contact_us_message: defineTable({
+    email: v.string(),
+    name: v.string(),
+    phone: v.optional(v.string()),
+    subject: v.string(),
+    message: v.string(),
+  }),
 });

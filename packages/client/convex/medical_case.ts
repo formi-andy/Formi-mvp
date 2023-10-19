@@ -141,6 +141,7 @@ export const createMedicalCase = mutation({
     symptom_areas: v.array(v.string()),
     medical_history: v.any(),
     chief_complaint: v.string(),
+    symptoms: v.string(),
     // patient_id: v.id("users"),
     patient_id: v.string(),
     tags: v.optional(v.array(v.string())),
@@ -155,6 +156,7 @@ export const createMedicalCase = mutation({
       medical_history,
       tags,
       symptom_areas,
+      symptoms,
       chief_complaint,
     } = args;
 
@@ -164,6 +166,7 @@ export const createMedicalCase = mutation({
     const caseRecord = await ctx.db.insert("medical_case", {
       title,
       symptom_areas,
+      symptoms,
       description: sanitizedDescription,
       medical_history,
       tags: tags || [],
