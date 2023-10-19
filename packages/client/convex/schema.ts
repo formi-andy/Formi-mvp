@@ -8,6 +8,8 @@ export default defineSchema({
     title: v.string(),
     description: v.optional(v.string()),
     symptom_areas: v.array(v.string()),
+    age: v.optional(v.number()),
+    ethnicity: v.optional(v.string()),
     symptoms: v.string(),
     medical_history: v.any(),
     user_id: v.id("users"),

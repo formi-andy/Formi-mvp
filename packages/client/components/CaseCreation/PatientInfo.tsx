@@ -1,4 +1,4 @@
-import { Select, TextInput, Textarea } from "@mantine/core";
+import { NumberInput, Select, TextInput, Textarea } from "@mantine/core";
 
 import Dropzone from "../DropZone/DropZone";
 import BodySelect from "../BodySelect/BodySelect";
@@ -32,6 +32,22 @@ export default function PatientInfo({ form }: { form: CaseForm }) {
           required
           data={CHIEF_COMPLAINTS}
           {...form.getInputProps("chiefComplaint")}
+        />
+      </div>
+      <div className="flex flex-col sm:flex-row gap-x-4 gap-y-6">
+        <NumberInput
+          className="w-full"
+          label="Patient Age"
+          placeholder="Patient Age"
+          required
+          {...form.getInputProps("age")}
+        />
+        <TextInput
+          className="w-full"
+          label="Race/Ethnicity"
+          placeholder="Race/Ethnicity"
+          required
+          {...form.getInputProps("ethnicity")}
         />
       </div>
       <div className={style.gridContainer}>

@@ -142,6 +142,8 @@ export const createMedicalCase = mutation({
     medical_history: v.any(),
     chief_complaint: v.string(),
     symptoms: v.string(),
+    age: v.optional(v.number()),
+    ethnicity: v.optional(v.string()),
     // patient_id: v.id("users"),
     patient_id: v.string(),
     tags: v.optional(v.array(v.string())),
@@ -158,6 +160,8 @@ export const createMedicalCase = mutation({
       symptom_areas,
       symptoms,
       chief_complaint,
+      age,
+      ethnicity,
     } = args;
 
     const sanitizedDescription = sanitizeHtml(description || "");
@@ -174,6 +178,8 @@ export const createMedicalCase = mutation({
       chief_complaint,
       diagnosis: [],
       user_id: user._id,
+      ethnicity,
+      age,
     });
     return { caseRecord };
   },
