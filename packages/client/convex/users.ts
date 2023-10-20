@@ -9,6 +9,7 @@ import {
 import { ConvexError, v } from "convex/values";
 import { Doc, Id } from "./_generated/dataModel";
 import { UserJSON } from "@clerk/backend";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 
 /**
  * Whether the current user is fully logged in, including having their information
@@ -67,7 +68,12 @@ export const updateOrCreateUser = internalMutation({
     if (userRecord === null) {
       const colors = ["red", "green", "blue"];
       const color = colors[Math.floor(Math.random() * colors.length)];
-      await ctx.db.insert("users", { clerkUser, color, role: "patient" });
+      await clerkClient.users.updateUserMetadata(clerkUser.id, {
+        publicMetadata: {
+          role: null,
+        },
+      });
+      await ctx.db.insert("users", { clerkUser, color, role: null });
     } else {
       await ctx.db.patch(userRecord._id, { clerkUser });
     }

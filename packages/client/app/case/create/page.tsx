@@ -92,7 +92,6 @@ function useCaseForm(active: number) {
               : null,
         };
       }
-
       if (active === 1) {
         const questions = form.values.questions;
 

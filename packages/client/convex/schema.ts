@@ -42,7 +42,7 @@ export default defineSchema({
     // this is UserJSON from @clerk/backend
     clerkUser: v.any(),
     color: v.string(),
-    role: v.string(),
+    role: v.union(v.string(), v.null()), //TODO: enum
   }).index("by_clerk_id", ["clerkUser.id"]),
   action_item: defineTable({
     user_id: v.string(),
