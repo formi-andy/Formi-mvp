@@ -17,6 +17,7 @@ export default function StudentTab() {
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
   const [changeEmail, setChangeEmail] = useState(false);
 
   const setEmailMetadata = useAction(api.medical_student.setEmailMetadata);
@@ -27,19 +28,20 @@ export default function StudentTab() {
 
   return (
     <div className="flex flex-col gap-y-4 items-center justify-center p-4 rounded-lg border w-full">
-      {studentEmail && !changeEmail ? (
+      {(studentEmail || emailSent) && !changeEmail ? (
         <>
           <p className="text-xl lg:text-2xl font-medium text-center">
             Verify your email
           </p>
           <div className="my-2 flex gap-x-2 items-center">
             <div className="border rounded-full py-2 px-6 border-black">
-              <p className="text-sm">{studentEmail}</p>
+              <p className="text-sm">{studentEmail || email}</p>
             </div>
             <Button
               size="icon"
               variant="outline"
               onClick={() => {
+                setEmailSent(false);
                 setChangeEmail(true);
               }}
             >
@@ -79,7 +81,7 @@ export default function StudentTab() {
                 await emailAddress.attemptVerification({
                   code,
                 });
-                await verifyEmail({ email: studentEmail });
+                await verifyEmail({ email: studentEmail || email });
                 toast.success({
                   title: "Email verified",
                   message: "Navigating to dashboard",
@@ -183,6 +185,7 @@ export default function StudentTab() {
                   }),
                   setEmailMetadata({ email }),
                 ]);
+                setEmailSent(true);
                 toast.success({
                   title: "Email set",
                   message: "Verification email sent",
