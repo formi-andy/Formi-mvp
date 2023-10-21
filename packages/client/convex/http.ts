@@ -1,7 +1,7 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
-import type { WebhookEvent } from "@clerk/backend";
+import type { WebhookEvent } from "@clerk/clerk-sdk-node";
 import { Webhook } from "svix";
 import { Id } from "./_generated/dataModel";
 
@@ -32,7 +32,7 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
         console.warn("Overwriting user", event.data.id, "with", event.data);
       }
       console.log("creating/updating user", event.data.id);
-      await ctx.runMutation(internal.users.updateOrCreateUser, {
+      await ctx.runAction(internal.users.updateOrCreateUserAction, {
         clerkUser: event.data,
       });
       break;

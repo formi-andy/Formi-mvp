@@ -39,11 +39,21 @@ export default defineSchema({
     .index("by_case_id", ["case_id"])
     .index("by_user_id", ["user_id"]),
   users: defineTable({
-    // this is UserJSON from @clerk/backend
+    // this is UserJSON from @clerk/node-sdk
     clerkUser: v.any(),
     color: v.string(),
-    role: v.string(),
+    role: v.union(v.string(), v.null()), //TODO: enum
   }).index("by_clerk_id", ["clerkUser.id"]),
+  medical_student: defineTable({
+    user_id: v.id("users"),
+    school: v.string(),
+    email: v.string(),
+    bio: v.optional(v.string()),
+    blurb: v.optional(v.string()),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_school", ["school"])
+    .index("by_email", ["email"]),
   action_item: defineTable({
     user_id: v.string(),
     created_by: v.string(),
