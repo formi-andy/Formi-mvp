@@ -44,6 +44,26 @@ export const createMedicalStudent = internalMutation({
   },
 });
 
+export const getMedicalStudent = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    return ctx.db
+      .query("medical_student")
+      .withIndex("by_user_id", (q) => q.eq("user_id", userId))
+      .first();
+  },
+});
+
+export const deleteMedicalStudentByUserId = internalMutation({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const medicalStudent = await getMedicalStudent(ctx, { userId });
+    if (medicalStudent) {
+      await ctx.db.delete(medicalStudent._id);
+    }
+  },
+});
+
 export const verifyEmail = action({
   args: { email: v.string() },
   handler: async (ctx, { email }) => {

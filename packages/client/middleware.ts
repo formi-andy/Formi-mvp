@@ -34,6 +34,8 @@ export default authMiddleware({
       return NextResponse.redirect(dashboard);
     } else if (clerkUser.publicMetadata.role) {
       return NextResponse.next();
+    } else if (req.nextUrl.pathname === "/onboarding") {
+      return NextResponse.next();
     } else {
       const onboarding = new URL("/onboarding", req.url);
       return NextResponse.redirect(onboarding);

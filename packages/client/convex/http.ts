@@ -7,7 +7,7 @@ import { Id } from "./_generated/dataModel";
 
 function ensureEnvironmentVariable(name: string): string {
   const value = process.env[name];
-  if (value === undefined ) {
+  if (value === undefined) {
     throw new Error(`missing environment variable ${name}`);
   }
   return value;
@@ -32,7 +32,7 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
         console.warn("Overwriting user", event.data.id, "with", event.data);
       }
       console.log("creating/updating user", event.data.id);
-      await ctx.runMutation(internal.users.updateOrCreateUser, {
+      await ctx.runAction(internal.users.updateOrCreateUserAction, {
         clerkUser: event.data,
       });
       break;

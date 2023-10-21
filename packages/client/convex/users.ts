@@ -9,7 +9,12 @@ import {
 
 import { ConvexError, v } from "convex/values";
 import { Doc, Id } from "./_generated/dataModel";
-import { UserJSON } from "@clerk/clerk-sdk-node";
+import clerkClient, { UserJSON } from "@clerk/clerk-sdk-node";
+import {
+  deleteMedicalStudentByUserId,
+  getMedicalStudent,
+} from "./medical_student";
+import { internal } from "./_generated/api";
 
 /**
  * Whether the current user is fully logged in, including having their information
@@ -70,11 +75,54 @@ export const updateOrCreateUser = internalMutation({
         const colors = ["red", "green", "blue"];
         const color = colors[Math.floor(Math.random() * colors.length)];
         await ctx.db.insert("users", { clerkUser, color, role: null });
-      } else {
+        return;
+      }
+
+      if (userRecord.role === "patient" || userRecord.role === null) {
         await ctx.db.patch(userRecord._id, { clerkUser });
+        return;
+      }
+
+      const oldStudentEmail = userRecord.clerkUser.public_metadata
+        .student_email as string | undefined;
+
+      const studentEmail = clerkUser.email_addresses.find(
+        (emailAddress) => emailAddress.email_address === oldStudentEmail
+      );
+
+      if (
+        (studentEmail && studentEmail.verification?.status === "verified") ||
+        !oldStudentEmail
+      ) {
+        await ctx.db.patch(userRecord._id, { clerkUser });
+      } else {
+        await ctx.db.patch(userRecord._id, {
+          clerkUser,
+          role: null,
+        });
+        await deleteMedicalStudentByUserId(ctx, { userId: userRecord._id });
+        return { clearMetadata: true };
       }
     } catch (e) {
       console.log("error updating user", e);
+    }
+  },
+});
+
+export const updateOrCreateUserAction = internalAction({
+  args: { clerkUser: v.any() }, // no runtime validation, trust Clerk
+  async handler(ctx, { clerkUser }: { clerkUser: UserJSON }) {
+    const res = await ctx.runMutation(internal.users.updateOrCreateUser, {
+      clerkUser,
+    });
+
+    if (res?.clearMetadata) {
+      const test = await clerkClient.users.updateUserMetadata(clerkUser.id, {
+        publicMetadata: {
+          student_email: null,
+          role: null,
+        },
+      });
     }
   },
 });
