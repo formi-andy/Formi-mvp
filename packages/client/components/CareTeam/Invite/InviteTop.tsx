@@ -3,7 +3,7 @@
 import { useState } from "react";
 import InviteDoctorModal from "./InviteDoctorModal";
 import DoctorCodeModal from "./DoctorCodeModal";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 export default function InviteTop({ role }: { role: string }) {
   const [opened, setOpened] = useState(false);
@@ -13,7 +13,8 @@ export default function InviteTop({ role }: { role: string }) {
         <p className="text-4xl font-medium">Invites</p>
         {role === "doctor" ? (
           <p className="text-sm">
-            Your invites to join your patients' care team will show up here.
+            Your invites to join your patients&apos; care team will show up
+            here.
           </p>
         ) : (
           <p className="text-sm">

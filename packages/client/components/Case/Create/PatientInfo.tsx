@@ -1,9 +1,9 @@
 import { NumberInput, Select, TextInput, Textarea } from "@mantine/core";
 
-import Dropzone from "../DropZone/DropZone";
-import BodySelect from "../BodySelect/BodySelect";
-import AcceptedFiles from "../DropZone/AcceptedFiles";
-import SelectedParts from "../BodySelect/SelectedParts";
+import Dropzone from "@/components/ui/DropZone/DropZone";
+import BodySelect from "./BodySelect/BodySelect";
+import AcceptedFiles from "@/components/ui/DropZone/AcceptedFiles";
+import SelectedParts from "./BodySelect/SelectedParts";
 import style from "./create.module.css";
 import { CaseForm } from "@/app/case/create/page";
 import { CHIEF_COMPLAINTS } from "@/commons/constants/complaints";

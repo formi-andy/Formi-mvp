@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "@/components/Image/Image";
+import Image from "@/components/ui/Image/Image";
 import { useMutation, useQuery } from "convex/react";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
@@ -13,7 +13,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { GALLERY_LOADERS } from "@/commons/constants/loaders";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 const Gallery: React.FC = () => {
   let images = useQuery(api.images.listImages, {
@@ -129,10 +129,7 @@ const Gallery: React.FC = () => {
                     )}
                     {selecting && selectedImages.includes(image._id) && (
                       <div className="absolute bottom-2 right-2 w-6 h-6 rounded-full flex items-center justify-center bg-blue-500">
-                        <LuCheck
-                          size={12}
-                          className="text-white stroke-2"
-                        />
+                        <LuCheck size={12} className="text-white stroke-2" />
                       </div>
                     )}
                   </div>

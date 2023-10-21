@@ -15,9 +15,9 @@ import { Breadcrumbs, TextInput, TagsInput, Modal } from "@mantine/core";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 
-import Image from "@/components/Image/Image";
+import Image from "@/components/ui/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
-import RTE from "@/components/RTE/RTE";
+import RTE from "@/components/ui/RTE/RTE";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import useNetworkToasts from "@/hooks/useNetworkToasts";

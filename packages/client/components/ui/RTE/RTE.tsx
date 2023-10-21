@@ -39,6 +39,7 @@ export default function RTE({
       <RichTextEditor
         editor={editor}
         classNames={{
+          typographyStylesProvider: "!pl-0",
           toolbar: "!px-2 !py-1",
           controlsGroup: "border-none",
           control: "!border-none hover:bg-sky-100",

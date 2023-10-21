@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { api } from "@/convex/_generated/api";
-import { Badge } from "../ui/badge";
-import { CircleImage } from "../Image/Image";
-import Image from "../Image/Image";
+import { Badge } from "../../ui/badge";
+import { CircleImage } from "../../ui/Image/Image";
+import Image from "../../ui/Image/Image";
 
 type MedicalCase =
   (typeof api.medical_case.listMedicalCases)["_returnType"][number]["medicalCases"][number];

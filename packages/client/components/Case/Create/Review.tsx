@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { CaseForm } from "@/app/case/create/page";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 import DOMPurify from "dompurify";
 
 export default function Review({ form }: { form: CaseForm }) {

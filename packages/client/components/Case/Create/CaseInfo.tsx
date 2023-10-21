@@ -3,7 +3,7 @@ import { MdNotes } from "react-icons/md";
 import { LuPencil } from "react-icons/lu";
 
 import { Radio, TextInput, Textarea } from "@mantine/core";
-import RTE from "../RTE/RTE";
+import RTE from "../../ui/RTE/RTE";
 
 export default function CaseInfo({ form }: { form: CaseForm }) {
   return (

@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import VideoContainer from "./VideoContainer";
 import { TextInput } from "@mantine/core";
 import { message } from "antd";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 export default function Meeting() {
   const [joined, setJoined] = useState(false);

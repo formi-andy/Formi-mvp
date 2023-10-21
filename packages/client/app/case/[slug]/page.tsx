@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 import Autoplay from "embla-carousel-autoplay";
 
-import Image from "@/components/Image/Image";
+import Image from "@/components/ui/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";

@@ -27,7 +27,7 @@ import ChatContext from "@/context/chat-context";
 import CommandContext from "@/context/cmd-context";
 import LiveTranscriptionContext from "@/context/live-transcription";
 import RecordingContext from "@/context/recording-context";
-import LoadingLayer from "../loading-layer";
+import LoadingLayer from "../../loading-layer";
 // import Chat from "@/feature/chat/chat";
 // import Command from "@/feature/command/command";
 // import Subsession from "@/feature/subsession/subsession";

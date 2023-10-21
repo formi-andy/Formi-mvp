@@ -4,10 +4,10 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 import AppLoader from "@/components/Loaders/AppLoader";
-import PatientInvites from "@/components/Invite/PatientInvites";
-import DoctorInvites from "@/components/Invite/DoctorInvites";
+import PatientInvites from "@/components/CareTeam/Invite/PatientInvites";
+import DoctorInvites from "@/components/CareTeam/Invite/DoctorInvites";
 import NotFoundPage from "../not-found";
-import InviteTop from "@/components/Invite/InviteTop";
+import InviteTop from "@/components/CareTeam/Invite/InviteTop";
 
 export default function Invite() {
   const user = useQuery(api.users.currentUser);

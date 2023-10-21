@@ -1,4 +1,4 @@
-import TutorialCard from "../Tutorials/TutorialCard";
+import TutorialCard from "./TutorialCard";
 
 export const Instructions = () => {
   return (

@@ -11,7 +11,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { GALLERY_LOADERS } from "@/commons/constants/loaders";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import NoCases from "./NoCases";
 import CaseCard from "./CaseCard";
 

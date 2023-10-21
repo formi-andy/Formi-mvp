@@ -14,9 +14,9 @@ import {
   LuSend,
 } from "react-icons/lu";
 import { INITIAL_PARTS_INPUT } from "@/commons/constants/bodyParts";
-import PatientInfo from "@/components/CaseCreation/PatientInfo";
-import CaseInfo from "@/components/CaseCreation/CaseInfo";
-import Review from "@/components/CaseCreation/Review";
+import PatientInfo from "@/components/Case/Create/PatientInfo";
+import CaseInfo from "@/components/Case/Create/CaseInfo";
+import Review from "@/components/Case/Create/Review";
 import { BASE_QUESTIONS } from "@/commons/constants/questions";
 import { Stepper } from "@mantine/core";
 import { useMutation } from "convex/react";

@@ -1,6 +1,6 @@
 import { formatBytes } from "@/utils/formatBytes";
 import { TextInput } from "@mantine/core";
-import { Button } from "../ui/button";
+import { Button } from "../button";
 import { LuTrash } from "react-icons/lu";
 
 export default function AcceptedFiles({

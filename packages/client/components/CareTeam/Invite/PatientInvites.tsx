@@ -3,9 +3,9 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { LuSend } from "react-icons/lu";
+import PatientInvite from "./PatientInvite";
 import PatientInviteLoader from "./PatientInviteLoader";
 import { INVITES_LOADERS } from "@/commons/constants/loaders";
-import DoctorInvite from "./DoctorInvite";
 
 type Invites = (typeof api.invite.getPendingInvites)["_returnType"];
 
@@ -27,22 +27,23 @@ function renderInvites(invites: Invites | undefined) {
             No invites found
           </p>
           <p className="text-sm mt-3 text-center w-80">
-            Pending invitations that your patients sent will show up here.
+            Pending invitations that you sent to join your care team will show
+            up here.
           </p>
         </div>
         <p className="text-base font-medium text-center mb-4">
-          How to join your patient's care team
+          How to invite your doctor
         </p>
         <div className="flex flex-col border divide-y rounded-lg">
           <div className="p-4">
-            <p className="text-sm">Send your patient your code</p>
+            <p className="text-sm">Get your doctor&apos;s invite code</p>
           </div>
           <div className="p-4">
-            <p className="text-sm">They'll send you an invite</p>
+            <p className="text-sm">Enter the code on this page</p>
           </div>
           <div className="p-4">
             <p className="text-sm">
-              Accept the invite and you'll be added to their care team
+              Once your doctor accepts they will be added to your care team
             </p>
           </div>
         </div>
@@ -53,13 +54,13 @@ function renderInvites(invites: Invites | undefined) {
   return (
     <div className="w-full flex flex-col">
       {invites.map((invite) => {
-        return <DoctorInvite key={invite._id} invite={invite} />;
+        return <PatientInvite key={invite._id} invite={invite} />;
       })}
     </div>
   );
 }
 
-export default function DoctorInvites() {
+export default function PatientInvites() {
   const pendingInvites = useQuery(api.invite.getPendingInvites);
 
   return (
