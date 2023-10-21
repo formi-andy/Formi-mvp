@@ -8,15 +8,19 @@ import { useState } from "react";
 import { useClerk } from "@clerk/nextjs";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { LuPenSquare } from "react-icons/lu";
+import { useRouter } from "next/navigation";
 
 export default function StudentTab() {
+  const toast = useNetworkToasts();
+  const router = useRouter();
+  const clerk = useClerk();
+
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [changeEmail, setChangeEmail] = useState(false);
-  const toast = useNetworkToasts();
+
   const setEmailMetadata = useAction(api.medical_student.setEmailMetadata);
   const verifyEmail = useAction(api.medical_student.verifyEmail);
-  const clerk = useClerk();
   const studentEmail = clerk.user?.publicMetadata.student_email as
     | string
     | undefined;
@@ -80,6 +84,7 @@ export default function StudentTab() {
                   title: "Email verified",
                   message: "Navigating to dashboard",
                 });
+                router.push("/dashboard");
               } catch (error: any) {
                 setCode("");
                 toast.error({

@@ -37,6 +37,9 @@ export const createMedicalStudent = internalMutation({
       bio,
       blurb,
     });
+    await ctx.db.patch(user._id, {
+      role: "medical_student",
+    });
     return medicalStudent;
   },
 });

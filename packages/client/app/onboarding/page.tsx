@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserTab from "@/components/Onboarding/UserTab";
 import StudentTab from "@/components/Onboarding/StudentTab";
 
-export default function Onboarding() {
+export default async function Onboarding() {
   return (
     <div className="flex w-full items-center justify-center flex-1">
       <div className="w-full grid p-6 lg:p-8 justify-center gap-y-4 border rounded-lg max-w-2xl shadow-accent-2">
