@@ -1,4 +1,5 @@
 import {
+  action,
   internalAction,
   internalMutation,
   internalQuery,
@@ -117,13 +118,35 @@ export const updateOrCreateUserAction = internalAction({
     });
 
     if (res?.clearMetadata) {
-      const test = await clerkClient.users.updateUserMetadata(clerkUser.id, {
+      await clerkClient.users.updateUserMetadata(clerkUser.id, {
         publicMetadata: {
           student_email: null,
           role: null,
         },
       });
     }
+  },
+});
+
+export const setPatientRole = internalMutation({
+  args: {},
+  async handler(ctx) {
+    const user = await mustGetCurrentUser(ctx);
+    await ctx.db.patch(user._id, { role: "patient" });
+    return user;
+  },
+});
+
+export const setPatientAction = action({
+  args: {},
+  async handler(ctx) {
+    const user = await ctx.runMutation(internal.users.setPatientRole);
+    await clerkClient.users.updateUserMetadata(user.clerkUser.id, {
+      publicMetadata: {
+        role: "patient",
+        student_email: null,
+      },
+    });
   },
 });
 
@@ -199,3 +222,11 @@ export async function mustGetUserById(
     });
   return userRecord;
 }
+
+export const getClerkUserForAction = internalMutation({
+  args: {},
+  handler: async (ctx, {}) => {
+    const user = await mustGetCurrentUser(ctx);
+    return user.clerkUser.id;
+  },
+});

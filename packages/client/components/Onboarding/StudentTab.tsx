@@ -15,6 +15,7 @@ export default function StudentTab() {
   const router = useRouter();
   const clerk = useClerk();
 
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [emailSent, setEmailSent] = useState(false);
@@ -61,7 +62,7 @@ export default function StudentTab() {
           />
           <Button
             variant="outline-action"
-            disabled={code.length !== 6}
+            disabled={code.length !== 6 || loading}
             onClick={async () => {
               const emailAddress = clerk.user?.emailAddresses.find(
                 (emailAddress) => emailAddress.emailAddress === studentEmail
@@ -74,6 +75,7 @@ export default function StudentTab() {
                 return;
               }
               try {
+                setLoading(true);
                 toast.loading({
                   title: "Verifying email...",
                   message: "Please wait",
@@ -94,12 +96,15 @@ export default function StudentTab() {
                   message:
                     error?.errors?.[0]?.longMessage || "Please try again later",
                 });
+              } finally {
+                setLoading(false);
               }
             }}
           >
             Verify
           </Button>
           <Button
+            disabled={loading}
             variant="link"
             onClick={async () => {
               const emailAddress = clerk.user?.emailAddresses.find(
@@ -113,6 +118,7 @@ export default function StudentTab() {
                 return;
               }
               try {
+                setLoading(true);
                 toast.loading({
                   title: "Sending code...",
                   message: "Please wait",
@@ -129,6 +135,8 @@ export default function StudentTab() {
                   title: "Error sending code",
                   message: "Please try again later",
                 });
+              } finally {
+                setLoading(false);
               }
             }}
           >
@@ -146,6 +154,7 @@ export default function StudentTab() {
             onChange={(event) => setEmail(event.currentTarget.value)}
           />
           <Button
+            disabled={loading}
             variant="outline-action"
             onClick={async () => {
               const domain = email.split("@")[1];
@@ -159,6 +168,7 @@ export default function StudentTab() {
               }
 
               try {
+                setLoading(true);
                 if (studentEmail) {
                   toast.loading({
                     title: "Updating email...",
@@ -196,6 +206,8 @@ export default function StudentTab() {
                   title: "Error setting email",
                   message: "Please try again later",
                 });
+              } finally {
+                setLoading(false);
               }
             }}
           >
