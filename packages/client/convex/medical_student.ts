@@ -13,14 +13,6 @@ import { Doc, Id } from "./_generated/dataModel";
 import { clerkClient, UserJSON } from "@clerk/clerk-sdk-node";
 import { internal } from "./_generated/api";
 
-export const getClerkUserFromAction = internalMutation({
-  args: {},
-  handler: async (ctx, {}) => {
-    const user = await mustGetCurrentUser(ctx);
-    return user.clerkUser.id;
-  },
-});
-
 export const createMedicalStudent = internalMutation({
   args: {
     school: v.string(),
@@ -68,7 +60,7 @@ export const verifyEmail = action({
   args: { email: v.string() },
   handler: async (ctx, { email }) => {
     const clerkUserId = await ctx.runMutation(
-      internal.medical_student.getClerkUserFromAction
+      internal.users.getClerkUserForAction
     );
     const clerkUser = await clerkClient.users.getUser(clerkUserId);
     const schoolEmail = clerkUser.emailAddresses.find(
@@ -103,7 +95,7 @@ export const setEmailMetadata = action({
   args: { email: v.string() },
   handler: async (ctx, { email }) => {
     const clerkUser = await ctx.runMutation(
-      internal.medical_student.getClerkUserFromAction
+      internal.users.getClerkUserForAction
     );
     await clerkClient.users.updateUserMetadata(clerkUser, {
       publicMetadata: {
