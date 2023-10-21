@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
-    "@clerk/backend": "^0.29.0",
     "@clerk/clerk-sdk-node": "^4.12.15",
     "@clerk/nextjs": "^4.23.5",
     "@mantine/carousel": "^7.1.3",

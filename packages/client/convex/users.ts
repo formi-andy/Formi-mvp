@@ -1,4 +1,5 @@
 import {
+  internalAction,
   internalMutation,
   internalQuery,
   mutation,
@@ -8,8 +9,7 @@ import {
 
 import { ConvexError, v } from "convex/values";
 import { Doc, Id } from "./_generated/dataModel";
-import { UserJSON } from "@clerk/backend";
-import { clerkClient } from "@clerk/clerk-sdk-node";
+import { UserJSON } from "@clerk/clerk-sdk-node";
 
 /**
  * Whether the current user is fully logged in, including having their information
@@ -65,17 +65,16 @@ export const updateOrCreateUser = internalMutation({
   async handler(ctx, { clerkUser }: { clerkUser: UserJSON }) {
     const userRecord = await userQuery(ctx, clerkUser.id);
 
-    if (userRecord === null) {
-      const colors = ["red", "green", "blue"];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      await clerkClient.users.updateUserMetadata(clerkUser.id, {
-        publicMetadata: {
-          role: null,
-        },
-      });
-      await ctx.db.insert("users", { clerkUser, color, role: null });
-    } else {
-      await ctx.db.patch(userRecord._id, { clerkUser });
+    try {
+      if (userRecord === null) {
+        const colors = ["red", "green", "blue"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        await ctx.db.insert("users", { clerkUser, color, role: null });
+      } else {
+        await ctx.db.patch(userRecord._id, { clerkUser });
+      }
+    } catch (e) {
+      console.log("error updating user", e);
     }
   },
 });

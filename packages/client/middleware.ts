@@ -24,6 +24,8 @@ export default authMiddleware({
       return redirectToSignIn({ returnBackUrl: req.url });
     }
 
+    // console.log("METADATA", auth);
+    // TODO: fix user being undefined
     if (
       auth.user?.publicMetadata.role ||
       req.nextUrl.pathname === "/onboarding"
@@ -32,7 +34,7 @@ export default authMiddleware({
     } else {
       const onboarding = new URL("/onboarding", req.url);
       return NextResponse.redirect(onboarding);
-    }
+    } 
 
     // redirect them to organization selection page
     // if (auth.userId && !auth.orgId && req.nextUrl.pathname !== "/dashboard") {
