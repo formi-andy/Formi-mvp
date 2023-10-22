@@ -24,6 +24,8 @@ export default defineSchema({
       // })
     ),
     reviewed_at: v.optional(v.number()),
+    reviewers: v.array(v.id("users")),
+    status: v.string(),
   })
     .index("by_user_id", ["user_id"])
     .index("by_tags", ["tags"]),

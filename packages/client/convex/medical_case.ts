@@ -5,6 +5,7 @@ import {
   query,
   QueryCtx,
 } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 import { ConvexError, v } from "convex/values";
 import { mustGetCurrentUser, mustGetUserById } from "./users";
@@ -92,11 +93,22 @@ export const updateMedicalCase = mutation({
     medical_history: v.optional(v.any()),
     tags: v.optional(v.array(v.string())),
     diagnosis: v.optional(v.array(v.any())),
+    reviewers: v.optional(v.array(v.id("users"))),
+    status: v.optional(v.string()),
   },
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const { id, title, description, medical_history, tags, diagnosis } = args;
+    const {
+      id,
+      title,
+      description,
+      medical_history,
+      tags,
+      diagnosis,
+      reviewers,
+      status,
+    } = args;
 
     const medicalCase = await ctx.db.get(id);
     if (!medicalCase) {
@@ -121,6 +133,8 @@ export const updateMedicalCase = mutation({
       medical_history,
       tags,
       diagnosis,
+      reviewers,
+      status,
     });
 
     return {
@@ -130,6 +144,54 @@ export const updateMedicalCase = mutation({
       medical_history,
       tags,
       diagnosis,
+      reviewers,
+      status,
+    };
+  },
+});
+
+export const addReviewersToMedicalCase = mutation({
+  args: {
+    id: v.id("medical_case"),
+    reviewers: v.array(v.id("users")),
+  },
+  async handler(ctx, args) {
+    const { id, reviewers } = args;
+
+    const medicalCase = await ctx.db.get(id);
+
+    if (!medicalCase) {
+      throw new ConvexError({
+        message: "Medical case not found",
+        code: 404,
+      });
+    }
+
+    const reviewerSet = new Set(medicalCase.reviewers);
+
+    reviewers.forEach((reviewer) => {
+      if (reviewerSet.has(reviewer)) {
+        throw new ConvexError({
+          message: "Duplicate reviewer being added",
+          code: 422,
+        });
+      }
+    });
+
+    // const newReviewers = []
+    // reviewers?.forEach((reviewer) => newReviewers.push(reviewer))
+    // newReviewers.push(...medicalCase.reviewers)
+    const newReviewers = medicalCase.reviewers.push(
+      ...(reviewers as Id<"users">[])
+    );
+
+    await ctx.db.patch(id, {
+      reviewers,
+    });
+
+    return {
+      ...medicalCase,
+      reviewers,
     };
   },
 });
@@ -180,6 +242,8 @@ export const createMedicalCase = mutation({
       user_id: user._id,
       ethnicity,
       age,
+      reviewers: [],
+      status: "PENDING",
     });
     return { caseRecord };
   },
@@ -220,6 +284,68 @@ export const listMedicalCases = query({
       {};
 
     medicalCasesWithPatient.forEach((medicalCase) => {
+      const date = new Date(medicalCase._creationTime).toLocaleDateString(
+        "en-US",
+        {
+          timeZone: args.timezone,
+        }
+      );
+      medicalCasesByDay[date] = medicalCasesByDay[date] || [];
+      medicalCasesByDay[date].push(medicalCase);
+    });
+
+    return Object.keys(medicalCasesByDay)
+      .map((key) => ({
+        date: medicalCasesByDay[key][0]._creationTime,
+        medicalCases: medicalCasesByDay[key],
+      }))
+      .sort(
+        (a, b) =>
+          b.medicalCases[0]._creationTime - a.medicalCases[0]._creationTime
+      );
+  },
+});
+
+export const listPendingMedicalCases = query({
+  args: {
+    timezone: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== "doctor") {
+      throw new ConvexError({
+        message: "Invalid permissions",
+        code: 400,
+      });
+    }
+
+    const medicalCases = await ctx.db
+      .query("medical_case")
+      .filter((q) => q.eq(q.field("status"), "PENDING"))
+      .order("desc")
+      .collect();
+
+    const medicalCasesWithPatient = await Promise.all(
+      medicalCases.map(async (medicalCase) => {
+        const patient = await mustGetUserById(ctx, medicalCase.patient_id);
+        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
+        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+
+        return {
+          ...medicalCase,
+          patient,
+          image_url: url,
+        };
+      })
+    );
+
+    const medicalCasesByDay: Record<string, typeof medicalCasesWithPatient> =
+      {};
+
+    medicalCasesWithPatient.forEach((medicalCase) => {
+      if (medicalCase.reviewers.includes(user._id)) return;
+
       const date = new Date(medicalCase._creationTime).toLocaleDateString(
         "en-US",
         {
