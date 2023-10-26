@@ -42,8 +42,14 @@ const PatientCaseGallery: React.FC = () => {
       return <NoCases />;
     }
 
-    return medicalCasesByDate.map(({ date, medicalCases }) => {
-      return <CaseRow date={date} medicalCases={medicalCases} />;
+    return medicalCasesByDate.map(({ date, medicalCases }, idx) => {
+      return (
+        <CaseRow
+          key={`${date}-${idx}`}
+          date={date}
+          medicalCases={medicalCases}
+        />
+      );
     });
   };
 

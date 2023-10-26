@@ -85,8 +85,14 @@ const DoctorCaseGallery: React.FC = () => {
         {pendingCasesByDate.length === 0 ? (
           <p className="font-medium">No pending cases</p>
         ) : (
-          pendingCasesByDate.map(({ date, medicalCases }) => {
-            return <CaseRow date={date} medicalCases={medicalCases} />;
+          pendingCasesByDate.map(({ date, medicalCases }, idx) => {
+            return (
+              <CaseRow
+                key={`pending-${date}-${idx}`}
+                date={date}
+                medicalCases={medicalCases}
+              />
+            );
           })
         )}
         <div className="flex justify-between items-center mt-8">
@@ -96,7 +102,13 @@ const DoctorCaseGallery: React.FC = () => {
           <p className="font-medium">No completed cases</p>
         ) : (
           completedCasesByDate.map(({ date, medicalCases }) => {
-            return <CaseRow date={date} medicalCases={medicalCases} />;
+            return (
+              <CaseRow
+                key={`complete-${date}-${date}`}
+                date={date}
+                medicalCases={medicalCases}
+              />
+            );
           })
         )}
       </div>
