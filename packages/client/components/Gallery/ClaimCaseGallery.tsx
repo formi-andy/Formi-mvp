@@ -13,8 +13,8 @@ import { GALLERY_LOADERS } from "@/commons/constants/loaders";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { Button } from "../ui/button";
 import NoPendingCases from "./NoPendingCases";
-import ClaimCaseCard from "./ClaimCaseCard";
-import ClaimCaseModal from "./ClaimCaseModal";
+import ClaimCaseCard from "./Case/ClaimCaseCard";
+import ClaimCaseModal from "./Case/ClaimCaseModal";
 
 const ClaimCaseGallery: React.FC = () => {
   let medicalCasesByDate = useQuery(api.medical_case.listPendingMedicalCases, {

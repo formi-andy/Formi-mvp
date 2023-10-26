@@ -3,12 +3,11 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useMutation, useQuery } from "convex/react";
-import { ActionIcon, Code, CopyButton, Modal, Tooltip } from "@mantine/core";
-import { LuCopy, LuCopyCheck } from "react-icons/lu";
+import { Modal } from "@mantine/core";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { api } from "@/convex/_generated/api";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function ClaimCaseModal({
   opened,

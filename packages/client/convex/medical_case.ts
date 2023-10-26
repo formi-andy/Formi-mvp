@@ -178,20 +178,13 @@ export const addReviewersToMedicalCase = mutation({
       }
     });
 
-    // const newReviewers = []
-    // reviewers?.forEach((reviewer) => newReviewers.push(reviewer))
-    // newReviewers.push(...medicalCase.reviewers)
-    const newReviewers = medicalCase.reviewers.push(
-      ...(reviewers as Id<"users">[])
-    );
-
     await ctx.db.patch(id, {
-      reviewers,
+      reviewers: [...medicalCase.reviewers, ...reviewers],
     });
 
     return {
       ...medicalCase,
-      reviewers,
+      reviewers: [...medicalCase.reviewers, ...reviewers],
     };
   },
 });
@@ -345,6 +338,67 @@ export const listPendingMedicalCases = query({
 
     medicalCasesWithPatient.forEach((medicalCase) => {
       if (medicalCase.reviewers.includes(user._id)) return;
+
+      const date = new Date(medicalCase._creationTime).toLocaleDateString(
+        "en-US",
+        {
+          timeZone: args.timezone,
+        }
+      );
+      medicalCasesByDay[date] = medicalCasesByDay[date] || [];
+      medicalCasesByDay[date].push(medicalCase);
+    });
+
+    return Object.keys(medicalCasesByDay)
+      .map((key) => ({
+        date: medicalCasesByDay[key][0]._creationTime,
+        medicalCases: medicalCasesByDay[key],
+      }))
+      .sort(
+        (a, b) =>
+          b.medicalCases[0]._creationTime - a.medicalCases[0]._creationTime
+      );
+  },
+});
+
+export const listMedicalCasesByReviewer = query({
+  args: {
+    timezone: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== "doctor") {
+      throw new ConvexError({
+        message: "Invalid permissions",
+        code: 400,
+      });
+    }
+
+    const medicalCases = await ctx.db
+      .query("medical_case")
+      .order("desc")
+      .collect();
+
+    const medicalCasesWithPatient = await Promise.all(
+      medicalCases.map(async (medicalCase) => {
+        const patient = await mustGetUserById(ctx, medicalCase.patient_id);
+        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
+        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+
+        return {
+          ...medicalCase,
+          patient,
+          image_url: url,
+        };
+      })
+    );
+
+    const medicalCasesByDay: Record<string, typeof medicalCasesWithPatient> =
+      {};
+
+    medicalCasesWithPatient.forEach((medicalCase) => {
+      if (!medicalCase.reviewers.includes(user._id)) return;
 
       const date = new Date(medicalCase._creationTime).toLocaleDateString(
         "en-US",
