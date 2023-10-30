@@ -20,7 +20,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
-import { LuChevronDown, LuClipboard, LuWorkflow } from "react-icons/lu";
+import { LuChevronDown, LuClipboard } from "react-icons/lu";
 import style from "../case.module.css";
 import { Badge } from "@/components/ui/badge";
 import RTE from "@/components/ui/RTE/RTE";
@@ -72,13 +72,7 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           </Breadcrumbs>
         </div>
         <div>
-          <p className="!text-4xl font-medium !h-10 overflow-visible !border-0 disabled:bg-transparent disabled:opacity-100 disabled:text-black disabled:cursor-text">
-            {medicalCase.title}
-          </p>
-          <p className="text-lg">{medicalCase.chief_complaint}</p>
-        </div>
-        {/* <p className="text-xl">{image.user_id || "No patient"}</p> */}
-        <div>
+          <p className="text-4xl font-medium truncate">{medicalCase.title}</p>
           <p>
             Created at{" "}
             {dayjs(medicalCase._creationTime).format("M/DD/YYYY h:mm A")}
@@ -86,52 +80,25 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <MdNotes size={24} /> Additional Notes
+            <LuClipboard size={24} /> Patient Info
           </div>
-          <div className="flex flex-col w-full p-4">
-            <div
-              id="notes"
-              className={`rte-content-container ${style.notesContainer}`}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  medicalCase.description || "No notes yet."
-                ),
-              }}
-            />
-            {notesContainer && notesContainer.scrollHeight > 160 && (
-              <button
-                type="button"
-                aria-label="Toggle notes"
-                aria-expanded={expanded}
-                className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
-                onClick={() => {
-                  let icon = document.getElementById("assetDescriptionIcon");
-                  if (expanded) {
-                    notesContainer.style.maxHeight = "160px";
-                    notesContainer.classList.remove(style.expanded);
-                    icon?.classList.remove(style.rotate);
-                  } else {
-                    notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
-                    notesContainer.classList.add(style.expanded);
-                    icon?.classList.add(style.rotate);
-                  }
-                  setExpanded(!expanded);
-                }}
-              >
-                <LuChevronDown
-                  id="assetDescriptionIcon"
-                  className="transition"
-                />
-              </button>
-            )}
+          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+            <p className="text-lg">Age - {medicalCase.age}</p>
+            <p className="text-lg">Birth Sex - {medicalCase.age}</p>
+            <p className="text-lg">Ethnicity - {medicalCase.ethnicity}</p>
+            <p className="text-lg">State - {medicalCase.age}</p>
+            <p className="text-lg">
+              Chief Complaint - {medicalCase.chief_complaint}
+            </p>
           </div>
         </div>
+        {/* <p className="text-xl">{image.user_id || "No patient"}</p> */}
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
             <LuClipboard size={24} /> Symptoms
           </div>
-          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
-            <p className="text-lg">{medicalCase.symptoms}</p>
+          <div className="p-4 grid grid-cols-1">
+            <p>{medicalCase.symptoms}</p>
           </div>
         </div>
         <div className="flex flex-col border rounded-lg">
@@ -172,6 +139,49 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
         </div>
+        <div className="flex flex-col border rounded-lg">
+          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
+            <MdNotes size={24} /> Additional Notes
+          </div>
+          <div className="flex flex-col w-full p-4">
+            <div
+              id="notes"
+              className={`rte-content-container ${style.notesContainer}`}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                  medicalCase.description || "No notes."
+                ),
+              }}
+            />
+            {notesContainer && notesContainer.scrollHeight > 160 && (
+              <button
+                type="button"
+                aria-label="Toggle notes"
+                aria-expanded={expanded}
+                className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
+                onClick={() => {
+                  let icon = document.getElementById("assetDescriptionIcon");
+                  if (expanded) {
+                    notesContainer.style.maxHeight = "160px";
+                    notesContainer.classList.remove(style.expanded);
+                    icon?.classList.remove(style.rotate);
+                  } else {
+                    notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
+                    notesContainer.classList.add(style.expanded);
+                    icon?.classList.add(style.rotate);
+                  }
+                  setExpanded(!expanded);
+                }}
+              >
+                <LuChevronDown
+                  id="assetDescriptionIcon"
+                  className="transition"
+                />
+              </button>
+            )}
+          </div>
+        </div>
+        <p className="text-xl font-semibold">Images</p>
         <div className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px]">
           <Carousel
             plugins={[autoplay.current]}
