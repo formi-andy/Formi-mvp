@@ -1,5 +1,6 @@
 "use client";
 import { useDropzone } from "react-dropzone";
+import { notifications } from "@mantine/notifications";
 
 const maxSize = 1024 * 1024 * 5; // 5MB
 const maxFiles = 20;
@@ -34,12 +35,56 @@ export default function Dropzone({ data, setData }: Props) {
     accept: acceptedFileTypes,
     maxSize: maxSize,
     maxFiles: maxFiles,
-    onDrop: (acceptedFiles) => {
-      const parsedFiles = acceptedFiles.map((file) => ({
-        file,
-        title: file.name,
-      }));
+    onDrop: (acceptedFiles, fileRejections) => {
+      let duplicateCount = 0;
+      const parsedFiles = acceptedFiles
+        .filter((file) => {
+          const isDuplicate = data.some(
+            (existingFile) =>
+              existingFile.file.name === file.name &&
+              existingFile.file.size === file.size &&
+              existingFile.file.lastModified === file.lastModified
+          );
+          if (isDuplicate) {
+            duplicateCount += 1;
+          }
+          return !isDuplicate;
+        })
+        .map((file) => ({
+          file,
+          title: file.name,
+        }));
+
       setData([...data, ...parsedFiles]);
+
+      if (duplicateCount > 0) {
+        notifications.show({
+          title: `${duplicateCount} ${
+            duplicateCount === 1 ? "File" : "Files"
+          } already uploaded`,
+          message: "",
+        });
+      }
+
+      if (acceptedFiles.length - duplicateCount > 0) {
+        notifications.show({
+          title: `${acceptedFiles.length - duplicateCount} ${
+            acceptedFiles.length - duplicateCount === 1 ? "file" : "files "
+          } uploaded successfully`,
+          message: "",
+          color: "green",
+        });
+      }
+
+      if (fileRejections.length > 0) {
+        notifications.show({
+          title: `${fileRejections.length} ${
+            fileRejections.length === 1 ? "file" : "files "
+          } rejected`,
+          message: "",
+          color: "red",
+        });
+      }
     },
   });
 
@@ -77,7 +122,8 @@ export default function Dropzone({ data, setData }: Props) {
             return (
               <div key={file.name}>
                 <p>
-                  {file.name} - {errors[0].message}
+                  {/* {file.name} - {errors[0].message} */}
+                  {file.name}
                 </p>
               </div>
             );

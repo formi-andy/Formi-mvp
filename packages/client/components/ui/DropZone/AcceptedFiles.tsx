@@ -1,5 +1,4 @@
 import { formatBytes } from "@/utils/formatBytes";
-import { TextInput } from "@mantine/core";
 import { Button } from "../button";
 import { LuTrash } from "react-icons/lu";
 
@@ -20,20 +19,10 @@ export default function AcceptedFiles({
 }) {
   const listedFiles = data.map((d, index) => (
     <div key={d.file.name} className="flex flex-col gap-y-2">
-      <p className="truncate max-w-[calc(100vw-56px)] sm:max-w-[calc(60vw-64px)]">
-        {d.file.name} - {formatBytes(d.file.size)} bytes
-      </p>
       <div className="flex w-full items-center gap-x-4">
-        <TextInput
-          className="flex-1"
-          placeholder="Title"
-          value={d.title}
-          onChange={(e) => {
-            const newData = [...data];
-            newData[index].title = e.target.value;
-            setData(newData);
-          }}
-        />
+        <p className="truncate w-[calc(100vw-32px-1rem-40px)] sm:w-[calc(60vw-64px-1rem-40px)]">
+          {d.file.name} - {formatBytes(d.file.size)} bytes
+        </p>
         <Button
           variant="outline-danger"
           size="icon"

@@ -22,6 +22,7 @@ import { Stepper } from "@mantine/core";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 
 function useCaseForm(active: number) {
   const form = useForm({
@@ -127,6 +128,7 @@ const Upload = () => {
   const [active, setActive] = useState(0);
   const [uploading, setUploading] = useState(false);
   const createCase = useMutation(api.medical_case.createMedicalCase);
+  const router = useRouter();
 
   const form = useCaseForm(active);
 
@@ -244,9 +246,11 @@ const Upload = () => {
         message: "Your case has been created successfully",
       });
 
-      setActive(0);
-      form.reset();
+      // setActive(0);
+      // form.reset();
+      router.push("/dashboard");
     } catch (error) {
+      console.log(error);
       toast.error({
         title: "Failed to create case",
         message: "Something went wrong while creating your case",

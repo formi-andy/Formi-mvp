@@ -5,8 +5,10 @@ import {
   query,
   QueryCtx,
 } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
+import { CaseStatus } from "../types/case-types";
 
-import { ConvexError, v } from "convex/values";
+import { ConvexError, v, Value } from "convex/values";
 import { mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
 import { getImageByCaseId, getImagesByCaseId } from "./images";
@@ -144,21 +146,23 @@ export const internalGetMedicalCase = internalQuery({
   },
 });
 
-export const updateMedicalCase = mutation({
+export const addReviewersToMedicalCase = mutation({
   args: {
     id: v.id("medical_case"),
-    title: v.optional(v.string()),
-    description: v.optional(v.string()),
-    medical_history: v.optional(v.any()),
-    tags: v.optional(v.array(v.string())),
-    diagnosis: v.optional(v.array(v.any())),
   },
   async handler(ctx, args) {
+    const { id } = args;
     const user = await mustGetCurrentUser(ctx);
 
-    const { id, title, description, medical_history, tags, diagnosis } = args;
+    if (user.role !== "medical_student") {
+      throw new ConvexError({
+        message: "Invalid permissions",
+        code: 403,
+      });
+    }
 
     const medicalCase = await ctx.db.get(id);
+
     if (!medicalCase) {
       throw new ConvexError({
         message: "Medical case not found",
@@ -166,30 +170,25 @@ export const updateMedicalCase = mutation({
       });
     }
 
-    if (medicalCase.user_id !== user._id) {
+    const reviewerSet = new Set(medicalCase.reviewers);
+    const reviewers = medicalCase.reviewers;
+
+    if (reviewerSet.has(user._id)) {
       throw new ConvexError({
-        message: "Unauthenticated call to get medical case",
-        code: 401,
+        message: "User is already a reviewer for this case",
+        code: 400,
       });
     }
 
-    const sanitizedDescription = sanitizeHtml(description || "");
+    reviewers.push(user._id);
 
     await ctx.db.patch(id, {
-      title,
-      description,
-      medical_history,
-      tags,
-      diagnosis,
+      reviewers,
     });
 
     return {
       ...medicalCase,
-      title,
-      description: sanitizedDescription,
-      medical_history,
-      tags,
-      diagnosis,
+      reviewers,
     };
   },
 });
@@ -225,7 +224,7 @@ export const createMedicalCase = mutation({
     } = args;
 
     const sanitizedDescription = sanitizeHtml(description || "");
-    const normaliedId = ctx.db.normalizeId("users", patient_id);
+    const normalizedId = ctx.db.normalizeId("users", patient_id);
 
     const caseRecord = await ctx.db.insert("medical_case", {
       title,
@@ -234,33 +233,153 @@ export const createMedicalCase = mutation({
       description: sanitizedDescription,
       medical_history,
       tags: tags || [],
-      patient_id: normaliedId ? normaliedId : user._id,
+      patient_id: normalizedId ? normalizedId : user._id,
       chief_complaint,
       reviews: [],
       user_id: user._id,
       ethnicity,
       age,
+      reviewers: [],
+      status: CaseStatus.CREATED,
+      max_reviewers: 5,
     });
     return { caseRecord };
   },
 });
 
-export const listMedicalCases = query({
+export const listMedicalCasesByReviewer = query({
   args: {
-    patient_id: v.optional(v.id("users")),
+    reviewer_id: v.optional(v.id("users")),
     timezone: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
-    const patientId = args.patient_id || user._id;
+    const reviewerId = args.reviewer_id || user._id;
+    // await verifyCareTeam(ctx, user._id, patientId);
+
+    // TODO: need to make this more efficient
+    const medicalCases = (
+      await ctx.db.query("medical_case").order("desc").collect()
+    ).filter(({ reviewers }) => reviewers.includes(reviewerId));
+
+    const medicalCasesWithPatient = await Promise.all(
+      medicalCases.map(async (medicalCase) => {
+        const patient = await mustGetUserById(ctx, medicalCase.patient_id);
+        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
+        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+
+        return {
+          ...medicalCase,
+          patient,
+          image_url: url,
+        };
+      })
+    );
+
+    const medicalCasesByDay: Record<string, typeof medicalCasesWithPatient> =
+      {};
+
+    medicalCasesWithPatient.forEach((medicalCase) => {
+      const date = new Date(medicalCase._creationTime).toLocaleDateString(
+        "en-US",
+        {
+          timeZone: args.timezone,
+        }
+      );
+      medicalCasesByDay[date] = medicalCasesByDay[date] || [];
+      medicalCasesByDay[date].push(medicalCase);
+    });
+
+    return Object.keys(medicalCasesByDay)
+      .map((key) => ({
+        date: medicalCasesByDay[key][0]._creationTime,
+        medicalCases: medicalCasesByDay[key],
+      }))
+      .sort(
+        (a, b) =>
+          b.medicalCases[0]._creationTime - a.medicalCases[0]._creationTime
+      );
+  },
+});
+
+export const listMedicalCasesByUser = query({
+  args: {
+    user_id: v.optional(v.id("users")),
+    timezone: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await mustGetCurrentUser(ctx);
+    const patientId = args.user_id || user._id;
 
     // await verifyCareTeam(ctx, user._id, patientId);
 
     const medicalCases = await ctx.db
       .query("medical_case")
-      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .withIndex("by_user_id", (q) => q.eq("user_id", patientId))
       .order("desc")
       .collect();
+
+    const medicalCasesWithPatient = await Promise.all(
+      medicalCases.map(async (medicalCase) => {
+        const patient = await mustGetUserById(ctx, medicalCase.patient_id);
+        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
+        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+
+        return {
+          ...medicalCase,
+          patient,
+          image_url: url,
+        };
+      })
+    );
+
+    const medicalCasesByDay: Record<string, typeof medicalCasesWithPatient> =
+      {};
+
+    medicalCasesWithPatient.forEach((medicalCase) => {
+      const date = new Date(medicalCase._creationTime).toLocaleDateString(
+        "en-US",
+        {
+          timeZone: args.timezone,
+        }
+      );
+      medicalCasesByDay[date] = medicalCasesByDay[date] || [];
+      medicalCasesByDay[date].push(medicalCase);
+    });
+
+    return Object.keys(medicalCasesByDay)
+      .map((key) => ({
+        date: medicalCasesByDay[key][0]._creationTime,
+        medicalCases: medicalCasesByDay[key],
+      }))
+      .sort(
+        (a, b) =>
+          b.medicalCases[0]._creationTime - a.medicalCases[0]._creationTime
+      );
+  },
+});
+
+// TODO: obfuscate case data until review process is initiated
+export const listClaimableMedicalCases = query({
+  args: {
+    timezone: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== "doctor") {
+      throw new ConvexError({
+        message: "Invalid permissions",
+        code: 400,
+      });
+    }
+
+    const medicalCases = (
+      await ctx.db.query("medical_case").order("desc").collect()
+    ).filter(
+      ({ reviewers, max_reviewers }) =>
+        !reviewers.includes(user._id) && reviewers.length < max_reviewers
+    );
 
     const medicalCasesWithPatient = await Promise.all(
       medicalCases.map(async (medicalCase) => {
