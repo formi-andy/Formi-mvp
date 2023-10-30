@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import { Badge } from "../../ui/badge";
-import Image from "../../Image/Image";
+import { Badge } from "@/components/ui/badge";
+import Image from "@/components/ui/Image/Image";
 import { MedicalCase } from "@/types/case-types";
 import { SetStateAction, Dispatch } from "react";
 

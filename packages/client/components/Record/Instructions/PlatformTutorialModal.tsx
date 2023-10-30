@@ -4,7 +4,7 @@ import classes from "./carousel.module.css";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Modal } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useMediaQuery } from "@mantine/hooks";
 

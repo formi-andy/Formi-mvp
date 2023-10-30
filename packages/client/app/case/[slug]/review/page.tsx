@@ -21,7 +21,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
 import { LuChevronDown, LuClipboard, LuWorkflow } from "react-icons/lu";
-import style from "./case.module.css";
+import style from "../case.module.css";
 import { Badge } from "@/components/ui/badge";
 
 // TODO: Move this to ssr after convex supports server side reactive queries

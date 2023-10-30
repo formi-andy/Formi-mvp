@@ -5,9 +5,9 @@ import { Tabs } from "@mantine/core";
 import { useQuery } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
-import NoReviewedCases from "../Gallery/NoReviewedCases";
-import ClaimCaseGallery from "../Gallery/ClaimCaseGallery";
-import { renderCases } from "../Gallery/RenderCases";
+import NoReviewedCases from "./Gallery/NoReviewedCases";
+import ClaimCaseGallery from "./Gallery/ClaimCaseGallery";
+import { renderCases } from "./Gallery/RenderCases";
 
 const DoctorDashboardView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string | null>("review");

@@ -1,5 +1,5 @@
 import React from "react";
-import PatientCaseGallery from "../Gallery/PatientCaseGallery";
+import PatientCaseGallery from "./Gallery/PatientCaseGallery";
 
 type Props = {};
 

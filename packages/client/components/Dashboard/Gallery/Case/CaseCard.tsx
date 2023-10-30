@@ -10,7 +10,7 @@ const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
     _creationTime,
     title,
     symptom_areas,
-    diagnosis,
+    status,
     image_url,
     chief_complaint,
   } = medicalCase;
@@ -42,9 +42,7 @@ const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
         <p className="text-sm">
           Created at {dayjs(_creationTime).format("h:mm A")}
         </p>
-        <p className="text-sm">
-          {diagnosis.length === 0 ? "Pending Review" : "Reviewed"}
-        </p>
+        <p className="text-sm">{status}</p>
       </div>
     </div>
   );

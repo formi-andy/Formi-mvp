@@ -1,5 +1,5 @@
 import AuthErrorBoundary from "@/components/AuthErrorBoundary/AuthErrorBoundary";
-import ClaimCaseGallery from "@/components/Gallery/ClaimCaseGallery";
+import ClaimCaseGallery from "@/components/Dashboard/Gallery/ClaimCaseGallery";
 
 const page = async () => {
   return (
