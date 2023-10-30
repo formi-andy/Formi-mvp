@@ -12,10 +12,12 @@ export default function RTE({
   content,
   onChange,
   maxLength,
+  sticky = true,
 }: {
   content?: string;
   onChange?: (content: string) => void;
   maxLength?: number;
+  sticky?: boolean;
 }) {
   const editor = useEditor({
     extensions: [
@@ -45,7 +47,7 @@ export default function RTE({
           control: "!border-none hover:bg-sky-100",
         }}
       >
-        <RichTextEditor.Toolbar sticky stickyOffset={0}>
+        <RichTextEditor.Toolbar sticky={sticky} stickyOffset={0}>
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Bold />
             <RichTextEditor.Italic />

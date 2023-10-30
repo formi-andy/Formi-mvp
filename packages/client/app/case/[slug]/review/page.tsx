@@ -23,6 +23,8 @@ import { ConvexError } from "convex/values";
 import { LuChevronDown, LuClipboard, LuWorkflow } from "react-icons/lu";
 import style from "../case.module.css";
 import { Badge } from "@/components/ui/badge";
+import RTE from "@/components/ui/RTE/RTE";
+import { Button } from "@/components/ui/button";
 
 // TODO: Move this to ssr after convex supports server side reactive queries
 function CaseReviewPage({ params }: { params: { slug: string } }) {
@@ -80,13 +82,6 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           <p>
             Created at{" "}
             {dayjs(medicalCase._creationTime).format("M/DD/YYYY h:mm A")}
-          </p>
-          <p>
-            {medicalCase.reviews.length === 0
-              ? "Pending Review"
-              : `Reviewed at ${dayjs(medicalCase.reviewed_at).format(
-                  "M/DD/YYYY h:mm A"
-                )}`}
           </p>
         </div>
         <div className="flex flex-col border rounded-lg">
@@ -177,7 +172,7 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
         </div>
-        <div className="flex w-full lg:w-2/5 rounded-lg relative aspect-square max-h-[50vh] min-w-[200px]">
+        <div className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px]">
           <Carousel
             plugins={[autoplay.current]}
             onMouseEnter={autoplay.current.stop}
@@ -198,7 +193,20 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           </Carousel>
         </div>
       </div>
-      <div className="flex flex-col w-full lg:w-2/5 gap-y-4"></div>
+      <div className="flex flex-col w-full lg:w-2/5 gap-y-4">
+        <p className="text-xl font-semibold">Review</p>
+        <RTE
+          content={review}
+          sticky={false}
+          onChange={(content) => {
+            setReview(content);
+          }}
+          maxLength={5000}
+        />
+        <Button className="w-fit" variant="action">
+          Submit
+        </Button>
+      </div>
     </div>
   );
 }
