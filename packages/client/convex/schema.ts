@@ -16,13 +16,6 @@ export default defineSchema({
     tags: v.array(v.string()),
     chief_complaint: v.string(),
     reviews: v.array(v.id("review")),
-    // diagnosis: v.array(
-    //   v.any()
-    //   // v.object({
-    //   //   diagnosis: v.string(),
-    //   //   notes: v.string(),
-    //   // })
-    // ),
     reviewed_at: v.optional(v.number()),
     reviewers: v.array(v.id("users")),
     status: v.union(

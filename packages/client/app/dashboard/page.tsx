@@ -1,5 +1,5 @@
 import DoctorDashboardView from "@/components/Dashboard/DoctorDashboardView";
-import PatientDashboardView from "@/components/Dashboard/PatientDashboardView";
+import PatientCaseGallery from "@/components/Dashboard/Gallery/PatientCaseGallery";
 import PlatformTutorial from "@/components/Record/Instructions/PlatformTutorial";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { auth } from "@clerk/nextjs";
@@ -24,7 +24,7 @@ export default async function Dashboard() {
         {user.publicMetadata.role === "patient" ? (
           <>
             {"tutorial" in (user?.unsafeMetadata || {}) && <PlatformTutorial />}
-            <PatientDashboardView />
+            <PatientCaseGallery />
           </>
         ) : (
           <DoctorDashboardView />

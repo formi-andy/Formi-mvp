@@ -367,7 +367,7 @@ export const listClaimableMedicalCases = query({
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
 
-    if (user.role !== "doctor") {
+    if (user.role !== "medical_student") {
       throw new ConvexError({
         message: "Invalid permissions",
         code: 400,
