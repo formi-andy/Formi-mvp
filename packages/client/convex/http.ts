@@ -189,15 +189,15 @@ http.route({
       }
     );
 
-    const diagnosis = attempts.map((attempt: any) => {
+    const reviews = attempts.map((attempt: any) => {
       return {
         diagnosis: attempt.response.annotations.diagnosis.response[0],
       };
     });
 
-    await ctx.runMutation(internal.medical_case.diagnosisCallback, {
+    await ctx.runMutation(internal.medical_case.reviewCallback, {
       id: medicalCase._id,
-      diagnosis,
+      reviews,
     });
     return new Response(null, {
       status: 200,

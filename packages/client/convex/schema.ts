@@ -16,17 +16,25 @@ export default defineSchema({
     patient_id: v.id("users"),
     tags: v.array(v.string()),
     chief_complaint: v.string(),
-    diagnosis: v.array(
-      v.any()
-      // v.object({
-      //   diagnosis: v.string(),
-      //   notes: v.string(),
-      // })
-    ),
+    reviews: v.array(v.id("review")),
+    // diagnosis: v.array(
+    //   v.any()
+    //   // v.object({
+    //   //   diagnosis: v.string(),
+    //   //   notes: v.string(),
+    //   // })
+    // ),
     reviewed_at: v.optional(v.number()),
   })
     .index("by_user_id", ["user_id"])
     .index("by_tags", ["tags"]),
+  review: defineTable({
+    case_id: v.id("medical_case"),
+    user_id: v.id("users"),
+    notes: v.string(),
+  })
+    .index("by_case_id", ["case_id"])
+    .index("by_user_id", ["user_id"]),
   images: defineTable({
     storage_id: v.string(),
     user_id: v.string(),

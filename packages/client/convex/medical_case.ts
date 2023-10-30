@@ -10,6 +10,7 @@ import { ConvexError, v } from "convex/values";
 import { mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
 import { getImageByCaseId, getImagesByCaseId } from "./images";
+import { getReviewsByCaseId } from "./review";
 
 export const getMedicalCase = query({
   args: {
@@ -37,8 +38,13 @@ export const getMedicalCase = query({
       });
     }
 
-    // get all images for this case
-    const images = await getImagesByCaseId(ctx, { case_id: medicalCase._id });
+    // get all images and reviews for this case
+    const [images, reviews] = await Promise.all([
+      getImagesByCaseId(ctx, { case_id: medicalCase._id }),
+      getReviewsByCaseId(ctx, {
+        case_id: medicalCase._id,
+      }),
+    ]);
 
     // get urls for all images
     const imagesWithUrls = await Promise.all(
@@ -57,6 +63,60 @@ export const getMedicalCase = query({
       ...medicalCase,
       images: imagesWithUrls,
       patient,
+      reviews,
+    };
+  },
+});
+
+export const getAnonymizedMedicalCase = query({
+  args: {
+    id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const user = await mustGetCurrentUser(ctx);
+
+    const { id } = args;
+
+    const medicalCase = await ctx.db.get(id);
+    if (!medicalCase) {
+      throw new ConvexError({
+        message: "Medical case not found",
+        code: 404,
+      });
+    }
+
+    if (user.role !== "medical_student") {
+      throw new ConvexError({
+        message: "Unauthenticated call to get medical case",
+        code: 401,
+      });
+    }
+
+    const [images, reviews] = await Promise.all([
+      getImagesByCaseId(ctx, { case_id: medicalCase._id }),
+      getReviewsByCaseId(ctx, {
+        case_id: medicalCase._id,
+      }),
+    ]);
+
+    const imagesWithUrls = await Promise.all(
+      images.map(async (image) => {
+        const url = await ctx.storage.getUrl(image.storage_id);
+        return {
+          ...image,
+          url,
+        };
+      })
+    );
+
+    const { user_id, ...medicalCaseWithoutUserId } = medicalCase;
+
+    // await verifyCareTeam(ctx, user._id, medicalCase.user_id);
+
+    return {
+      ...medicalCaseWithoutUserId,
+      images: imagesWithUrls,
+      reviews,
     };
   },
 });
@@ -176,7 +236,7 @@ export const createMedicalCase = mutation({
       tags: tags || [],
       patient_id: normaliedId ? normaliedId : user._id,
       chief_complaint,
-      diagnosis: [],
+      reviews: [],
       user_id: user._id,
       ethnicity,
       age,
@@ -276,13 +336,13 @@ export const deleteCases = mutation({
   },
 });
 
-export const diagnosisCallback = internalMutation({
+export const reviewCallback = internalMutation({
   args: {
     id: v.id("medical_case"),
-    diagnosis: v.array(v.any()),
+    reviews: v.array(v.any()),
   },
   async handler(ctx, args) {
-    const { id, diagnosis } = args;
+    const { id, reviews } = args;
 
     const medicalCase = await ctx.db.get(id);
     if (!medicalCase) {
@@ -292,8 +352,16 @@ export const diagnosisCallback = internalMutation({
       });
     }
 
+    // create new reviews
+    const caseReviews = await Promise.all(
+      reviews.map(async (review) => {
+        const reviewRecord = await ctx.db.insert("review", review);
+        return reviewRecord;
+      })
+    );
+
     return ctx.db.patch(id, {
-      diagnosis,
+      reviews: caseReviews,
       reviewed_at: Date.now(),
     });
   },

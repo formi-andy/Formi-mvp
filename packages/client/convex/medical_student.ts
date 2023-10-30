@@ -46,6 +46,20 @@ export const getMedicalStudent = query({
   },
 });
 
+export async function mustGetMedicalStudentbyId(
+  ctx: QueryCtx,
+  userId: Id<"users">
+) {
+  const userRecord = await getMedicalStudent(ctx, { userId });
+  if (!userRecord)
+    throw new ConvexError({
+      message: "User not found",
+      code: 404,
+    });
+
+  return userRecord;
+}
+
 export const deleteMedicalStudentByUserId = internalMutation({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {
