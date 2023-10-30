@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -9,7 +9,7 @@ import NotFoundPage from "@/app/not-found";
 import PlatformTutorialModal from "./PlatformTutorialModal";
 
 const PlatformTutorial = () => {
-  const [opened, setOpened] = useState(true);
+  const [opened, { open, close }] = useDisclosure(false);
   const user = useQuery(api.users.currentUser);
 
   if (user === undefined) {
@@ -21,7 +21,7 @@ const PlatformTutorial = () => {
   }
 
   if (user.role === "patient") {
-    return <PlatformTutorialModal opened={opened} setOpened={setOpened} />;
+    return <PlatformTutorialModal opened={opened} close={close} />;
   } // else return platform tutorial for doctors
 
   return <></>;

@@ -1,6 +1,5 @@
 import { currentUser } from "@clerk/nextjs";
-import CaseGallery from "@/components/Gallery/CaseGallery";
-import PlatformTutorial from "@/components/Tutorials/PlatformTutorial";
+import DashboardView from "@/components/Dashboard/DashboardView";
 // import Gallery from "@/components/Gallery/Gallery";
 // import CareTeam from "@/components/CareTeam/CareTeam";
 // import ActionItems from "@/components/ActionItems/ActionItems";
@@ -18,8 +17,7 @@ export default async function Dashboard() {
         <ActionItems />
       </div> */}
       <div className="w-full flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
-        {"tutorial" in (user?.unsafeMetadata || {}) && <PlatformTutorial />}
-        <CaseGallery />
+        <DashboardView />
       </div>
     </div>
   );

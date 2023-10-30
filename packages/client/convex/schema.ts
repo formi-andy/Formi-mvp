@@ -3,7 +3,6 @@ import { v } from "convex/values";
 
 export default defineSchema({
   // chief complaint should be high level field
-  // should also include field for status w/ respective enum
   medical_case: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
@@ -25,7 +24,12 @@ export default defineSchema({
     ),
     reviewed_at: v.optional(v.number()),
     reviewers: v.array(v.id("users")),
-    status: v.string(),
+    status: v.union(
+      v.literal("CREATED"),
+      v.literal("REVIEWING"),
+      v.literal("COMPLETED")
+    ),
+    max_reviewers: v.number(),
   })
     .index("by_user_id", ["user_id"])
     .index("by_tags", ["tags"]),

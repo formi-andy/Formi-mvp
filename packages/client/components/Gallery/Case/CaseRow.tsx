@@ -6,9 +6,10 @@ import CaseCard from "./CaseCard";
 type Props = {
   date: any;
   medicalCases: any[];
+  renderCaseComponent?: (medicalCase: any) => React.ReactNode;
 };
 
-const CaseRow = ({ date, medicalCases }: Props) => {
+const CaseRow = ({ date, medicalCases, renderCaseComponent }: Props) => {
   return (
     <div key={date} className="flex flex-col gap-y-2">
       <p className="text-lg lg:text-xl font-medium">
@@ -21,9 +22,13 @@ const CaseRow = ({ date, medicalCases }: Props) => {
               className="flex flex-col relative cursor-pointer"
               key={medicalCase._id}
             >
-              <Link href={`/case/${medicalCase._id}`}>
-                <CaseCard medicalCase={medicalCase} />
-              </Link>
+              {renderCaseComponent ? (
+                renderCaseComponent(medicalCase)
+              ) : (
+                <Link href={`/case/${medicalCase._id}`}>
+                  <CaseCard medicalCase={medicalCase} />
+                </Link>
+              )}
             </div>
           );
         })}

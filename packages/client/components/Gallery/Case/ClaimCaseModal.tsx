@@ -2,12 +2,13 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { Modal } from "@mantine/core";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function ClaimCaseModal({
   opened,
@@ -24,30 +25,34 @@ export default function ClaimCaseModal({
   const addReviewerToCase = useMutation(
     api.medical_case.addReviewersToMedicalCase
   );
-  const user = useQuery(api.users.currentUser);
 
-  const addReviewer = async () => {
-    if (!user) {
-      toast.error({
-        message: "Error retrieving user id",
-      });
-      return;
-    }
+  const router = useRouter();
+
+  const startReview = async () => {
+    setUpdating(true);
+
+    toast.loading({
+      title: "Adding you as a reviewer...",
+      message: "Please wait",
+    });
 
     try {
       await addReviewerToCase({
         id: caseData.id as Id<"medical_case">,
-        reviewers: [user._id],
       });
 
       toast.success({
-        message: "Successfully added as a reviewer",
+        title: "Successfully added as a reviewer",
+        message: "Opening case...",
       });
+      router.push(`/case/${caseData.id}/review`);
       setOpened(false);
     } catch (error) {
       toast.error({
         message: "Error accepting case",
       });
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -60,7 +65,10 @@ export default function ClaimCaseModal({
         body: "flex flex-col gap-y-4 items-center",
       }}
     >
-      <p className="text-xl font-medium text-center">Claim case for review?</p>
+      <p className="text-xl font-medium text-center">
+        Review Case #{caseData.id}
+      </p>
+      <p>Pressing confirm will start the review process</p>
       <div>
         <p className="text-center">Case Details</p>
         <div className="bg-slate-100 rounded p-4 my-2 font-mono">
@@ -71,7 +79,11 @@ export default function ClaimCaseModal({
         </div>
       </div>
       <div className="flex gap-x-4 w-full justify-center">
-        <Button className="bg-green-500 text-lg" onClick={addReviewer}>
+        <Button
+          className="bg-green-500 text-lg"
+          onClick={startReview}
+          disabled={updating}
+        >
           Confirm
         </Button>
         <Button className="bg-red-500 text-lg" onClick={() => setOpened(false)}>

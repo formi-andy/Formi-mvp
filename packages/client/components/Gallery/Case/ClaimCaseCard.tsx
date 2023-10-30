@@ -1,20 +1,21 @@
 import dayjs from "dayjs";
-import { api } from "@/convex/_generated/api";
 import { Badge } from "../../ui/badge";
-import { CircleImage } from "../../Image/Image";
 import Image from "../../Image/Image";
+import { MedicalCase } from "@/types/case-types";
+import { SetStateAction, Dispatch } from "react";
 
-type MedicalCase =
-  (typeof api.medical_case.listMedicalCases)["_returnType"][number]["medicalCases"][number];
+type Props = {
+  medicalCase: MedicalCase;
+  setOpened: Dispatch<SetStateAction<boolean>>;
+  setCaseData: (caseData: any) => void;
+};
 
-const ClaimCaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
+const ClaimCaseCard = ({ medicalCase, setCaseData, setOpened }: Props) => {
   const {
     _id,
     _creationTime,
     title,
-    patient,
     symptom_areas,
-    diagnosis,
     image_url,
     chief_complaint,
   } = medicalCase;
@@ -22,7 +23,17 @@ const ClaimCaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
   return (
     <div
       key={_id}
-      className="flex flex-col gap-y-4 relative min-w-[200px] min-h-[200px] aspect-square border p-6 rounded-lg transition hover:bg-slate-50"
+      className="flex flex-col gap-y-4 relative min-w-[200px] min-h-[200px] aspect-square border p-6 rounded-lg transition hover:bg-slate-50 cursor-pointer"
+      onClick={() => {
+        setCaseData({
+          id: medicalCase._id,
+          title: medicalCase.title,
+          chiefComplaint: medicalCase.chief_complaint,
+          pay: 5,
+          duration: 5,
+        });
+        setOpened(true);
+      }}
     >
       <div className="w-full relative flex flex-col gap-y-1">
         <p className="text-lg md:text-xl truncate font-medium">{title}</p>

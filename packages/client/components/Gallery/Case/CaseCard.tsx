@@ -1,18 +1,13 @@
 import dayjs from "dayjs";
-import { api } from "@/convex/_generated/api";
 import { Badge } from "../../ui/badge";
-import { CircleImage } from "../../Image/Image";
 import Image from "../../Image/Image";
-
-type MedicalCase =
-  (typeof api.medical_case.listMedicalCases)["_returnType"][number]["medicalCases"][number];
+import { MedicalCase } from "@/types/case-types";
 
 const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
   const {
     _id,
     _creationTime,
     title,
-    patient,
     symptom_areas,
     diagnosis,
     image_url,

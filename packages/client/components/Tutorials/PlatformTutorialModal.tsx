@@ -5,23 +5,39 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Modal } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { Button } from "../ui/button";
+import { useUser } from "@clerk/nextjs";
+import { useMediaQuery } from "@mantine/hooks";
 
 export default function PlatformTutorialModal({
   opened,
-  setOpened,
+  close,
 }: {
   opened: boolean;
-  setOpened: Dispatch<SetStateAction<boolean>>;
+  close: any;
 }) {
   const [finished, setFinished] = useState(false);
+  const { user } = useUser();
+  const isMobile = useMediaQuery("(max-width: 50em)");
 
   return (
     <Modal
       opened={opened}
-      onClose={() => setOpened(false)}
+      onClose={() => {
+        close();
+
+        if (user) {
+          const currentMetadata = user.unsafeMetadata;
+          delete currentMetadata.tutorial;
+
+          user.update({
+            unsafeMetadata: currentMetadata,
+          });
+        }
+      }}
+      closeOnClickOutside={finished}
       centered
       withCloseButton={false}
-      size={"80%"}
+      size={isMobile ? "95%" : "80%"}
       classNames={{
         body: "flex flex-col gap-y-4 items-center",
       }}
@@ -36,7 +52,7 @@ export default function PlatformTutorialModal({
         }`}
         size="icon"
         onClick={() => {
-          if (finished) setOpened(false);
+          if (finished) close();
         }}
       >
         Done
@@ -44,7 +60,7 @@ export default function PlatformTutorialModal({
       <Carousel
         className="w-full"
         slideSize="95%"
-        height={600}
+        height={"100%"}
         slideGap="md"
         withIndicators
         classNames={classes}
