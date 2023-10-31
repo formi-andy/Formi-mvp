@@ -165,7 +165,7 @@ export const internalGetMedicalCase = internalQuery({
   },
 });
 
-export const addReviewersToMedicalCase = mutation({
+export const addReviewerToMedicalCase = mutation({
   args: {
     id: v.id("medical_case"),
   },
