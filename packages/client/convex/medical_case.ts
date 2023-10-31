@@ -296,8 +296,6 @@ export const listMedicalCasesByReviewer = query({
       reviews.map(async (review) => {
         const medicalCase = await mustGetMedicalCase(ctx, review.case_id);
 
-        if (!medicalCase) return null;
-
         const image = await getImageByCaseId(ctx, {
           case_id: medicalCase._id as Id<"medical_case">,
         });
@@ -310,14 +308,9 @@ export const listMedicalCasesByReviewer = query({
       })
     );
 
-    const filteredReviewsWithCase = reviewsWithCase.filter(
-      (review): review is NonNullable<typeof review> => review !== null
-    );
+    const medicalCasesByDay: Record<string, typeof reviewsWithCase> = {};
 
-    const medicalCasesByDay: Record<string, typeof filteredReviewsWithCase> =
-      {};
-
-    filteredReviewsWithCase.forEach((medicalCase) => {
+    reviewsWithCase.forEach((medicalCase) => {
       const date = new Date(medicalCase._creationTime).toLocaleDateString(
         "en-US",
         {
