@@ -287,27 +287,32 @@ export const listMedicalCasesByReviewer = query({
       .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
       .collect();
 
-    const reviewsWithCase = [];
+    const reviewsWithCase = await Promise.all(
+      reviews.map(async (review) => {
+        const medicalCase = await mustGetMedicalCase(ctx, review.case_id);
 
-    for (const review of reviews) {
-      const medicalCase = await ctx.db.get(review.case_id);
+        if (!medicalCase) return null;
 
-      if (!medicalCase) continue;
+        const image = await getImageByCaseId(ctx, {
+          case_id: medicalCase._id as Id<"medical_case">,
+        });
+        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
 
-      const image = await getImageByCaseId(ctx, {
-        case_id: medicalCase._id as Id<"medical_case">,
-      });
-      const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+        return {
+          ...medicalCase,
+          image_url: url,
+        };
+      })
+    );
 
-      reviewsWithCase.push({
-        ...medicalCase,
-        image_url: url,
-      });
-    }
+    const filteredReviewsWithCase = reviewsWithCase.filter(
+      (review): review is NonNullable<typeof review> => review !== null
+    );
 
-    const medicalCasesByDay: Record<string, typeof reviewsWithCase> = {};
+    const medicalCasesByDay: Record<string, typeof filteredReviewsWithCase> =
+      {};
 
-    reviewsWithCase.forEach((medicalCase) => {
+    filteredReviewsWithCase.forEach((medicalCase) => {
       const date = new Date(medicalCase._creationTime).toLocaleDateString(
         "en-US",
         {
@@ -446,27 +451,6 @@ export const listClaimableMedicalCases = query({
         (a, b) =>
           b.medicalCases[0]._creationTime - a.medicalCases[0]._creationTime
       );
-  },
-});
-
-export const updateMedicalCaseStatus = internalMutation({
-  args: {
-    case_id: v.id("medical_case"),
-    status: v.union(
-      v.literal("CREATED"),
-      v.literal("REVIEWING"),
-      v.literal("COMPLETED")
-    ),
-  },
-  async handler(ctx, args) {
-    const { case_id, status } = args;
-
-    // check if medical case exists
-    await getMedicalCase(ctx, { id: case_id });
-
-    return ctx.db.patch(case_id, {
-      status,
-    });
   },
 });
 
