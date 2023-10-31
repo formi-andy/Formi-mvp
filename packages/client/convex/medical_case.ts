@@ -249,37 +249,46 @@ export const createMedicalCase = mutation({
 
 export const listMedicalCasesByReviewer = query({
   args: {
-    reviewer_id: v.optional(v.id("users")),
     timezone: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
-    const reviewerId = args.reviewer_id || user._id;
+
+    if (user.role !== "medical_student") {
+      throw new ConvexError({
+        message: "Invalid permissions",
+        code: 400,
+      });
+    }
+
     // await verifyCareTeam(ctx, user._id, patientId);
 
-    // TODO: need to make this more efficient
-    const medicalCases = (
-      await ctx.db.query("medical_case").order("desc").collect()
-    ).filter(({ reviewers }) => reviewers.includes(reviewerId));
+    const reviews = await ctx.db
+      .query("review")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .collect();
 
-    const medicalCasesWithPatient = await Promise.all(
-      medicalCases.map(async (medicalCase) => {
-        const patient = await mustGetUserById(ctx, medicalCase.patient_id);
-        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
-        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+    const reviewsWithCase = [];
 
-        return {
-          ...medicalCase,
-          patient,
-          image_url: url,
-        };
-      })
-    );
+    for (const review of reviews) {
+      const medicalCase = await ctx.db.get(review.case_id);
 
-    const medicalCasesByDay: Record<string, typeof medicalCasesWithPatient> =
-      {};
+      if (!medicalCase) continue;
 
-    medicalCasesWithPatient.forEach((medicalCase) => {
+      const image = await getImageByCaseId(ctx, {
+        case_id: medicalCase._id as Id<"medical_case">,
+      });
+      const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+
+      reviewsWithCase.push({
+        ...medicalCase,
+        image_url: url,
+      });
+    }
+
+    const medicalCasesByDay: Record<string, typeof reviewsWithCase> = {};
+
+    reviewsWithCase.forEach((medicalCase) => {
       const date = new Date(medicalCase._creationTime).toLocaleDateString(
         "en-US",
         {

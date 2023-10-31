@@ -11,6 +11,8 @@ export default async function Dashboard() {
   const { userId } = auth();
   const user = await clerkClient.users.getUser(userId || "");
 
+  console.log(user.unsafeMetadata, "tutorial" in user?.unsafeMetadata);
+
   return (
     <div className="flex flex-col-reverse lg:flex-row gap-4 md:gap-6 lg:gap-8">
       {/* <div className="w-full lg:w-3/5 flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
@@ -23,7 +25,7 @@ export default async function Dashboard() {
       <div className="w-full flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
         {user.publicMetadata.role === "patient" ? (
           <>
-            {"tutorial" in (user?.unsafeMetadata || {}) && <PlatformTutorial />}
+            {"tutorial" in user?.unsafeMetadata && <PlatformTutorial />}
             <PatientCaseGallery />
           </>
         ) : (
