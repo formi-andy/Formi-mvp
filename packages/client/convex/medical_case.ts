@@ -76,7 +76,10 @@ export const getAnonymizedMedicalCase = query({
 
     const medicalCase = await mustGetMedicalCase(ctx, id);
 
-    if (user.role !== "medical_student") {
+    if (
+      user.role !== "medical_student" ||
+      !medicalCase.reviewers.includes(user._id)
+    ) {
       throw new ConvexError({
         message: "Unauthenticated call to get medical case",
         code: 401,

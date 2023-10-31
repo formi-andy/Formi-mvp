@@ -48,7 +48,6 @@ function CasePage({ params }: { params: { slug: string } }) {
   const medicalCase = useQuery(api.medical_case.getMedicalCase, {
     id: slug as Id<"medical_case">,
   });
-  const user = useQuery(api.users.currentUser);
   const toast = useNetworkToasts();
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
@@ -278,7 +277,6 @@ function CasePage({ params }: { params: { slug: string } }) {
 }
 
 function fallbackRender({ error, resetErrorBoundary }) {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
   if (error instanceof ConvexError) {
     switch ((error.data as { code: number }).code) {
       case 404:
@@ -300,12 +298,7 @@ function fallbackRender({ error, resetErrorBoundary }) {
     }
   }
 
-  return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <pre style={{ color: "red" }}>{error.message}</pre>
-    </div>
-  );
+  return <NotFoundPage />;
 }
 
 export default function Page({ params }: { params: { slug: string } }) {
