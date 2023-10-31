@@ -5,7 +5,7 @@ import {
   query,
   QueryCtx,
 } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { CaseStatus } from "../types/case-types";
 
 import { ConvexError, v, Value } from "convex/values";
@@ -24,13 +24,7 @@ export const getMedicalCase = query({
 
     const { id } = args;
 
-    const medicalCase = await ctx.db.get(id);
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     const patient = await mustGetUserById(ctx, medicalCase.patient_id);
 
@@ -80,13 +74,7 @@ export const getAnonymizedMedicalCase = query({
 
     const { id } = args;
 
-    const medicalCase = await ctx.db.get(id);
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     if (user.role !== "medical_student") {
       throw new ConvexError({
@@ -131,13 +119,7 @@ export const internalGetMedicalCase = internalQuery({
   async handler(ctx, args) {
     const { id } = args;
 
-    const medicalCase = await ctx.db.get(id);
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     // await verifyCareTeam(ctx, user._id, medicalCase.user_id);
 
@@ -162,14 +144,7 @@ export const addReviewersToMedicalCase = mutation({
       });
     }
 
-    const medicalCase = await ctx.db.get(id);
-
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     const reviewerSet = new Set(medicalCase.reviewers);
     const reviewers = medicalCase.reviewers;
@@ -205,6 +180,7 @@ export const addReviewersToMedicalCase = mutation({
 
     await Promise.all([
       ctx.db.patch(id, {
+        status: CaseStatus.REVIEWING,
         reviewers,
       }),
       ctx.db.insert("review", {
@@ -264,7 +240,6 @@ export const createMedicalCase = mutation({
       tags: tags || [],
       patient_id: normalizedId ? normalizedId : user._id,
       chief_complaint,
-      reviews: [],
       user_id: user._id,
       ethnicity,
       age,
@@ -461,13 +436,7 @@ export const deleteCases = mutation({
 
     await Promise.all(
       ids.map(async (id) => {
-        const medicalCase = await ctx.db.get(id);
-        if (!medicalCase) {
-          throw new ConvexError({
-            message: "Medical case not found",
-            code: 404,
-          });
-        }
+        const medicalCase = await mustGetMedicalCase(ctx, id);
 
         if (medicalCase.user_id !== user._id) {
           throw new ConvexError({
@@ -492,13 +461,7 @@ export const reviewCallback = internalMutation({
   async handler(ctx, args) {
     const { id, reviews } = args;
 
-    const medicalCase = await ctx.db.get(id);
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     // create new reviews
     const caseReviews = await Promise.all(
@@ -509,7 +472,6 @@ export const reviewCallback = internalMutation({
     );
 
     return ctx.db.patch(id, {
-      reviews: caseReviews,
       reviewed_at: Date.now(),
     });
   },
@@ -539,4 +501,17 @@ export async function verifyCareTeam(
   }
 
   return true;
+}
+
+export async function mustGetMedicalCase(
+  ctx: QueryCtx,
+  case_id: Id<"medical_case">
+): Promise<Doc<"medical_case">> {
+  const caseRecord = await ctx.db.get(case_id);
+  if (!caseRecord)
+    throw new ConvexError({
+      message: "Medical case not found",
+      code: 404,
+    });
+  return caseRecord;
 }

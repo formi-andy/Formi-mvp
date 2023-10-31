@@ -15,7 +15,6 @@ export default defineSchema({
     patient_id: v.id("users"),
     tags: v.array(v.string()),
     chief_complaint: v.string(),
-    reviews: v.array(v.id("review")),
     reviewed_at: v.optional(v.number()),
     reviewers: v.array(v.id("users")),
     status: v.union(

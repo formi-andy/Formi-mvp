@@ -16,7 +16,7 @@ export const doMigration = internalMutation(async ({ db }) => {
   // const medicalCases = await db.query("medical_case").collect();
   // for (const medicalCase of medicalCases) {
   //   await db.patch(medicalCase._id, {
-  //     reviewers: [],
+  //     reviews: undefined,
   //   });
   // }
 });
