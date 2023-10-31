@@ -150,7 +150,7 @@ function CasePage({ params }: { params: { slug: string } }) {
               className={`rte-content-container ${style.notesContainer}`}
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(
-                  medicalCase.description || "No notes yet."
+                  medicalCase.description || "No notes."
                 ),
               }}
             />

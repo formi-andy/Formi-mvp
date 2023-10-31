@@ -13,6 +13,7 @@ import { mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
 import { getImageByCaseId, getImagesByCaseId } from "./images";
 import { getReviewsByCaseId } from "./review";
+import { ReviewStatus } from "../types/review-types";
 
 export const getMedicalCase = query({
   args: {
@@ -190,7 +191,7 @@ export const addReviewersToMedicalCase = mutation({
     const reviews = await ctx.db
       .query("review")
       .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
-      .filter((q) => q.eq(q.field("status"), "CREATED"))
+      .filter((q) => q.eq(q.field("status"), ReviewStatus.CREATED))
       .collect();
 
     if (reviews.length > 0) {
@@ -210,7 +211,7 @@ export const addReviewersToMedicalCase = mutation({
         case_id: id,
         user_id: user._id,
         notes: "",
-        status: "CREATED",
+        status: ReviewStatus.CREATED,
       }),
     ]);
 

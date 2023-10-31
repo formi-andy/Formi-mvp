@@ -1,8 +1,9 @@
 import { ConvexError, v } from "convex/values";
-import { QueryCtx, internalQuery, query } from "./_generated/server";
+import { QueryCtx, internalQuery, mutation, query } from "./_generated/server";
 import { mustGetCurrentUser, mustGetUserById } from "./users";
 import { Id } from "./_generated/dataModel";
 import { mustGetMedicalStudentbyId } from "./medical_student";
+import sanitizeHtml from "sanitize-html";
 
 async function attachUsersAndMedicalStudents(
   ctx: QueryCtx,
@@ -65,5 +66,36 @@ export const getReviewsByUser = query({
       .collect();
 
     return reviews;
+  },
+});
+
+export const saveReview = mutation({
+  args: {
+    case_id: v.id("medical_case"),
+    notes: v.string(),
+  },
+  async handler(ctx, args) {
+    const { case_id, notes } = args;
+
+    const user = await mustGetCurrentUser(ctx);
+
+    const existingReview = await ctx.db
+      .query("review")
+      .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
+      .filter((q) => q.eq(q.field("user_id"), user._id))
+      .first();
+
+    if (!existingReview) {
+      throw new ConvexError({
+        message: "Review not found",
+        code: 404,
+      });
+    }
+
+    const sanitizedNotes = sanitizeHtml(notes || "");
+
+    return ctx.db.patch(existingReview._id, {
+      notes: sanitizedNotes,
+    });
   },
 });

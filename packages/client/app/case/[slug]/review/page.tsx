@@ -1,7 +1,7 @@
 "use client";
 
 import { ErrorBoundary } from "react-error-boundary";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import NotFoundPage from "@/app/not-found";
@@ -34,12 +34,15 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
   });
   const toast = useNetworkToasts();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [notesContainer, setNotesContainer] = useState<HTMLElement | null>(
     null
   );
   const [review, setReview] = useState("");
   const autoplay = useRef(Autoplay({ delay: 5000 }));
+
+  const saveReview = useMutation(api.review.saveReview);
 
   if (medicalCase === undefined) {
     return <AppLoader />;
@@ -213,9 +216,44 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           }}
           maxLength={5000}
         />
-        <Button className="w-fit" variant="action">
-          Submit
-        </Button>
+        <div className="flex gap-x-4">
+          <Button
+            className="w-fit"
+            variant="action"
+            onClick={() => {
+              try {
+                setLoading(true);
+                toast.loading({
+                  title: "Saving review...",
+                  message: "Please wait",
+                });
+                saveReview({
+                  case_id: slug as Id<"medical_case">,
+                  notes: review,
+                });
+                toast.success({
+                  title: "Review saved",
+                  message: "Your review has been saved",
+                });
+              } catch (error) {
+                toast.error({
+                  title: "Error saving review",
+                  message:
+                    error instanceof ConvexError
+                      ? (error.data as { message: string }).message
+                      : undefined,
+                });
+              } finally {
+                setLoading(false);
+              }
+            }}
+          >
+            Save
+          </Button>
+          <Button className="w-fit" variant="action">
+            Submit
+          </Button>
+        </div>
       </div>
     </div>
   );
