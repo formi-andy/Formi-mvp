@@ -43,6 +43,7 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
   const autoplay = useRef(Autoplay({ delay: 5000 }));
 
   const saveReview = useMutation(api.review.saveReview);
+  const submitReview = useMutation(api.review.submitReview);
 
   if (medicalCase === undefined) {
     return <AppLoader />;
@@ -221,14 +222,14 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
             className="w-fit"
             variant="action"
             disabled={loading || review.length === 0}
-            onClick={() => {
+            onClick={async () => {
               try {
                 setLoading(true);
                 toast.loading({
                   title: "Saving review...",
                   message: "Please wait",
                 });
-                saveReview({
+                await saveReview({
                   case_id: slug as Id<"medical_case">,
                   notes: review,
                 });
@@ -255,6 +256,33 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
             className="w-fit"
             variant="action"
             disabled={loading || review.length === 0}
+            onClick={async () => {
+              try {
+                setLoading(true);
+                toast.loading({
+                  title: "Submitting review...",
+                  message: "Please wait",
+                });
+                await submitReview({
+                  case_id: slug as Id<"medical_case">,
+                  notes: review,
+                });
+                toast.success({
+                  title: "Review submitted",
+                  message: "Your review has been submitted",
+                });
+              } catch (error) {
+                toast.error({
+                  title: "Error submitting review",
+                  message:
+                    error instanceof ConvexError
+                      ? (error.data as { message: string }).message
+                      : undefined,
+                });
+              } finally {
+                setLoading(false);
+              }
+            }}
           >
             Submit
           </Button>

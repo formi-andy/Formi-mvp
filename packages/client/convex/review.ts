@@ -94,6 +94,13 @@ export const saveReview = mutation({
       });
     }
 
+    if (existingReview.status === ReviewStatus.COMPLETED) {
+      throw new ConvexError({
+        message: "Review already completed",
+        code: 400,
+      });
+    }
+
     const sanitizedNotes = sanitizeHtml(notes || "");
 
     return ctx.db.patch(existingReview._id, {
@@ -127,6 +134,13 @@ export const submitReview = mutation({
       throw new ConvexError({
         message: "Review not found",
         code: 404,
+      });
+    }
+
+    if (existingReview.status === ReviewStatus.COMPLETED) {
+      throw new ConvexError({
+        message: "Review already completed",
+        code: 400,
       });
     }
 
