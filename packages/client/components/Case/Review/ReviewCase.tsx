@@ -35,10 +35,20 @@ export default function ReviewCase({
   const submitReview = useMutation(api.review.submitReview);
 
   useEffect(() => {
-    if (currentReview) {
+    setReviewContainer(document.getElementById("review"));
+  }, []);
+
+  useEffect(() => {
+    if (reviewContainer && reviewContainer.scrollHeight > 160) {
+      reviewContainer.classList.add(style.hidden);
+    }
+  }, [reviewContainer]);
+
+  useEffect(() => {
+    if (currentReview && review === "") {
       setReview(currentReview.notes);
     }
-  }, [currentReview]);
+  }, [currentReview, review]);
 
   return (
     <div className="flex flex-col w-full lg:w-2/5 gap-y-4">
@@ -53,7 +63,7 @@ export default function ReviewCase({
             id="review"
             className={`rte-content-container ${style.notesContainer}`}
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(currentReview?.notes || "No Review"),
+              __html: DOMPurify.sanitize(currentReview.notes),
             }}
           />
           {reviewContainer && reviewContainer.scrollHeight > 160 && (
@@ -63,7 +73,7 @@ export default function ReviewCase({
               aria-expanded={expanded}
               className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
               onClick={() => {
-                let icon = document.getElementById("assetDescriptionIcon");
+                let icon = document.getElementById("reviewIcon");
                 if (expanded) {
                   reviewContainer.style.maxHeight = "160px";
                   reviewContainer.classList.remove(style.expanded);
@@ -76,7 +86,7 @@ export default function ReviewCase({
                 setExpanded(!expanded);
               }}
             >
-              <LuChevronDown id="assetDescriptionIcon" className="transition" />
+              <LuChevronDown id="reviewIcon" className="transition" />
             </button>
           )}
         </>
@@ -88,7 +98,11 @@ export default function ReviewCase({
             onChange={(content) => {
               setReview(content);
             }}
-            loadedContent={currentReview?.notes}
+            loadedContent={
+              currentReview?.notes && review === ""
+                ? currentReview?.notes
+                : undefined
+            }
             maxLength={5000}
           />
           <div className="flex gap-x-4">
