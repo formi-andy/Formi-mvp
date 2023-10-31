@@ -57,6 +57,34 @@ export const getReviewsByCaseId = internalQuery({
   },
 });
 
+export const getUserReviewByCaseId = query({
+  args: {
+    case_id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { case_id } = args;
+
+    const user = await mustGetCurrentUser(ctx);
+
+    const medicalCase = await mustGetMedicalCase(ctx, case_id);
+
+    if (medicalCase.reviewers.indexOf(user._id) === -1) {
+      throw new ConvexError({
+        message: "User not allowed to review this case",
+        code: 403,
+      });
+    }
+
+    const review = await ctx.db
+      .query("review")
+      .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
+      .filter((q) => q.eq(q.field("user_id"), user._id))
+      .first();
+
+    return review;
+  },
+});
+
 export const getReviewsByUser = query({
   args: {},
   async handler(ctx, args) {

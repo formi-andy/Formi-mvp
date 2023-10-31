@@ -2,7 +2,7 @@
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useMutation, useQuery } from "convex/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import NotFoundPage from "@/app/not-found";
 
@@ -18,13 +18,11 @@ import Image from "@/components/ui/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
 import { LuChevronDown, LuClipboard } from "react-icons/lu";
 import style from "../case.module.css";
 import { Badge } from "@/components/ui/badge";
-import RTE from "@/components/ui/RTE/RTE";
-import { Button } from "@/components/ui/button";
+import ReviewCase from "@/components/Case/Review/ReviewCase";
 
 // TODO: Move this to ssr after convex supports server side reactive queries
 function CaseReviewPage({ params }: { params: { slug: string } }) {
@@ -32,20 +30,18 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
   const medicalCase = useQuery(api.medical_case.getAnonymizedMedicalCase, {
     id: slug as Id<"medical_case">,
   });
-  const toast = useNetworkToasts();
+  const currentReview = useQuery(api.review.getUserReviewByCaseId, {
+    case_id: slug as Id<"medical_case">,
+  });
+
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [notesContainer, setNotesContainer] = useState<HTMLElement | null>(
     null
   );
-  const [review, setReview] = useState("");
   const autoplay = useRef(Autoplay({ delay: 5000 }));
 
-  const saveReview = useMutation(api.review.saveReview);
-  const submitReview = useMutation(api.review.submitReview);
-
-  if (medicalCase === undefined) {
+  if (medicalCase === undefined || currentReview === undefined) {
     return <AppLoader />;
   }
 
@@ -207,87 +203,7 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           </Carousel>
         </div>
       </div>
-      <div className="flex flex-col w-full lg:w-2/5 gap-y-4">
-        <p className="text-xl font-semibold">Review</p>
-        <RTE
-          content={review}
-          sticky={false}
-          onChange={(content) => {
-            setReview(content);
-          }}
-          maxLength={5000}
-        />
-        <div className="flex gap-x-4">
-          <Button
-            className="w-fit"
-            variant="action"
-            disabled={loading || review.length === 0}
-            onClick={async () => {
-              try {
-                setLoading(true);
-                toast.loading({
-                  title: "Saving review...",
-                  message: "Please wait",
-                });
-                await saveReview({
-                  case_id: slug as Id<"medical_case">,
-                  notes: review,
-                });
-                toast.success({
-                  title: "Review saved",
-                  message: "Your review has been saved",
-                });
-              } catch (error) {
-                toast.error({
-                  title: "Error saving review",
-                  message:
-                    error instanceof ConvexError
-                      ? (error.data as { message: string }).message
-                      : undefined,
-                });
-              } finally {
-                setLoading(false);
-              }
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            className="w-fit"
-            variant="action"
-            disabled={loading || review.length === 0}
-            onClick={async () => {
-              try {
-                setLoading(true);
-                toast.loading({
-                  title: "Submitting review...",
-                  message: "Please wait",
-                });
-                await submitReview({
-                  case_id: slug as Id<"medical_case">,
-                  notes: review,
-                });
-                toast.success({
-                  title: "Review submitted",
-                  message: "Your review has been submitted",
-                });
-              } catch (error) {
-                toast.error({
-                  title: "Error submitting review",
-                  message:
-                    error instanceof ConvexError
-                      ? (error.data as { message: string }).message
-                      : undefined,
-                });
-              } finally {
-                setLoading(false);
-              }
-            }}
-          >
-            Submit
-          </Button>
-        </div>
-      </div>
+      <ReviewCase caseId={slug} currentReview={currentReview} />
     </div>
   );
 }
