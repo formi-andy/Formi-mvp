@@ -1,8 +1,9 @@
 import { ConvexError, v } from "convex/values";
-import { QueryCtx, internalQuery, query } from "./_generated/server";
+import { QueryCtx, internalQuery, query, mutation } from "./_generated/server";
 import { mustGetCurrentUser, mustGetUserById } from "./users";
 import { Id } from "./_generated/dataModel";
 import { mustGetMedicalStudentbyId } from "./medical_student";
+import { getMedicalCase } from "./medical_case";
 
 async function attachUsersAndMedicalStudents(
   ctx: QueryCtx,
@@ -65,5 +66,49 @@ export const getReviewsByUser = query({
       .collect();
 
     return reviews;
+  },
+});
+
+export const createReview = mutation({
+  args: {
+    case_id: v.id("medical_case"),
+    notes: v.string(),
+  },
+  async handler(ctx, args) {
+    const { case_id, notes } = args;
+
+    const user = await mustGetCurrentUser(ctx);
+
+    const medicalCase = await getMedicalCase(ctx, { id: case_id });
+
+    // check if user is in reviewers
+    if (!medicalCase.reviewers.includes(user._id)) {
+      throw new ConvexError({
+        message: "User not in reviewers",
+        code: 401,
+      });
+    }
+
+    // check if user already reviewed
+    const existingReview = await ctx.db
+      .query("review")
+      .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
+      .filter((q) => q.eq(q.field("user_id"), user._id))
+      .collect();
+
+    if (existingReview) {
+      throw new ConvexError({
+        message: "User already reviewed",
+        code: 401,
+      });
+    }
+
+    const review = await ctx.db.insert("review", {
+      case_id,
+      user_id: user._id,
+      notes,
+    });
+
+    return review;
   },
 });

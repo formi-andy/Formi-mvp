@@ -45,7 +45,7 @@ export const renderCases = ({
       {cases && cases.length > 0 && (
         <>
           {title && (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mb-4">
               <p className="text-xl lg:text-2xl font-medium">{title}</p>
             </div>
           )}

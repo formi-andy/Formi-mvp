@@ -44,9 +44,12 @@ function renderTags(tags: string[]) {
 function CasePage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   // cast to Id<"medical_case"> to satisfy type checker
-  const medicalCase = useQuery(api.medical_case.getMedicalCase, {
-    id: slug as Id<"medical_case">,
-  });
+  const medicalCase = useQuery(
+    api.medical_case.getMedicalCaseWithImageAndPatient,
+    {
+      id: slug as Id<"medical_case">,
+    }
+  );
   const user = useQuery(api.users.currentUser);
   const toast = useNetworkToasts();
   const router = useRouter();

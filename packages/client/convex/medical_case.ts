@@ -14,7 +14,26 @@ import sanitizeHtml from "sanitize-html";
 import { getImageByCaseId, getImagesByCaseId } from "./images";
 import { getReviewsByCaseId } from "./review";
 
-export const getMedicalCase = query({
+export const getMedicalCase = internalQuery({
+  args: {
+    id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { id } = args;
+
+    const medicalCase = await ctx.db.get(id);
+    if (!medicalCase) {
+      throw new ConvexError({
+        message: "Medical case not found",
+        code: 404,
+      });
+    }
+
+    return medicalCase;
+  },
+});
+
+export const getMedicalCaseWithImageAndPatient = query({
   args: {
     id: v.id("medical_case"),
   },
