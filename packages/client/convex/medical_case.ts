@@ -43,6 +43,10 @@ export const getMedicalCase = query({
       }),
     ]);
 
+    const completedReviews = reviews.filter(
+      (review) => review.status === ReviewStatus.COMPLETED
+    );
+
     // get urls for all images
     const imagesWithUrls = await Promise.all(
       images.map(async (image) => {
@@ -60,7 +64,7 @@ export const getMedicalCase = query({
       ...medicalCase,
       images: imagesWithUrls,
       patient,
-      reviews,
+      reviews: completedReviews,
     };
   },
 });
@@ -86,12 +90,7 @@ export const getAnonymizedMedicalCase = query({
       });
     }
 
-    const [images, reviews] = await Promise.all([
-      getImagesByCaseId(ctx, { case_id: medicalCase._id }),
-      getReviewsByCaseId(ctx, {
-        case_id: medicalCase._id,
-      }),
-    ]);
+    const images = await getImagesByCaseId(ctx, { case_id: medicalCase._id });
 
     const imagesWithUrls = await Promise.all(
       images.map(async (image) => {
@@ -110,7 +109,6 @@ export const getAnonymizedMedicalCase = query({
     return {
       ...medicalCaseWithoutUserId,
       images: imagesWithUrls,
-      reviews,
     };
   },
 });

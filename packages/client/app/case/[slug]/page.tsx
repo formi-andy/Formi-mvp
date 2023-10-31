@@ -141,48 +141,6 @@ function CasePage({ params }: { params: { slug: string } }) {
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <MdNotes size={24} /> Additional Notes
-          </div>
-          <div className="flex flex-col w-full p-4">
-            <div
-              id="notes"
-              className={`rte-content-container ${style.notesContainer}`}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  medicalCase.description || "No notes."
-                ),
-              }}
-            />
-            {notesContainer && notesContainer.scrollHeight > 160 && (
-              <button
-                type="button"
-                aria-label="Toggle notes"
-                aria-expanded={expanded}
-                className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
-                onClick={() => {
-                  let icon = document.getElementById("assetDescriptionIcon");
-                  if (expanded) {
-                    notesContainer.style.maxHeight = "160px";
-                    notesContainer.classList.remove(style.expanded);
-                    icon?.classList.remove(style.rotate);
-                  } else {
-                    notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
-                    notesContainer.classList.add(style.expanded);
-                    icon?.classList.add(style.rotate);
-                  }
-                  setExpanded(!expanded);
-                }}
-              >
-                <LuChevronDown
-                  id="assetDescriptionIcon"
-                  className="transition"
-                />
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col border rounded-lg">
-          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
             <LuWorkflow size={24} /> Reviews
           </div>
           <div className="flex flex-col w-full p-4">
@@ -192,8 +150,8 @@ function CasePage({ params }: { params: { slug: string } }) {
               medicalCase.reviews.map((review, index) => {
                 return (
                   <div key={`review_${index}`}>
-                    <p className="font-medium text-xl mb-2">
-                      {`${review.user.clerkUser.firstName} ${review.user.clerkUser.lastName}`}
+                    <p className="font-medium mb-2">
+                      {`${review.user.clerkUser.first_name} ${review.user.clerkUser.last_name}`}
                     </p>
                     <p className="text-lg">{review.notes}</p>
                   </div>
@@ -246,6 +204,48 @@ function CasePage({ params }: { params: { slug: string } }) {
                 );
               })}
             </div>
+          </div>
+        </div>
+        <div className="flex flex-col border rounded-lg">
+          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
+            <MdNotes size={24} /> Additional Notes
+          </div>
+          <div className="flex flex-col w-full p-4">
+            <div
+              id="notes"
+              className={`rte-content-container ${style.notesContainer}`}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                  medicalCase.description || "No notes."
+                ),
+              }}
+            />
+            {notesContainer && notesContainer.scrollHeight > 160 && (
+              <button
+                type="button"
+                aria-label="Toggle notes"
+                aria-expanded={expanded}
+                className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
+                onClick={() => {
+                  let icon = document.getElementById("assetDescriptionIcon");
+                  if (expanded) {
+                    notesContainer.style.maxHeight = "160px";
+                    notesContainer.classList.remove(style.expanded);
+                    icon?.classList.remove(style.rotate);
+                  } else {
+                    notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
+                    notesContainer.classList.add(style.expanded);
+                    icon?.classList.add(style.rotate);
+                  }
+                  setExpanded(!expanded);
+                }}
+              >
+                <LuChevronDown
+                  id="assetDescriptionIcon"
+                  className="transition"
+                />
+              </button>
+            )}
           </div>
         </div>
         {/* <div className="flex flex-col border rounded-lg">

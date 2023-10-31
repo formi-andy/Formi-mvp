@@ -220,6 +220,7 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           <Button
             className="w-fit"
             variant="action"
+            disabled={loading || review.length === 0}
             onClick={() => {
               try {
                 setLoading(true);
@@ -250,7 +251,11 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           >
             Save
           </Button>
-          <Button className="w-fit" variant="action">
+          <Button
+            className="w-fit"
+            variant="action"
+            disabled={loading || review.length === 0}
+          >
             Submit
           </Button>
         </div>
