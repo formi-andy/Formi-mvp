@@ -12,7 +12,7 @@ import { ConvexError, v, Value } from "convex/values";
 import { mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
 import { getImageByCaseId, getImagesByCaseId } from "./images";
-import { getReviewsByCaseId } from "./review";
+import { getReviewsByCaseId, getReviewsByUser } from "./review";
 import { ReviewStatus } from "../types/review-types";
 
 export const getMedicalCase = query({
@@ -189,6 +189,7 @@ export const addReviewersToMedicalCase = mutation({
         user_id: user._id,
         notes: "",
         status: ReviewStatus.CREATED,
+        updated_at: Date.now(),
       }),
     ]);
 
@@ -252,39 +253,39 @@ export const createMedicalCase = mutation({
   },
 });
 
-export const listMedicalCasesByReviewer = query({
+export const getCompletedMedicalCasesByReviewer = query({
   args: {
-    reviewer_id: v.optional(v.id("users")),
     timezone: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
-    const reviewerId = args.reviewer_id || user._id;
     // await verifyCareTeam(ctx, user._id, patientId);
 
     // TODO: need to make this more efficient
-    const medicalCases = (
-      await ctx.db.query("medical_case").order("desc").collect()
-    ).filter(({ reviewers }) => reviewers.includes(reviewerId));
-
-    const medicalCasesWithPatient = await Promise.all(
-      medicalCases.map(async (medicalCase) => {
+    const reviews = await getReviewsByUser(ctx, {
+      status: ReviewStatus.COMPLETED,
+    });
+    const reviewsWithCases = await Promise.all(
+      reviews.map(async (review) => {
+        const medicalCase = await mustGetMedicalCase(ctx, review.case_id);
         const patient = await mustGetUserById(ctx, medicalCase.patient_id);
-        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
+        const image = await getImageByCaseId(ctx, {
+          case_id: medicalCase._id,
+        });
         const url = (await ctx.storage.getUrl(image.storage_id)) || "";
 
         return {
           ...medicalCase,
           patient,
           image_url: url,
+          _creationTime: review.updated_at,
         };
       })
     );
 
-    const medicalCasesByDay: Record<string, typeof medicalCasesWithPatient> =
-      {};
+    const medicalCasesByDay: Record<string, typeof reviewsWithCases> = {};
 
-    medicalCasesWithPatient.forEach((medicalCase) => {
+    reviewsWithCases.forEach((medicalCase) => {
       const date = new Date(medicalCase._creationTime).toLocaleDateString(
         "en-US",
         {

@@ -1,11 +1,16 @@
 import dayjs from "dayjs";
 import { Badge } from "@/components/ui/badge";
 import Image from "@/components/ui/Image/Image";
-import { capitalize } from "lodash";
 
 import { MedicalCase } from "@/types/case-types";
 
-const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
+const CaseCard = ({
+  medicalCase,
+  type,
+}: {
+  medicalCase: MedicalCase;
+  type: "medical_student" | "patient";
+}) => {
   const {
     _id,
     _creationTime,
@@ -41,9 +46,9 @@ const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
       </div>
       <div className="flex justify-between items-center">
         <p className="text-sm">
-          Created at {dayjs(_creationTime).format("h:mm A")}
+          {type === "medical_student" ? "Reviewed" : "Created"} at{" "}
+          {dayjs(_creationTime).format("h:mm A")}
         </p>
-        <p className="text-sm">{capitalize(status)}</p>
       </div>
     </div>
   );
