@@ -449,6 +449,27 @@ export const listClaimableMedicalCases = query({
   },
 });
 
+export const updateMedicalCaseStatus = internalMutation({
+  args: {
+    case_id: v.id("medical_case"),
+    status: v.union(
+      v.literal("CREATED"),
+      v.literal("REVIEWING"),
+      v.literal("COMPLETED")
+    ),
+  },
+  async handler(ctx, args) {
+    const { case_id, status } = args;
+
+    // check if medical case exists
+    await getMedicalCase(ctx, { id: case_id });
+
+    return ctx.db.patch(case_id, {
+      status,
+    });
+  },
+});
+
 export const deleteCases = mutation({
   args: {
     ids: v.array(v.id("medical_case")),

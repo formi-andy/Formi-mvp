@@ -3,7 +3,7 @@ import { QueryCtx, internalQuery, query, mutation } from "./_generated/server";
 import { mustGetCurrentUser, mustGetUserById } from "./users";
 import { Id } from "./_generated/dataModel";
 import { mustGetMedicalStudentbyId } from "./medical_student";
-import { getMedicalCase } from "./medical_case";
+import { getMedicalCase, updateMedicalCaseStatus } from "./medical_case";
 
 async function attachUsersAndMedicalStudents(
   ctx: QueryCtx,
@@ -108,6 +108,17 @@ export const createReview = mutation({
       user_id: user._id,
       notes,
     });
+
+    // if reviewers is empty, set status to REVIEWING
+    if (medicalCase.reviewers.length === 0) {
+      await updateMedicalCaseStatus(ctx, {
+        case_id,
+        status: "REVIEWING",
+      });
+    }
+
+    // determine if all reviewers have reviewed
+    // TODO
 
     return review;
   },
