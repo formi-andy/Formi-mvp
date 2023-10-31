@@ -175,16 +175,44 @@ export const addReviewersToMedicalCase = mutation({
 
     if (reviewerSet.has(user._id)) {
       throw new ConvexError({
-        message: "User is already a reviewer for this case",
+        message: "You are already a reviewer for this case",
+        code: 400,
+      });
+    }
+
+    if (reviewers.length >= medicalCase.max_reviewers) {
+      throw new ConvexError({
+        message: "Max reviewers for this case has been reached",
+        code: 400,
+      });
+    }
+
+    const reviews = await ctx.db
+      .query("review")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .filter((q) => q.eq(q.field("status"), "CREATED"))
+      .collect();
+
+    if (reviews.length > 0) {
+      throw new ConvexError({
+        message: "You are already reviewing another case",
         code: 400,
       });
     }
 
     reviewers.push(user._id);
 
-    await ctx.db.patch(id, {
-      reviewers,
-    });
+    await Promise.all([
+      ctx.db.patch(id, {
+        reviewers,
+      }),
+      ctx.db.insert("review", {
+        case_id: id,
+        user_id: user._id,
+        notes: "",
+        status: "CREATED",
+      }),
+    ]);
 
     return {
       ...medicalCase,

@@ -22,7 +22,7 @@ const DoctorDashboardView: React.FC = () => {
   return (
     <Tabs color="rgba(0, 0, 0, 1)" value={activeTab} onChange={setActiveTab}>
       <Tabs.List grow>
-        <Tabs.Tab value="review">Review Cases</Tabs.Tab>
+        <Tabs.Tab value="review">Open Cases</Tabs.Tab>
         <Tabs.Tab value="completed">Completed Cases</Tabs.Tab>
       </Tabs.List>
 

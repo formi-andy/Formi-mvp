@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { Badge } from "@/components/ui/badge";
 import Image from "@/components/ui/Image/Image";
+import { capitalize } from "lodash";
 
 import { MedicalCase } from "@/types/case-types";
 
@@ -42,7 +43,7 @@ const CaseCard = ({ medicalCase }: { medicalCase: MedicalCase }) => {
         <p className="text-sm">
           Created at {dayjs(_creationTime).format("h:mm A")}
         </p>
-        <p className="text-sm">{status}</p>
+        <p className="text-sm">{capitalize(status)}</p>
       </div>
     </div>
   );

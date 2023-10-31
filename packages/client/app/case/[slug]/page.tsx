@@ -13,6 +13,7 @@ import { Carousel } from "@mantine/carousel";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 import Autoplay from "embla-carousel-autoplay";
+import { capitalize } from "lodash";
 
 import Image from "@/components/ui/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
@@ -110,7 +111,6 @@ function CasePage({ params }: { params: { slug: string } }) {
           <p className="!text-4xl font-medium !h-10 overflow-visible !border-0 disabled:bg-transparent disabled:opacity-100 disabled:text-black disabled:cursor-text">
             {medicalCase.title}
           </p>
-          <p className="text-lg">{medicalCase.chief_complaint}</p>
         </div>
         {/* <p className="text-xl">{image.user_id || "No patient"}</p> */}
         <div>
@@ -119,12 +119,26 @@ function CasePage({ params }: { params: { slug: string } }) {
             {dayjs(medicalCase._creationTime).format("M/DD/YYYY h:mm A")}
           </p>
           <p>
-            {medicalCase.reviews.length === 0
-              ? "Pending Review"
-              : `Reviewed at ${dayjs(medicalCase.reviewed_at).format(
-                  "M/DD/YYYY h:mm A"
-                )}`}
+            {medicalCase.status === "COMPLETED" ? (
+              <span>Reviewed</span>
+            ) : (
+              <span>{capitalize(medicalCase.status)}</span>
+            )}
           </p>
+        </div>
+        <div className="flex flex-col border rounded-lg">
+          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
+            <LuClipboard size={24} /> Patient Info
+          </div>
+          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+            <p className="text-lg">Age - {medicalCase.age}</p>
+            <p className="text-lg">Birth Sex - {medicalCase.age}</p>
+            <p className="text-lg">Ethnicity - {medicalCase.ethnicity}</p>
+            <p className="text-lg">State - {medicalCase.age}</p>
+            <p className="text-lg">
+              Chief Complaint - {medicalCase.chief_complaint}
+            </p>
+          </div>
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
@@ -170,7 +184,7 @@ function CasePage({ params }: { params: { slug: string } }) {
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <LuWorkflow size={24} /> Review
+            <LuWorkflow size={24} /> Reviews
           </div>
           <div className="flex flex-col w-full p-4">
             {medicalCase.reviews.length === 0 ? (
