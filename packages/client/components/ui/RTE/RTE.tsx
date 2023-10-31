@@ -7,14 +7,17 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import CharacterCount from "@tiptap/extension-character-count";
+import { useEffect } from "react";
 
 export default function RTE({
   content,
+  loadedContent,
   onChange,
   maxLength,
   sticky = true,
 }: {
   content?: string;
+  loadedContent?: string;
   onChange?: (content: string) => void;
   maxLength?: number;
   sticky?: boolean;
@@ -35,6 +38,12 @@ export default function RTE({
       onChange?.(editor.getHTML());
     },
   });
+
+  useEffect(() => {
+    if (loadedContent && editor) {
+      editor.commands.setContent(loadedContent);
+    }
+  }, [loadedContent, editor]);
 
   return (
     <div className="flex flex-col gap-y-4">

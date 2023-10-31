@@ -9,6 +9,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { ConvexError } from "convex/values";
 
 export default function ClaimCaseModal({
   opened,
@@ -49,7 +50,11 @@ export default function ClaimCaseModal({
       setOpened(false);
     } catch (error) {
       toast.error({
-        message: "Error accepting case",
+        title: "Error accepting case",
+        message:
+          error instanceof ConvexError
+            ? (error.data as { message: string }).message
+            : undefined,
       });
     } finally {
       setUpdating(false);

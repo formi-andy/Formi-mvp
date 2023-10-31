@@ -13,6 +13,7 @@ import { Carousel } from "@mantine/carousel";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 import Autoplay from "embla-carousel-autoplay";
+import { capitalize } from "lodash";
 
 import Image from "@/components/ui/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
@@ -113,7 +114,6 @@ function CasePage({ params }: { params: { slug: string } }) {
           <p className="!text-4xl font-medium !h-10 overflow-visible !border-0 disabled:bg-transparent disabled:opacity-100 disabled:text-black disabled:cursor-text">
             {medicalCase.title}
           </p>
-          <p className="text-lg">{medicalCase.chief_complaint}</p>
         </div>
         {/* <p className="text-xl">{image.user_id || "No patient"}</p> */}
         <div>
@@ -122,58 +122,30 @@ function CasePage({ params }: { params: { slug: string } }) {
             {dayjs(medicalCase._creationTime).format("M/DD/YYYY h:mm A")}
           </p>
           <p>
-            {medicalCase.reviews.length === 0
-              ? "Pending Review"
-              : `Reviewed at ${dayjs(medicalCase.reviewed_at).format(
-                  "M/DD/YYYY h:mm A"
-                )}`}
+            {medicalCase.status === "COMPLETED" ? (
+              <span>Reviewed</span>
+            ) : (
+              <span>{capitalize(medicalCase.status)}</span>
+            )}
           </p>
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <MdNotes size={24} /> Additional Notes
+            <LuClipboard size={24} /> Patient Info
           </div>
-          <div className="flex flex-col w-full p-4">
-            <div
-              id="notes"
-              className={`rte-content-container ${style.notesContainer}`}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  medicalCase.description || "No notes yet."
-                ),
-              }}
-            />
-            {notesContainer && notesContainer.scrollHeight > 160 && (
-              <button
-                type="button"
-                aria-label="Toggle notes"
-                aria-expanded={expanded}
-                className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
-                onClick={() => {
-                  let icon = document.getElementById("assetDescriptionIcon");
-                  if (expanded) {
-                    notesContainer.style.maxHeight = "160px";
-                    notesContainer.classList.remove(style.expanded);
-                    icon?.classList.remove(style.rotate);
-                  } else {
-                    notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
-                    notesContainer.classList.add(style.expanded);
-                    icon?.classList.add(style.rotate);
-                  }
-                  setExpanded(!expanded);
-                }}
-              >
-                <LuChevronDown
-                  id="assetDescriptionIcon"
-                  className="transition"
-                />
-              </button>
-            )}
+          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+            <p className="text-lg">Age - {medicalCase.age}</p>
+            <p className="text-lg">Birth Sex - {medicalCase.age}</p>
+            <p className="text-lg">Ethnicity - {medicalCase.ethnicity}</p>
+            <p className="text-lg">State - {medicalCase.age}</p>
+            <p className="text-lg">
+              Chief Complaint - {medicalCase.chief_complaint}
+            </p>
           </div>
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <LuWorkflow size={24} /> Review
+            <LuWorkflow size={24} /> Reviews
           </div>
           <div className="flex flex-col w-full p-4">
             {medicalCase.reviews.length === 0 ? (
@@ -182,8 +154,8 @@ function CasePage({ params }: { params: { slug: string } }) {
               medicalCase.reviews.map((review, index) => {
                 return (
                   <div key={`review_${index}`}>
-                    <p className="font-medium text-xl mb-2">
-                      {`${review.user.clerkUser.firstName} ${review.user.clerkUser.lastName}`}
+                    <p className="font-medium mb-2">
+                      {`${review.user.clerkUser.first_name} ${review.user.clerkUser.last_name}`}
                     </p>
                     <p className="text-lg">{review.notes}</p>
                   </div>
@@ -238,6 +210,48 @@ function CasePage({ params }: { params: { slug: string } }) {
             </div>
           </div>
         </div>
+        <div className="flex flex-col border rounded-lg">
+          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
+            <MdNotes size={24} /> Additional Notes
+          </div>
+          <div className="flex flex-col w-full p-4">
+            <div
+              id="notes"
+              className={`rte-content-container ${style.notesContainer}`}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                  medicalCase.description || "No notes."
+                ),
+              }}
+            />
+            {notesContainer && notesContainer.scrollHeight > 160 && (
+              <button
+                type="button"
+                aria-label="Toggle notes"
+                aria-expanded={expanded}
+                className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
+                onClick={() => {
+                  let icon = document.getElementById("assetDescriptionIcon");
+                  if (expanded) {
+                    notesContainer.style.maxHeight = "160px";
+                    notesContainer.classList.remove(style.expanded);
+                    icon?.classList.remove(style.rotate);
+                  } else {
+                    notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
+                    notesContainer.classList.add(style.expanded);
+                    icon?.classList.add(style.rotate);
+                  }
+                  setExpanded(!expanded);
+                }}
+              >
+                <LuChevronDown
+                  id="assetDescriptionIcon"
+                  className="transition"
+                />
+              </button>
+            )}
+          </div>
+        </div>
         {/* <div className="flex flex-col border rounded-lg">
           <div className="items-center flex w-full border-b p-4 text-xl font-medium gap-x-4">
             <LuTags />
@@ -267,7 +281,6 @@ function CasePage({ params }: { params: { slug: string } }) {
 }
 
 function fallbackRender({ error, resetErrorBoundary }) {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
   if (error instanceof ConvexError) {
     switch ((error.data as { code: number }).code) {
       case 404:
@@ -289,12 +302,7 @@ function fallbackRender({ error, resetErrorBoundary }) {
     }
   }
 
-  return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <pre style={{ color: "red" }}>{error.message}</pre>
-    </div>
-  );
+  return <NotFoundPage />;
 }
 
 export default function Page({ params }: { params: { slug: string } }) {

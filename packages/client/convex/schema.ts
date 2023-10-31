@@ -15,7 +15,6 @@ export default defineSchema({
     patient_id: v.id("users"),
     tags: v.array(v.string()),
     chief_complaint: v.string(),
-    reviews: v.array(v.id("review")),
     reviewed_at: v.optional(v.number()),
     reviewers: v.array(v.id("users")),
     status: v.union(
@@ -31,6 +30,7 @@ export default defineSchema({
     case_id: v.id("medical_case"),
     user_id: v.id("users"),
     notes: v.string(),
+    status: v.union(v.literal("CREATED"), v.literal("COMPLETED")),
   })
     .index("by_case_id", ["case_id"])
     .index("by_user_id", ["user_id"]),

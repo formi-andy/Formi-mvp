@@ -20,7 +20,7 @@ export const renderCases = ({
     <div
       className={`${
         cases === undefined ? "opacity-0" : "opacity-100"
-      } transition-opacity duration-300 ease-in-out`}
+      } transition-opacity duration-300 ease-in-out grid gap-y-4`}
     >
       {/* Skeleton Loader */}
       {cases === undefined && (

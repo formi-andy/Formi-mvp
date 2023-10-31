@@ -5,7 +5,7 @@ import {
   query,
   QueryCtx,
 } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { CaseStatus } from "../types/case-types";
 
 import { ConvexError, v, Value } from "convex/values";
@@ -13,6 +13,7 @@ import { mustGetCurrentUser, mustGetUserById } from "./users";
 import sanitizeHtml from "sanitize-html";
 import { getImageByCaseId, getImagesByCaseId } from "./images";
 import { getReviewsByCaseId } from "./review";
+import { ReviewStatus } from "../types/review-types";
 
 export const getMedicalCase = internalQuery({
   args: {
@@ -42,13 +43,7 @@ export const getMedicalCaseWithImageAndPatient = query({
 
     const { id } = args;
 
-    const medicalCase = await ctx.db.get(id);
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     const patient = await mustGetUserById(ctx, medicalCase.patient_id);
 
@@ -67,6 +62,10 @@ export const getMedicalCaseWithImageAndPatient = query({
       }),
     ]);
 
+    const completedReviews = reviews.filter(
+      (review) => review.status === ReviewStatus.COMPLETED
+    );
+
     // get urls for all images
     const imagesWithUrls = await Promise.all(
       images.map(async (image) => {
@@ -84,7 +83,7 @@ export const getMedicalCaseWithImageAndPatient = query({
       ...medicalCase,
       images: imagesWithUrls,
       patient,
-      reviews,
+      reviews: completedReviews,
     };
   },
 });
@@ -98,27 +97,19 @@ export const getAnonymizedMedicalCase = query({
 
     const { id } = args;
 
-    const medicalCase = await ctx.db.get(id);
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
-    if (user.role !== "medical_student") {
+    if (
+      user.role !== "medical_student" ||
+      !medicalCase.reviewers.includes(user._id)
+    ) {
       throw new ConvexError({
         message: "Unauthenticated call to get medical case",
         code: 401,
       });
     }
 
-    const [images, reviews] = await Promise.all([
-      getImagesByCaseId(ctx, { case_id: medicalCase._id }),
-      getReviewsByCaseId(ctx, {
-        case_id: medicalCase._id,
-      }),
-    ]);
+    const images = await getImagesByCaseId(ctx, { case_id: medicalCase._id });
 
     const imagesWithUrls = await Promise.all(
       images.map(async (image) => {
@@ -137,7 +128,6 @@ export const getAnonymizedMedicalCase = query({
     return {
       ...medicalCaseWithoutUserId,
       images: imagesWithUrls,
-      reviews,
     };
   },
 });
@@ -149,13 +139,7 @@ export const internalGetMedicalCase = internalQuery({
   async handler(ctx, args) {
     const { id } = args;
 
-    const medicalCase = await ctx.db.get(id);
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     // await verifyCareTeam(ctx, user._id, medicalCase.user_id);
 
@@ -180,30 +164,52 @@ export const addReviewerToMedicalCase = mutation({
       });
     }
 
-    const medicalCase = await ctx.db.get(id);
-
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     const reviewerSet = new Set(medicalCase.reviewers);
     const reviewers = medicalCase.reviewers;
 
     if (reviewerSet.has(user._id)) {
       throw new ConvexError({
-        message: "User is already a reviewer for this case",
+        message: "You are already a reviewer for this case",
+        code: 400,
+      });
+    }
+
+    if (reviewers.length >= medicalCase.max_reviewers) {
+      throw new ConvexError({
+        message: "Max reviewers for this case has been reached",
+        code: 400,
+      });
+    }
+
+    const reviews = await ctx.db
+      .query("review")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .filter((q) => q.eq(q.field("status"), ReviewStatus.CREATED))
+      .collect();
+
+    if (reviews.length > 0) {
+      throw new ConvexError({
+        message: "You are already reviewing another case",
         code: 400,
       });
     }
 
     reviewers.push(user._id);
 
-    await ctx.db.patch(id, {
-      reviewers,
-    });
+    await Promise.all([
+      ctx.db.patch(id, {
+        status: CaseStatus.REVIEWING,
+        reviewers,
+      }),
+      ctx.db.insert("review", {
+        case_id: id,
+        user_id: user._id,
+        notes: "",
+        status: ReviewStatus.CREATED,
+      }),
+    ]);
 
     return {
       ...medicalCase,
@@ -254,7 +260,6 @@ export const createMedicalCase = mutation({
       tags: tags || [],
       patient_id: normalizedId ? normalizedId : user._id,
       chief_complaint,
-      reviews: [],
       user_id: user._id,
       ethnicity,
       age,
@@ -465,13 +470,7 @@ export const deleteCases = mutation({
 
     await Promise.all(
       ids.map(async (id) => {
-        const medicalCase = await ctx.db.get(id);
-        if (!medicalCase) {
-          throw new ConvexError({
-            message: "Medical case not found",
-            code: 404,
-          });
-        }
+        const medicalCase = await mustGetMedicalCase(ctx, id);
 
         if (medicalCase.user_id !== user._id) {
           throw new ConvexError({
@@ -496,13 +495,7 @@ export const reviewCallback = internalMutation({
   async handler(ctx, args) {
     const { id, reviews } = args;
 
-    const medicalCase = await ctx.db.get(id);
-    if (!medicalCase) {
-      throw new ConvexError({
-        message: "Medical case not found",
-        code: 404,
-      });
-    }
+    const medicalCase = await mustGetMedicalCase(ctx, id);
 
     // create new reviews
     const caseReviews = await Promise.all(
@@ -513,7 +506,6 @@ export const reviewCallback = internalMutation({
     );
 
     return ctx.db.patch(id, {
-      reviews: caseReviews,
       reviewed_at: Date.now(),
     });
   },
@@ -543,4 +535,17 @@ export async function verifyCareTeam(
   }
 
   return true;
+}
+
+export async function mustGetMedicalCase(
+  ctx: QueryCtx,
+  case_id: Id<"medical_case">
+): Promise<Doc<"medical_case">> {
+  const caseRecord = await ctx.db.get(case_id);
+  if (!caseRecord)
+    throw new ConvexError({
+      message: "Medical case not found",
+      code: 404,
+    });
+  return caseRecord;
 }
