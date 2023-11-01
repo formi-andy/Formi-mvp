@@ -294,7 +294,6 @@ export const getCompletedMedicalCasesByReviewer = query({
     const reviewsWithCases = await Promise.all(
       reviews.map(async (review) => {
         const medicalCase = await mustGetMedicalCase(ctx, review.case_id);
-        const patient = await mustGetUserById(ctx, medicalCase.patient_id);
         const image = await getImageByCaseId(ctx, {
           case_id: medicalCase._id,
         });
@@ -412,24 +411,21 @@ export const listClaimableMedicalCases = query({
         !reviewers.includes(user._id) && reviewers.length < max_reviewers
     );
 
-    const medicalCasesWithPatient = await Promise.all(
+    const medicalCasesWithImage = await Promise.all(
       medicalCases.map(async (medicalCase) => {
-        const patient = await mustGetUserById(ctx, medicalCase.patient_id);
         const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
         const url = (await ctx.storage.getUrl(image.storage_id)) || "";
 
         return {
           ...medicalCase,
-          patient,
           image_url: url,
         };
       })
     );
 
-    const medicalCasesByDay: Record<string, typeof medicalCasesWithPatient> =
-      {};
+    const medicalCasesByDay: Record<string, typeof medicalCasesWithImage> = {};
 
-    medicalCasesWithPatient.forEach((medicalCase) => {
+    medicalCasesWithImage.forEach((medicalCase) => {
       const date = new Date(medicalCase._creationTime).toLocaleDateString(
         "en-US",
         {

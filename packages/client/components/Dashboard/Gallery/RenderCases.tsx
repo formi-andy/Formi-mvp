@@ -1,10 +1,13 @@
-import { MedicalCasesByDate } from "@/types/case-types";
+import {
+  AnonymizedMedicalCasesByDate,
+  MedicalCasesByDate,
+} from "@/types/case-types";
 import { GALLERY_LOADERS } from "@/commons/constants/loaders";
 import { Skeleton } from "antd";
 import CaseRow from "./Case/CaseRow";
 
 type Props = {
-  cases: MedicalCasesByDate | undefined;
+  cases: MedicalCasesByDate | AnonymizedMedicalCasesByDate | undefined;
   title?: string;
   emptyComponent: React.ReactNode;
   renderCaseComponent?: (medicalCase: any) => React.ReactNode;
