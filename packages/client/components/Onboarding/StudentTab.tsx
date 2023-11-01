@@ -9,6 +9,7 @@ import { useClerk } from "@clerk/nextjs";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { LuPenSquare } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import { validateEmail } from "@/utils/validateEmail";
 
 export default function StudentTab() {
   const toast = useNetworkToasts();
@@ -157,6 +158,14 @@ export default function StudentTab() {
             disabled={loading}
             variant="outline-action"
             onClick={async () => {
+              if (!validateEmail(email)) {
+                toast.error({
+                  title: "Invalid email",
+                  message: "Please enter a valid email",
+                });
+                return;
+              }
+
               const domain = email.split("@")[1];
               const [school, extension] = domain.split(".");
               if (extension !== "edu") {

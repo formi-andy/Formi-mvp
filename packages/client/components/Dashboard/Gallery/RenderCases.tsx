@@ -43,7 +43,7 @@ export const renderCases = ({
 
       {/* Actual Content */}
       {cases && cases.length > 0 && (
-        <>
+        <div className="flex flex-col gap-y-4">
           {title && (
             <div className="flex justify-between items-center">
               <p className="text-xl lg:text-2xl font-medium">{title}</p>
@@ -57,7 +57,7 @@ export const renderCases = ({
               renderCaseComponent={renderCaseComponent}
             />
           ))}
-        </>
+        </div>
       )}
 
       {/* Empty State */}

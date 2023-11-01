@@ -15,7 +15,26 @@ import { getImageByCaseId, getImagesByCaseId } from "./images";
 import { getReviewsByCaseId, getReviewsByUser } from "./review";
 import { ReviewStatus } from "../types/review-types";
 
-export const getMedicalCase = query({
+export const getMedicalCase = internalQuery({
+  args: {
+    id: v.id("medical_case"),
+  },
+  async handler(ctx, args) {
+    const { id } = args;
+
+    const medicalCase = await ctx.db.get(id);
+    if (!medicalCase) {
+      throw new ConvexError({
+        message: "Medical case not found",
+        code: 404,
+      });
+    }
+
+    return medicalCase;
+  },
+});
+
+export const getMedicalCaseWithImageAndPatient = query({
   args: {
     id: v.id("medical_case"),
   },
@@ -130,7 +149,7 @@ export const internalGetMedicalCase = internalQuery({
   },
 });
 
-export const addReviewersToMedicalCase = mutation({
+export const addReviewerToMedicalCase = mutation({
   args: {
     id: v.id("medical_case"),
   },
@@ -259,6 +278,13 @@ export const getCompletedMedicalCasesByReviewer = query({
   },
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== "medical_student") {
+      throw new ConvexError({
+        message: "Invalid permissions",
+        code: 400,
+      });
+    }
     // await verifyCareTeam(ctx, user._id, patientId);
 
     // TODO: need to make this more efficient
@@ -276,7 +302,6 @@ export const getCompletedMedicalCasesByReviewer = query({
 
         return {
           ...medicalCase,
-          patient,
           image_url: url,
           _creationTime: review.updated_at,
         };
