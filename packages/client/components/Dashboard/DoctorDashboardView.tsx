@@ -13,7 +13,7 @@ const DoctorDashboardView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string | null>("review");
 
   const medicalCasesByDate = useQuery(
-    api.medical_case.listMedicalCasesByReviewer,
+    api.medical_case.getCompletedMedicalCasesByReviewer,
     {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }

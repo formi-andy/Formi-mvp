@@ -2,13 +2,13 @@
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useQuery } from "convex/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import NotFoundPage from "@/app/not-found";
 
 import Link from "next/link";
 import { MdNotes } from "react-icons/md";
-import { Breadcrumbs } from "@mantine/core";
+import { Breadcrumbs, Spoiler } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
@@ -58,6 +58,17 @@ function CasePage({ params }: { params: { slug: string } }) {
   const [notesContainer, setNotesContainer] = useState<HTMLElement | null>(
     null
   );
+  useEffect(() => {
+    if (medicalCase === undefined) return;
+    setNotesContainer(document.getElementById("notes"));
+  }, [medicalCase]);
+
+  useEffect(() => {
+    if (notesContainer && notesContainer.scrollHeight > 160) {
+      notesContainer.classList.add(style.hidden);
+    }
+  }, [notesContainer]);
+
   const autoplay = useRef(Autoplay({ delay: 5000 }));
 
   if (medicalCase === undefined) {
@@ -157,7 +168,19 @@ function CasePage({ params }: { params: { slug: string } }) {
                     <p className="font-medium mb-2">
                       {`${review.user.clerkUser.first_name} ${review.user.clerkUser.last_name}`}
                     </p>
-                    <p className="text-lg">{review.notes}</p>
+                    <Spoiler
+                      maxHeight={160}
+                      showLabel="Show more"
+                      hideLabel="Hide"
+                    >
+                      <div
+                        id={`review_${index}`}
+                        className="rte-content-container"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(review.notes),
+                        }}
+                      />
+                    </Spoiler>
                   </div>
                 );
               })
@@ -231,7 +254,7 @@ function CasePage({ params }: { params: { slug: string } }) {
                 aria-expanded={expanded}
                 className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
                 onClick={() => {
-                  let icon = document.getElementById("assetDescriptionIcon");
+                  let icon = document.getElementById("notesDescriptionIcon");
                   if (expanded) {
                     notesContainer.style.maxHeight = "160px";
                     notesContainer.classList.remove(style.expanded);
@@ -245,7 +268,7 @@ function CasePage({ params }: { params: { slug: string } }) {
                 }}
               >
                 <LuChevronDown
-                  id="assetDescriptionIcon"
+                  id="notesDescriptionIcon"
                   className="transition"
                 />
               </button>

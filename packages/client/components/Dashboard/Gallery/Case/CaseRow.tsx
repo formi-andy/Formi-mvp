@@ -2,6 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
 import CaseCard from "./CaseCard";
+import { useUser } from "@clerk/nextjs";
 
 type Props = {
   date: any;
@@ -10,6 +11,8 @@ type Props = {
 };
 
 const CaseRow = ({ date, medicalCases, renderCaseComponent }: Props) => {
+  const user = useUser();
+
   return (
     <div key={date} className="flex flex-col gap-y-2">
       <p className="text-lg lg:text-xl font-medium">
@@ -25,8 +28,21 @@ const CaseRow = ({ date, medicalCases, renderCaseComponent }: Props) => {
               {renderCaseComponent ? (
                 renderCaseComponent(medicalCase)
               ) : (
-                <Link href={`/case/${medicalCase._id}`}>
-                  <CaseCard medicalCase={medicalCase} />
+                <Link
+                  href={
+                    user.user?.publicMetadata.role === "medical_student"
+                      ? `/case/${medicalCase._id}/review`
+                      : `/case/${medicalCase._id}`
+                  }
+                >
+                  <CaseCard
+                    medicalCase={medicalCase}
+                    type={
+                      user.user?.publicMetadata.role === "medical_student"
+                        ? "medical_student"
+                        : "patient"
+                    }
+                  />
                 </Link>
               )}
             </div>

@@ -19,4 +19,10 @@ export const doMigration = internalMutation(async ({ db }) => {
   //     reviews: undefined,
   //   });
   // }
+  // const reviews = await db.query("review").collect();
+  // for (const review of reviews) {
+  //   await db.patch(review._id, {
+  //     updated_at: Date.now(),
+  //   });
+  // }
 });

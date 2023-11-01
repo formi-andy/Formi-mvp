@@ -86,15 +86,37 @@ export const getUserReviewByCaseId = query({
 });
 
 export const getReviewsByUser = query({
-  args: {},
+  args: {
+    status: v.optional(
+      v.union(
+        v.literal(ReviewStatus.COMPLETED),
+        v.literal(ReviewStatus.CREATED)
+      )
+    ),
+  },
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
-    const reviews = await ctx.db
+    let query = ctx.db
       .query("review")
-      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
-      .collect();
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id));
 
+    switch (args.status) {
+      case ReviewStatus.COMPLETED:
+        query = query.filter((q) =>
+          q.eq(q.field("status"), ReviewStatus.COMPLETED)
+        );
+        break;
+      case ReviewStatus.CREATED:
+        query = query.filter((q) =>
+          q.eq(q.field("status"), ReviewStatus.CREATED)
+        );
+        break;
+      default:
+        break;
+    }
+
+    const reviews = await query.collect();
     return reviews;
   },
 });
@@ -133,6 +155,7 @@ export const saveReview = mutation({
 
     return ctx.db.patch(existingReview._id, {
       notes: sanitizedNotes,
+      updated_at: Date.now(),
     });
   },
 });
@@ -177,6 +200,7 @@ export const submitReview = mutation({
     await ctx.db.patch(existingReview._id, {
       notes: sanitizedNotes,
       status: ReviewStatus.COMPLETED,
+      updated_at: Date.now(),
     });
 
     for (let i = 0; i < existingReviews.length; i++) {
