@@ -23,6 +23,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
+import CaseDisclaimerModal from "@/components/Disclaimers/CaseDisclaimerModal";
 
 function useCaseForm(active: number) {
   const form = useForm({
@@ -313,6 +314,7 @@ const Upload = () => {
       >
         {active === 2 ? "Create Case" : "Continue"}
       </Button>
+      <CaseDisclaimerModal />
     </>
   );
 };

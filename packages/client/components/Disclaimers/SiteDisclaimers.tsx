@@ -1,6 +1,6 @@
 import React from "react";
 
-const Disclaimer = () => {
+const SiteDisclaimer = () => {
   return (
     <div className="flex flex-col gap-y-4 w-4/5 md:w-[600px] lg:w-[800px] rounded-lg p-8 bg-white border">
       <p className="text-lg font-bold">WEBSITE DISCLAIMER</p>
@@ -12,8 +12,8 @@ const Disclaimer = () => {
         should consult with a licensed physician. Always seek the advice of your
         doctor or other qualified health provider regarding a medical condition.
         Never disregard professional medical advice or delay in seeking it
-        because of something you have read on HomeScope's website. If you think
-        you may have a medical emergency, call 911 or go to the nearest
+        because of something you have read on HomeScope&apos;s website. If you
+        think you may have a medical emergency, call 911 or go to the nearest
         emergency room immediately. No physician-patient relationship is created
         by this web site or its use. Neither HomeScope nor its employees,
         contractors, nor any contributor to this web site, makes any
@@ -53,4 +53,4 @@ const Disclaimer = () => {
   );
 };
 
-export default Disclaimer;
+export default SiteDisclaimer;
