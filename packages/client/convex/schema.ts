@@ -134,4 +134,11 @@ export default defineSchema({
     subject: v.string(),
     message: v.string(),
   }),
+  history: defineTable({
+    user_id: v.optional(v.id("users")),
+    created_by: v.id("users"),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_created_by", ["created_by"])
+    .index("by_user_id_and_created_by", ["user_id", "created_by"]),
 });
