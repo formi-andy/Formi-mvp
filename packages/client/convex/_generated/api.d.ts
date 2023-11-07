@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as action_item from "../action_item";
 import type * as contact_us_message from "../contact_us_message";
+import type * as history from "../history";
 import type * as http from "../http";
 import type * as images from "../images";
 import type * as invite from "../invite";
@@ -38,6 +39,7 @@ import type * as waitlist from "../waitlist";
 declare const fullApi: ApiFromModules<{
   action_item: typeof action_item;
   contact_us_message: typeof contact_us_message;
+  history: typeof history;
   http: typeof http;
   images: typeof images;
   invite: typeof invite;

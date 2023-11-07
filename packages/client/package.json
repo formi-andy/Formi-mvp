@@ -47,6 +47,7 @@
     "embla-carousel-react": "8.0.0-rc14",
     "eslint": "8.43.0",
     "eslint-config-next": "13.5.2",
+    "formik": "^2.4.5",
     "google": "link:@next/font/google",
     "immer": "^10.0.2",
     "jsrsasign": "^10.8.6",

@@ -134,4 +134,104 @@ export default defineSchema({
     subject: v.string(),
     message: v.string(),
   }),
+  history: defineTable({
+    user_id: v.optional(v.id("users")),
+    created_by: v.id("users"),
+    // medical history questions
+    immunizations: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    allergies_medical: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    medications: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    chronic_conditions: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    reproductive_issues: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    surgeries: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    hospitalizations: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    birth_type: v.optional(v.string()),
+    weeks_born_at: v.optional(v.number()),
+    birth_weight: v.optional(
+      v.object({
+        answer: v.number(),
+        select: v.string(),
+      })
+    ),
+    birth_complications: v.optional(
+      v.object({
+        answer: v.boolean(),
+        description: v.optional(v.string()),
+      })
+    ),
+    // family history questions
+    asthma: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    allergies_family: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    cancer: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    diabetes: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    hypertension: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    gastrointestinal: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    other: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    // social history questions
+    smoking: v.boolean(),
+    alcohol: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    drugs: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    sexual_activity: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    home_situation: v.optional(v.string()),
+    physical_activity: v.optional(
+      v.object({
+        answer: v.boolean(),
+        description: v.optional(v.string()),
+      })
+    ),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_created_by", ["created_by"])
+    .index("by_user_id_and_created_by", ["user_id", "created_by"]),
 });
