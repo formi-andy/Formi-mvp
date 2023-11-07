@@ -1,23 +1,3 @@
-type QuestionValue = {
-  question: string;
-  type:
-    | "checkbox-description"
-    | "checkbox"
-    | "select"
-    | "number"
-    | "number-select"
-    | "description";
-  placeholder?: string;
-  answer: string | boolean | null;
-  description?: string;
-  select?: string | null;
-  options?: Record<string, string>[];
-};
-
-type FormQuestion = {
-  key: string;
-} & QuestionValue;
-
 export const MEDICAL_HISTORY_QUESTIONS = {
   immunizations: {
     type: "checkbox-description",
@@ -42,7 +22,7 @@ export const MEDICAL_HISTORY_QUESTIONS = {
   },
   chronic_conditions: {
     type: "checkbox-description",
-    question: "Any chronic conditions?",
+    question: "Any chronic medical conditions?",
     answer: null,
     description: "",
     placeholder: "If yes please describe",
@@ -142,6 +122,7 @@ export const FAMILY_HISTORY_QUESTIONS = {
   },
   other: {
     type: "checkbox-description",
+    placeholder: "",
     question: "Any other major issues?",
     answer: null,
     description: "",
@@ -178,6 +159,7 @@ export const SOCIAL_HISTORY_QUESTIONS = {
   },
   home_situation: {
     type: "description",
+    placeholder: "",
     answer: "",
     question: "Please briefly describe your home situation",
   },

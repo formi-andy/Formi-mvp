@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
@@ -9,9 +9,10 @@ import { Formik, Form } from "formik";
 import {
   LuCheckCircle,
   LuClipboardList,
-  LuMessagesSquare,
+  LuUsers,
   LuSend,
 } from "react-icons/lu";
+import { MdOutlineSocialDistance } from "react-icons/md";
 import {
   MEDICAL_HISTORY_QUESTIONS,
   FAMILY_HISTORY_QUESTIONS,
@@ -22,117 +23,86 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
-import HistoryForm from "@/components/HistoryForms/HistoryForm";
 import MedicalHistoryForm from "@/components/HistoryForms/MedicalHistoryForm";
-
-type QuestionValue = {
-  question: string;
-  type:
-    | "checkbox-description"
-    | "checkbox"
-    | "select"
-    | "number"
-    | "number-select"
-    | "description";
-  placeholder?: string;
-  answer: string | boolean | null;
-  description?: string;
-  select?: string | null;
-  options?: Record<string, string>[];
-};
+import FamilyHistoryForm from "@/components/HistoryForms/FamilyHistoryForm";
+import SocialHistoryForm from "@/components/HistoryForms/SocialHistoryForm";
+import ReviewHistory from "@/components/HistoryForms/ReviewHistory";
 
 const HistoryPage = () => {
   const user = useAuth();
   const toast = useNetworkToasts();
   const [active, setActive] = useState(0);
-  const [uploading, setUploading] = useState(false);
-  const createCase = useMutation(api.medical_case.createMedicalCase);
+  const firstSubmission = useRef(false);
   const router = useRouter();
 
-  // const handleError = (errors: typeof form.errors) => {
-  //   if (errors.title) {
-  //     toast.error({ message: "Please fill the title field" });
-  //   } else if (errors.patient) {
-  //     toast.error({
-  //       message: "Please select a patient",
-  //     });
-  //   } else if (errors.files) {
-  //     toast.error({
-  //       message: "Please upload at least one image",
-  //     });
-  //   } else if (errors.bodyParts) {
-  //     toast.error({
-  //       message: "Please select at least one body part",
-  //     });
-  //   } else if (errors.questions) {
-  //     toast.error({
-  //       message: "Please answer all questions before continuing",
-  //     });
-  //   }
-  // };
+  const createHistory = useMutation(api.history.createHistory);
 
   // TODO: make this a queue job
-  // async function submitCase() {
-  //   try {
-  //     setUploading(true);
-  //     toast.loading({
-  //       title: "Creating case",
-  //       message: "Please wait while we create your case",
-  //     });
+  async function submitHistory(values: Record<string, object>) {
+    try {
+      toast.loading({
+        title: "Uploading history",
+        message: "Please wait while we upload your history",
+      });
 
-  //     const symptomAreas: string[] = [];
-  //     let promises: Promise<string | null>[] = [];
-  //     const token = await user.getToken({
-  //       template: "convex",
-  //     });
+      const cleanedValues = {} as any;
 
-  //     const { caseRecord } = await createCase({
-  //       title: form.values.title,
-  //       patient_id: form.values.patient,
-  //       chief_complaint: form.values.chiefComplaint,
-  //       description: form.values.description,
-  //       symptom_areas: symptomAreas,
-  //       symptoms: form.values.symptoms,
-  //       age: form.values.age === "" ? undefined : Number(form.values.age),
-  //       ethnicity: form.values.ethnicity,
-  //       medical_history: Object.keys(form.values.questions).map((key) => {
-  //         return {
-  //           question: form.values.questions[key].question,
-  //           answer: form.values.questions[key].answer,
-  //         };
-  //       }),
-  //       tags: [],
-  //     });
+      // clean up values
+      for (const section in values) {
+        for (const key in values[section]) {
+          const question = values[section][key];
 
-  //     // setActive(0);
-  //     // form.reset();
-  //     router.push("/dashboard");
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error({
-  //       title: "Failed to create case",
-  //       message: "Something went wrong while creating your case",
-  //     });
-  //   } finally {
-  //     setUploading(false);
-  //   }
-  // }
-  // useEffect(() => {
-  //   form.setFieldValue(
-  //     `medicalHistoryQuestions.immunizations.description`,
-  //     "what the actual"
-  //   );
-  // }, []);
+          if (question.type === "number-select") {
+            cleanedValues[key] = {
+              answer: parseInt(question.answer),
+              select: question.select,
+            };
+          } else if (question.type === "checkbox-description") {
+            cleanedValues[key] = {
+              answer: question.answer === "Yes" ? true : false,
+              description: question.description,
+            };
+          } else if (question.type === "checkbox") {
+            cleanedValues[key] = question.answer === "Yes" ? true : false;
+          } else if (question.type === "number") {
+            cleanedValues[key] = parseInt(question.answer);
+          } else {
+            cleanedValues[key] = question.answer;
+          }
+        }
+      }
 
-  // console.log("form: ", form.values.medicalHistoryQuestions.immunizations);
+      const { historyRecord } = await createHistory({
+        ...cleanedValues,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error({
+        title: "Failed to upload history",
+        message: "Something went wrong while creating your history",
+      });
+    } finally {
+      toast.success({
+        title: "History uploaded",
+        message: "Your history has been uploaded successfully",
+      });
+
+      router.push("/dashboard");
+    }
+  }
 
   return (
     <>
-      <p className="text-2xl font-medium mb-12">Create a Case</p>
+      <p className="text-2xl font-medium mb-12">
+        {active === 0 && "Medical History"}
+        {active === 1 && "Family History"}
+        {active === 2 && "Social History"}
+        {active === 3 && "Review"}
+      </p>
       <Stepper
         size="sm"
         classNames={{
-          root: "w-full max-w-[640px] self-center mb-12",
+          root: "w-full max-w-[720px] self-center mb-12",
         }}
         allowNextStepsSelect={false}
         active={active}
@@ -145,19 +115,19 @@ const HistoryPage = () => {
           description="Medical History"
         />
         <Stepper.Step
-          icon={<LuMessagesSquare size={20} />}
+          icon={<LuUsers size={20} />}
           label="Step 2"
           description="Family History"
         />
         <Stepper.Step
-          icon={<LuSend size={20} />}
+          icon={<MdOutlineSocialDistance size={20} />}
           label="Step 3"
           description="Social History"
         />
         <Stepper.Step
           icon={<LuSend size={20} />}
           label="Step 4"
-          description="Review"
+          description="Review and Submit"
         />
       </Stepper>
       <Formik
@@ -166,8 +136,11 @@ const HistoryPage = () => {
           familyHistoryQuestions: { ...FAMILY_HISTORY_QUESTIONS },
           socialHistoryQuestions: { ...SOCIAL_HISTORY_QUESTIONS },
         }}
-        validateOnChange={false}
+        validateOnChange={true}
         validate={(values) => {
+          if (!firstSubmission.current) {
+            return {};
+          }
           const errors = {};
           const questions =
             active === 0
@@ -177,37 +150,104 @@ const HistoryPage = () => {
               : values.socialHistoryQuestions;
           for (const key in questions) {
             if (
-              questions[key].answer === null ||
-              (questions[key].type === "number-select" &&
-                questions[key].select === null)
+              questions[key].type === "number-select" &&
+              (!questions[key].answer || !questions[key].select)
             ) {
-              console.log("error: ", key, questions[key]);
+              errors[key] = {
+                answer: questions[key].answer
+                  ? null
+                  : "Please answer this question",
+                select: questions[key].select
+                  ? null
+                  : "Please select an option",
+              };
+            } else if (
+              questions[key].answer === null ||
+              questions[key].answer === undefined ||
+              questions[key].answer === ""
+            ) {
               errors[key] = "Please answer all questions before continuing";
             }
           }
+
           return errors;
         }}
         onSubmit={(values, { setSubmitting }) => {
-          console.log("submitting values: ", values);
+          submitHistory(values);
+
+          setTimeout(() => {
+            setSubmitting(false);
+          }, 2000);
         }}
       >
-        {({ isSubmitting }) => (
+        {({
+          isSubmitting,
+          values,
+          handleChange,
+          submitForm,
+          validateForm,
+          setSubmitting,
+          errors,
+        }) => (
           <Form>
-            {active === 0 && <MedicalHistoryForm />}
-            {active === 1 && <HistoryForm section={"familyHistoryQuestions"} />}
-            {active === 2 && <HistoryForm section={"socialHistoryQuestions"} />}
+            <div className={`transition-all `}>
+              {active === 0 && (
+                <MedicalHistoryForm
+                  errors={errors}
+                  values={values}
+                  handleChange={handleChange}
+                />
+              )}
+              {active === 1 && (
+                <FamilyHistoryForm
+                  errors={errors}
+                  values={values}
+                  handleChange={handleChange}
+                />
+              )}
+              {active === 2 && (
+                <SocialHistoryForm
+                  errors={errors}
+                  values={values}
+                  handleChange={handleChange}
+                />
+              )}
+            </div>
+            {active === 3 && <ReviewHistory values={values} />}
             <Button
               disabled={isSubmitting}
-              type={active === 0 ? "submit" : "button"}
+              type="button"
               variant="action"
               className="w-fit mt-6"
+              onClick={async () => {
+                if (active === 3) {
+                  setSubmitting(true);
+                  await submitForm();
+                  setSubmitting(false);
+                } else {
+                  firstSubmission.current = true;
+                  validateForm().then((errors) => {
+                    if (Object.keys(errors).length > 0) {
+                      toast.error({
+                        message:
+                          "Please answer all questions before continuing",
+                      });
+                      return;
+                    } else {
+                      setActive((current) => {
+                        return current + 1;
+                      });
+                      firstSubmission.current = false;
+                    }
+                  });
+                }
+              }}
             >
-              {active === 2 ? "Save History" : "Continue"}
+              {active === 3 ? "Save History" : "Continue"}
             </Button>
           </Form>
         )}
       </Formik>
-      {/* {active === 3 && <ReviewHistory form={form} />} */}
     </>
   );
 };

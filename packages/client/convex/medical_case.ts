@@ -30,7 +30,7 @@ export const getMedicalCase = query({
 
     if (medicalCase.user_id !== user._id || patient._id !== user._id) {
       throw new ConvexError({
-        message: "Unauthenticated call to get medical case",
+        message: "Unauthenticated call to get this medical case",
         code: 401,
       });
     }
