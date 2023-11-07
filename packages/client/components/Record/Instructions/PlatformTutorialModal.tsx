@@ -11,9 +11,11 @@ import { useMediaQuery } from "@mantine/hooks";
 export default function PlatformTutorialModal({
   opened,
   close,
+  setOpened,
 }: {
   opened: boolean;
   close: any;
+  setOpened?: Dispatch<SetStateAction<boolean>>;
 }) {
   const [finished, setFinished] = useState(false);
   const { user } = useUser();
@@ -52,7 +54,18 @@ export default function PlatformTutorialModal({
         }`}
         size="icon"
         onClick={() => {
-          if (finished) close();
+          if (finished) {
+            close();
+
+            if (user) {
+              const currentMetadata = user.unsafeMetadata;
+              delete currentMetadata.tutorial;
+
+              user.update({
+                unsafeMetadata: currentMetadata,
+              });
+            }
+          }
         }}
       >
         Done

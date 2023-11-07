@@ -24,7 +24,7 @@ export default function ClaimCaseModal({
   const [updating, setUpdating] = useState(false);
 
   const addReviewerToCase = useMutation(
-    api.medical_case.addReviewersToMedicalCase
+    api.medical_case.addReviewerToMedicalCase
   );
 
   const router = useRouter();

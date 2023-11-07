@@ -1,0 +1,44 @@
+"use client";
+
+import React, { useState } from "react";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { Modal } from "@mantine/core";
+
+import CloseSiteDisclaimer from "./CloseSiteDisclaimer";
+import MedicalInfoDisclaimer from "./MedicalInfoDisclaimer";
+
+type Props = {};
+
+const CaseDisclaimerModal = (props: Props) => {
+  const [opened, { open, close }] = useDisclosure(true);
+  const [slide, setSlide] = useState<"close" | "medical">("close");
+  const isMobile = useMediaQuery("(max-width: 50em)");
+
+  return (
+    <Modal
+      opened={opened}
+      onClose={close}
+      withCloseButton={false}
+      closeOnClickOutside={false}
+      centered
+      size={isMobile ? "95%" : "80%"}
+    >
+      <div className="overflow-x-hidden">
+        <div
+          className={`flex w-full gap-x-4 transition-all duration-500 relative ${
+            slide === "close" ? "right-0" : "right-full"
+          }`}
+        >
+          <div className="w-full relative h-full">
+            <CloseSiteDisclaimer setSlide={setSlide} />
+          </div>
+          <div className="absolute left-full h-full w-full">
+            <MedicalInfoDisclaimer close={close} />
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+export default CaseDisclaimerModal;

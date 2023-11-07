@@ -9,5 +9,8 @@ export enum CaseStatus {
 export type MedicalCasesByDate =
   (typeof api.medical_case.listMedicalCasesByUser)["_returnType"];
 
+export type AnonymizedMedicalCasesByDate =
+  (typeof api.medical_case.listClaimableMedicalCases)["_returnType"];
+
 export type MedicalCase =
   (typeof api.medical_case.listMedicalCasesByUser)["_returnType"][number]["medicalCases"][number];

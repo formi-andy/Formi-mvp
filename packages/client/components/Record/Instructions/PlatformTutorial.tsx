@@ -9,7 +9,7 @@ import NotFoundPage from "@/app/not-found";
 import PlatformTutorialModal from "./PlatformTutorialModal";
 
 const PlatformTutorial = () => {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [opened, { open, close }] = useDisclosure(true);
   const user = useQuery(api.users.currentUser);
 
   if (user === undefined) {
