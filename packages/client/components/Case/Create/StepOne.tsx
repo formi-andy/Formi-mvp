@@ -1,8 +1,9 @@
 import { CaseForm } from "@/app/case/create/page";
+import { COUGH_QUESTIONS } from "@/commons/constants/questions";
 import { Chip, Textarea } from "@mantine/core";
 import { LuPersonStanding, LuUserPlus2 } from "react-icons/lu";
 
-const SYMPTOMS = [
+const CHIEF_COMPLAINTS = [
   {
     label: "Abdominal Pain",
     value: "abdominal_pain",
@@ -81,11 +82,50 @@ export default function StepOne({ form }: { form: CaseForm }) {
           <p className="font-semibold text-center text-xl sm:text-2xl">
             How are they feeling?
           </p>
-          <p className="text-center font-medium">Select all current symptoms</p>
+          <p className="text-center font-medium">Select a chief complaint</p>
         </div>
-        <Chip.Group multiple {...form.getInputProps("symptoms")}>
+        <Chip.Group
+          value={form.values.chiefComplaint}
+          onChange={(value) => {
+            let questions: {
+              question: string;
+              type: string;
+              placeholder?: string;
+              answer: string;
+            }[] = [];
+            switch (value) {
+              case "cough":
+                questions = COUGH_QUESTIONS;
+            }
+
+            const newQuestions = {
+              ...questions.reduce((acc, question) => {
+                return {
+                  ...acc,
+                  [question.question]: {
+                    question: question.question,
+                    type: question.type,
+                    placeholder: question.placeholder,
+                    answer: question.type === "boolean" ? false : "",
+                  },
+                };
+              }, {}),
+            } as Record<
+              string,
+              {
+                question: string;
+                type: "textinput" | "textarea" | "boolean";
+                placeholder?: string;
+                answer: string | boolean | null;
+              }
+            >;
+
+            form.setFieldValue("chiefComplaint", value as string);
+            form.setFieldValue("questions", newQuestions);
+          }}
+        >
           <div className="flex flex-col gap-y-6 w-full">
-            {SYMPTOMS.map((symptom) => (
+            {CHIEF_COMPLAINTS.map((complaint) => (
               <Chip
                 classNames={{
                   root: "w-full",
@@ -93,10 +133,10 @@ export default function StepOne({ form }: { form: CaseForm }) {
                   label:
                     "w-full text-center justify-center rounded-lg py-4 text-base",
                 }}
-                key={symptom.value}
-                value={symptom.value}
+                key={complaint.value}
+                value={complaint.value}
               >
-                {symptom.label}
+                {complaint.label}
               </Chip>
             ))}
           </div>

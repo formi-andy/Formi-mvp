@@ -65,3 +65,72 @@ export const BASE_QUESTIONS = [
     answer: "",
   },
 ];
+
+export const COUGH_QUESTIONS = [
+  {
+    question: "Describe in your own words what is happening",
+    type: "textarea",
+    placeholder:
+      "Is the cough dry or wet, wheezing, when does it happen (exercising, or always), laying down, at night vs. day, can you finish a full sentence, what was happening when it started",
+    answer: "",
+  },
+  {
+    question: "Is there plegm?",
+    type: "textinput",
+    placeholder: "If yes, describe the color. Is there blood?",
+    answer: "",
+  },
+  {
+    question: "What is the frequency of coughing?",
+    type: "textinput",
+    placeholder: "Please describe with numbers",
+    answer: "",
+  },
+  {
+    question: "Any recent infections or illnesses?",
+    type: "textinput",
+    placeholder: "If yes, describe in detail",
+    answer: "",
+  },
+  {
+    question: "Is there anything that helps or worsens symptoms?",
+    type: "textinput",
+    placeholder: "If yes, describe in detail",
+    answer: "",
+  },
+  {
+    question: "Fever",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Chest pain",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Abdominal pain",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Vomiting",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Runny nose",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Sore throat",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Shortness of breath",
+    type: "boolean",
+    answer: "",
+  },
+];

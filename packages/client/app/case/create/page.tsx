@@ -24,6 +24,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
 import CaseDisclaimerModal from "@/components/Disclaimers/CaseDisclaimerModal";
 import StepOne from "@/components/Case/Create/StepOne";
+import StepTwo from "@/components/Case/Create/StepTwo";
 
 const TOTAL_STEPS = 7;
 
@@ -51,7 +52,7 @@ function useCaseForm(active: number) {
               question: question.question,
               type: question.type,
               placeholder: question.placeholder,
-              answer: question.type === "text" ? "" : null,
+              answer: question.type === "boolean" ? null : "",
             },
           };
         }, {}),
@@ -59,7 +60,7 @@ function useCaseForm(active: number) {
         string,
         {
           question: string;
-          type: "text" | "textarea" | "boolean";
+          type: "textinput" | "textarea" | "boolean";
           placeholder?: string;
           answer: string | boolean | null;
         }
@@ -68,8 +69,6 @@ function useCaseForm(active: number) {
     validate: (values) => {
       if (active === 0) {
         return {
-          // title:
-          //   values.title.trim().length === 0 ? "Case must have a title" : null,
           patient:
             values.patient.trim().length === 0
               ? "Case must have a patient"
@@ -82,15 +81,10 @@ function useCaseForm(active: number) {
             values.duration.trim().length === 0
               ? "Symptoms must have a duration"
               : null,
-          symptoms:
-            values.symptoms.length === 0
-              ? "Case must have at least one symptom"
+          chiefComplaint:
+            values.chiefComplaint.trim().length === 0
+              ? "Case must have a chief complaint"
               : null,
-          // age: values.age === "" ? "Age cannot be empty" : null,
-          // ethnicity:
-          //   values.ethnicity.trim().length === 0
-          //     ? "Ethnicity cannot be empty"
-          //     : null,
         };
       }
       if (active === 1) {
@@ -99,7 +93,7 @@ function useCaseForm(active: number) {
         let invalid: Record<string, ReactNode> = {};
         Object.keys(questions).forEach((key) => {
           let question = questions[key];
-          if (question.type === "text") {
+          if (question.type === "textinput" || question.type === "textarea") {
             invalid[key] =
               (question.answer as string).trim().length === 0
                 ? "Please answer this question"
@@ -107,6 +101,12 @@ function useCaseForm(active: number) {
           } else {
             invalid[key] =
               question.answer === null ? "Please answer this question" : null;
+          }
+        });
+
+        Object.keys(invalid).forEach((key) => {
+          if (invalid[key] === null) {
+            delete invalid[key];
           }
         });
 
@@ -290,7 +290,7 @@ const Upload = () => {
         />
       </Stepper> */}
       {active === 0 && <StepOne form={form} />}
-      {active === 1 && <CaseInfo form={form} />}
+      {active === 1 && <StepTwo form={form} />}
       {active === 2 && <Review form={form} />}
       <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-8 lg:px-16">
         <Button
