@@ -18,12 +18,14 @@ import PatientInfo from "@/components/Case/Create/PatientInfo";
 import CaseInfo from "@/components/Case/Create/CaseInfo";
 import Review from "@/components/Case/Create/Review";
 import { BASE_QUESTIONS } from "@/commons/constants/questions";
-import { Stepper } from "@mantine/core";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
 import CaseDisclaimerModal from "@/components/Disclaimers/CaseDisclaimerModal";
+import StepOne from "@/components/Case/Create/StepOne";
+
+const TOTAL_STEPS = 7;
 
 function useCaseForm(active: number) {
   const form = useForm({
@@ -32,9 +34,10 @@ function useCaseForm(active: number) {
       patient: "",
       chiefComplaint: "",
       description: "",
-      symptoms: "",
+      symptoms: [] as string[],
       age: "" as number | string,
       ethnicity: "",
+      duration: "",
       files: [] as {
         file: File;
         title: string;
@@ -64,34 +67,30 @@ function useCaseForm(active: number) {
     },
     validate: (values) => {
       if (active === 0) {
-        const parts = form.values.bodyParts;
-        let selected = false;
-        for (const key in parts) {
-          if (parts[key].selected) {
-            selected = true;
-          }
-        }
         return {
-          title:
-            values.title.trim().length === 0 ? "Case must have a title" : null,
+          // title:
+          //   values.title.trim().length === 0 ? "Case must have a title" : null,
           patient:
             values.patient.trim().length === 0
               ? "Case must have a patient"
               : null,
-          files:
-            values.files.length === 0
-              ? "Case must have at least one image"
+          // files:
+          //   values.files.length === 0
+          //     ? "Case must have at least one image"
+          //     : null,
+          duration:
+            values.duration.trim().length === 0
+              ? "Symptoms must have a duration"
               : null,
-          bodyParts: selected ? null : "Case must have at least one body part",
           symptoms:
-            values.symptoms.trim().length === 0
-              ? "Symptoms cannot be empty"
+            values.symptoms.length === 0
+              ? "Case must have at least one symptom"
               : null,
-          age: values.age === "" ? "Age cannot be empty" : null,
-          ethnicity:
-            values.ethnicity.trim().length === 0
-              ? "Ethnicity cannot be empty"
-              : null,
+          // age: values.age === "" ? "Age cannot be empty" : null,
+          // ethnicity:
+          //   values.ethnicity.trim().length === 0
+          //     ? "Ethnicity cannot be empty"
+          //     : null,
         };
       }
       if (active === 1) {
@@ -183,7 +182,7 @@ const Upload = () => {
         chief_complaint: form.values.chiefComplaint,
         description: form.values.description,
         symptom_areas: symptomAreas,
-        symptoms: form.values.symptoms,
+        symptoms: form.values.symptoms.join(",").toLowerCase(),
         age: form.values.age === "" ? undefined : Number(form.values.age),
         ethnicity: form.values.ethnicity,
         medical_history: Object.keys(form.values.questions).map((key) => {
@@ -263,8 +262,8 @@ const Upload = () => {
 
   return (
     <>
-      <p className="text-2xl font-medium mb-12">Create a Case</p>
-      <Stepper
+      <p className="text-2xl font-medium mb-8">Create a Case</p>
+      {/* <Stepper
         size="sm"
         classNames={{
           root: "w-full max-w-[640px] self-center mb-12",
@@ -289,32 +288,65 @@ const Upload = () => {
           label="Step 3"
           description="Review & Submit"
         />
-      </Stepper>
-      {active === 0 && <PatientInfo form={form} />}
+      </Stepper> */}
+      {active === 0 && <StepOne form={form} />}
       {active === 1 && <CaseInfo form={form} />}
       {active === 2 && <Review form={form} />}
-      <Button
-        disabled={uploading}
-        variant="action"
-        className="w-fit mt-6"
-        onClick={() => {
-          if (form.validate().hasErrors) {
-            handleError(form.errors);
-            return;
-          }
+      <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-8 lg:px-16">
+        <Button
+          disabled={uploading}
+          variant="action"
+          className="w-32"
+          onClick={() => {
+            if (active === 0) {
+              router.push("/dashboard");
+            } else {
+              setActive((current) => {
+                return current - 1;
+              });
+            }
+          }}
+        >
+          Back
+        </Button>
+        <div className="flex flex-col w-full items-center gap-y-4 relative">
+          <div className="flex gap-x-2 items-center">
+            {[...Array(TOTAL_STEPS)].map((_, index) => {
+              return (
+                <div
+                  className={`w-4 h-4 rounded-full ${
+                    index > active ? "bg-blue-200" : "bg-formiblue"
+                  }`}
+                  key={index}
+                />
+              );
+            })}
+          </div>
+          <p className="absolute mt-6">Step {active + 1} of 7</p>
+        </div>
+        <Button
+          disabled={uploading}
+          variant="action"
+          className="w-32"
+          onClick={() => {
+            if (form.validate().hasErrors) {
+              handleError(form.errors);
+              return;
+            }
 
-          if (active === 2) {
-            submitCase();
-          } else {
-            setActive((current) => {
-              return current + 1;
-            });
-          }
-        }}
-      >
-        {active === 2 ? "Create Case" : "Continue"}
-      </Button>
-      <CaseDisclaimerModal />
+            if (active === 2) {
+              submitCase();
+            } else {
+              setActive((current) => {
+                return current + 1;
+              });
+            }
+          }}
+        >
+          {active === 6 ? "Create Case" : "Continue"}
+        </Button>
+      </div>
+      {/* <CaseDisclaimerModal /> */}
     </>
   );
 };
