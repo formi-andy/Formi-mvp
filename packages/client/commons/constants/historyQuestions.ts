@@ -1,3 +1,31 @@
+export const BASIC_INFORMATION_QUESTIONS = {
+  name: {
+    type: "description",
+    question: "Name",
+    answer: "",
+    placeholder: "",
+  },
+  sex: {
+    type: "select",
+    question: "Sex",
+    answer: null,
+    options: [
+      { value: "Male", label: "Male" },
+      { value: "Female", label: "Female" },
+    ],
+  },
+  age: {
+    type: "number",
+    question: "Age",
+    answer: null,
+  },
+  pediatric_patient: {
+    type: "checkbox",
+    question: "Pediatric patient?",
+    answer: null,
+  },
+};
+
 export const MEDICAL_HISTORY_QUESTIONS = {
   immunizations: {
     type: "checkbox-description",

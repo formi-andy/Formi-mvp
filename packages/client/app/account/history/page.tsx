@@ -14,6 +14,7 @@ import {
 } from "react-icons/lu";
 import { MdOutlineSocialDistance } from "react-icons/md";
 import {
+  BASIC_INFORMATION_QUESTIONS,
   MEDICAL_HISTORY_QUESTIONS,
   FAMILY_HISTORY_QUESTIONS,
   SOCIAL_HISTORY_QUESTIONS,
@@ -23,6 +24,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
+import BasicInformationForm from "@/components/HistoryForms/BasicInformationForm";
 import MedicalHistoryForm from "@/components/HistoryForms/MedicalHistoryForm";
 import FamilyHistoryForm from "@/components/HistoryForms/FamilyHistoryForm";
 import SocialHistoryForm from "@/components/HistoryForms/SocialHistoryForm";
@@ -94,15 +96,16 @@ const HistoryPage = () => {
   return (
     <>
       <p className="text-2xl font-medium mb-12">
-        {active === 0 && "Medical History"}
-        {active === 1 && "Family History"}
-        {active === 2 && "Social History"}
-        {active === 3 && "Review"}
+        {active === 0 && "Basic Information"}
+        {active === 1 && "Medical History"}
+        {active === 2 && "Family History"}
+        {active === 3 && "Social History"}
+        {active === 4 && "Review"}
       </p>
       <Stepper
         size="sm"
         classNames={{
-          root: "w-full max-w-[720px] self-center mb-12",
+          root: "w-full max-w-[960px] self-center mb-12",
         }}
         allowNextStepsSelect={false}
         active={active}
@@ -112,26 +115,32 @@ const HistoryPage = () => {
         <Stepper.Step
           icon={<LuClipboardList size={20} />}
           label="Step 1"
+          description="Basic Info"
+        />
+        <Stepper.Step
+          icon={<LuClipboardList size={20} />}
+          label="Step 2"
           description="Medical History"
         />
         <Stepper.Step
           icon={<LuUsers size={20} />}
-          label="Step 2"
+          label="Step 3"
           description="Family History"
         />
         <Stepper.Step
           icon={<MdOutlineSocialDistance size={20} />}
-          label="Step 3"
+          label="Step 4"
           description="Social History"
         />
         <Stepper.Step
           icon={<LuSend size={20} />}
-          label="Step 4"
+          label="Step 5"
           description="Review and Submit"
         />
       </Stepper>
       <Formik
         initialValues={{
+          basicInformationQuestions: { ...BASIC_INFORMATION_QUESTIONS },
           medicalHistoryQuestions: { ...MEDICAL_HISTORY_QUESTIONS },
           familyHistoryQuestions: { ...FAMILY_HISTORY_QUESTIONS },
           socialHistoryQuestions: { ...SOCIAL_HISTORY_QUESTIONS },
@@ -144,8 +153,10 @@ const HistoryPage = () => {
           const errors = {};
           const questions =
             active === 0
-              ? values.medicalHistoryQuestions
+              ? values.basicInformationQuestions
               : active === 1
+              ? values.medicalHistoryQuestions
+              : active === 2
               ? values.familyHistoryQuestions
               : values.socialHistoryQuestions;
           for (const key in questions) {
@@ -192,24 +203,37 @@ const HistoryPage = () => {
           <Form>
             <div className={`transition-all `}>
               {active === 0 && (
-                <MedicalHistoryForm
+                <BasicInformationForm
                   errors={errors}
                   values={values}
                   handleChange={handleChange}
                 />
               )}
               {active === 1 && (
+                <MedicalHistoryForm
+                  errors={errors}
+                  values={values}
+                  handleChange={handleChange}
+                  pediatricQuestions={
+                    values.basicInformationQuestions.pediatric_patient.answer
+                  }
+                />
+              )}
+              {active === 2 && (
                 <FamilyHistoryForm
                   errors={errors}
                   values={values}
                   handleChange={handleChange}
                 />
               )}
-              {active === 2 && (
+              {active === 3 && (
                 <SocialHistoryForm
                   errors={errors}
                   values={values}
                   handleChange={handleChange}
+                  pediatricQuestions={
+                    values.basicInformationQuestions.pediatric_patient.answer
+                  }
                 />
               )}
             </div>
@@ -243,7 +267,7 @@ const HistoryPage = () => {
                 }
               }}
             >
-              {active === 3 ? "Save History" : "Continue"}
+              {active === 4 ? "Save History" : "Continue"}
             </Button>
           </Form>
         )}
