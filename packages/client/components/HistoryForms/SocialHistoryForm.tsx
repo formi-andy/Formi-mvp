@@ -10,15 +10,16 @@ type Props = {
   handleChange: HandleChange;
   values: Record<string, any>;
   errors: Record<string, any>;
+  pediatricQuestions?: string | null;
 };
 
 const SocialHistoryForm = memo(function SocialHistoryForm({
   handleChange,
   values,
   errors,
+  pediatricQuestions,
 }: Props) {
   const questions = SOCIAL_HISTORY_QUESTIONS;
-  const pediatric = true;
 
   return (
     <div className="grid gap-y-6">
@@ -57,7 +58,7 @@ const SocialHistoryForm = memo(function SocialHistoryForm({
           values={values["socialHistoryQuestions"]["sexual_activity"]}
           error={errors?.["sexual_activity"]}
         />
-        {pediatric && (
+        {pediatricQuestions === "Yes" && (
           <>
             <FormikDescription
               formKey="socialHistoryQuestions.home_situation"

@@ -11,15 +11,16 @@ type Props = {
   errors: any;
   handleChange: HandleChange;
   values: Record<string, object>;
+  pediatricQuestions?: string | null;
 };
 
 const MedicalHistoryForm = memo(function MedicalHistoryForm({
   handleChange,
   values,
   errors,
+  pediatricQuestions,
 }: Props) {
   const questions = MEDICAL_HISTORY_QUESTIONS;
-  const pediatric = true;
 
   return (
     <div className="grid gap-y-6">
@@ -83,16 +84,16 @@ const MedicalHistoryForm = memo(function MedicalHistoryForm({
           values={values["medicalHistoryQuestions"]["hospitalizations"]}
           error={errors?.["hospitalizations"]}
         />
-        <FormikSelect
-          formKey="medicalHistoryQuestions.birth_type"
-          question={questions["birth_type"].question}
-          options={questions["birth_type"].options}
-          handleChange={handleChange}
-          values={values["medicalHistoryQuestions"]["birth_type"]}
-          error={errors?.["birth_type"]}
-        />
-        {pediatric && (
+        {pediatricQuestions === "Yes" && (
           <>
+            <FormikSelect
+              formKey="medicalHistoryQuestions.birth_type"
+              question={questions["birth_type"].question}
+              options={questions["birth_type"].options}
+              handleChange={handleChange}
+              values={values["medicalHistoryQuestions"]["birth_type"]}
+              error={errors?.["birth_type"]}
+            />
             <FormikNumberInput
               formKey="medicalHistoryQuestions.weeks_born_at"
               question={questions["weeks_born_at"].question}
