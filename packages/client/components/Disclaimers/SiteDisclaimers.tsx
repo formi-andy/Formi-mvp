@@ -5,17 +5,17 @@ const SiteDisclaimer = () => {
     <div className="flex flex-col gap-y-4 w-4/5 md:w-[600px] lg:w-[800px] rounded-lg p-8 bg-white border">
       <p className="text-lg font-bold">WEBSITE DISCLAIMER</p>
       <p>
-        The HomeScope site is provided for educational and informational
+        The Formi site is provided for educational and informational
         purposes only and does not constitute providing medical advice. The
         information provided should not be used for diagnosing or treating a
         health problem or disease, and those seeking personal medical advice
         should consult with a licensed physician. Always seek the advice of your
         doctor or other qualified health provider regarding a medical condition.
         Never disregard professional medical advice or delay in seeking it
-        because of something you have read on HomeScope&apos;s website. If you
+        because of something you have read on Formi&apos;s website. If you
         think you may have a medical emergency, call 911 or go to the nearest
         emergency room immediately. No physician-patient relationship is created
-        by this web site or its use. Neither HomeScope nor its employees,
+        by this web site or its use. Neither Formi nor its employees,
         contractors, nor any contributor to this web site, makes any
         representations, express or implied, with respect to the information
         provided herein or to its use.

@@ -45,7 +45,7 @@ export default function PlatformTutorialModal({
       }}
     >
       <p className="text-xl font-medium text-center my-2">
-        Welcome to HomeScope!
+        Welcome to Formi!
       </p>
       <Button
         variant="action"
@@ -85,7 +85,7 @@ export default function PlatformTutorialModal({
               <p>[place holder picture]</p>
             </div>
             <p className="text-center text-lg px-16">
-              HomeScope connects you with medical reviewers who look at what you
+            Formi connects you with medical reviewers who look at what you
               submit and generate the most likely issues.
             </p>
           </div>

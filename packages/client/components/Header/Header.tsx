@@ -16,11 +16,11 @@ export default async function Header() {
         <Image
           priority
           src="/assets/logo.svg"
-          alt="Homescope Logo"
+          alt="Formi Logo"
           width={20}
           height={20}
         />
-        Homescope
+        Formi
       </Link>
       <HeaderContext>
         <nav className={styles.headerNav}>

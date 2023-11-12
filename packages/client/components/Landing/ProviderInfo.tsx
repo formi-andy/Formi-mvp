@@ -7,7 +7,7 @@ export default function ProviderInfo() {
   return (
     <div className="bg-black rounded-2xl w-full px-8 py-4 text-white">
       <p>A Groundbreaking All-In-One Device</p>
-      <p>HomeScope delivers the information providers need most, like:</p>
+      <p>Formi delivers the information providers need most, like:</p>
       <div></div>
     </div>
   );

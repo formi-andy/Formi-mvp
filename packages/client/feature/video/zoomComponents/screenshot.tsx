@@ -68,7 +68,7 @@ const ScreenshotButton = ({
 
     // download output
     download(canvas.toDataURL("image/png"), {
-      name: `Homescope-Meeting-${Date.now()}`,
+      name: `Formi-Meeting-${Date.now()}`,
       extension: "png",
     });
   }

@@ -5,7 +5,7 @@ export const Instructions = () => {
     <div>
       <p className="text-xl font-medium">Instructions</p>
       <ol className="list-decimal list-inside mb-8">
-        <li>Plug in your HomeScope device to the computer</li>
+        <li>Plug in your Formi device to the computer</li>
         <li>
           Enable permissions for microphone and camera if prompted and needed
         </li>

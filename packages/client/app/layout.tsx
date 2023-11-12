@@ -15,7 +15,7 @@ import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
 
 export const metadata = {
-  title: "Homescope",
+  title: "Formi",
   description: "",
 };
 
