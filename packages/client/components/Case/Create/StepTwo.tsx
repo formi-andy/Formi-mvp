@@ -1,6 +1,7 @@
 import { CaseForm } from "@/app/case/create/page";
 import Cough from "./Questions/Cough";
 import AbdominalPain from "./Questions/AbdominalPain";
+import Earache from "./Questions/Earache";
 
 function renderQuestions(form: CaseForm) {
   switch (form.values.chiefComplaint) {
@@ -8,6 +9,8 @@ function renderQuestions(form: CaseForm) {
       return <Cough form={form} />;
     case "abdominal_pain":
       return <AbdominalPain form={form} />;
+    case "earache":
+      return <Earache form={form} />;
   }
 }
 

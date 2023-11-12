@@ -181,7 +181,7 @@ export const ABDOMINAL_QUESTIONS = [
   {
     question: "Is there anything that helps or worsens symptoms?",
     type: "textarea",
-    placeholder: "",
+    placeholder: "If yes, describe in detail",
     answer: "",
   },
   {
@@ -220,3 +220,95 @@ export const ABDOMINAL_QUESTIONS = [
     answer: "",
   },
 ];
+
+export const EARACHE_QUESTIONS = [
+  {
+    question: "Describe in your own words what is happening",
+    type: "textarea",
+    placeholder:
+      "Is it on the inside vs. outside of ear, is the child touching or pulling the ear, what was happening when the symptoms began, etc.",
+    answer: "",
+  },
+  {
+    question: "Any major injury to the affected area?",
+    type: "textinput",
+    placeholder: "",
+    answer: "",
+  },
+  {
+    question: "Do siblings have similar symptoms?",
+    type: "textinput",
+    placeholder: "",
+    answer: "",
+  },
+  {
+    question: "Any recent swimming or full submersion in water?",
+    type: "textinput",
+    answer: "",
+  },
+  {
+    question: "Does child attend daycare?",
+    type: "textinput",
+    answer: "",
+  },
+  {
+    question: "Is there anything that helps or worsens symptoms?",
+    type: "textarea",
+    placeholder: "If yes, describe in detail",
+    answer: "",
+  },
+  {
+    question: "Fever",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Itching",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Lightheadedness",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Cough",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Headache",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Ringing or popping sounds in ear",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Rashes",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Hearing loss",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Protruding ear",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Discharge from ear",
+    type: "boolean",
+    answer: "",
+  },
+];
+
+export const FEVER_QUESTIONS = [];
+
+export const RASH_QUESTIONS = [];
