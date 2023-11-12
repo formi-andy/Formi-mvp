@@ -225,7 +225,7 @@ export const createMedicalCase = mutation({
     chief_complaint: v.string(),
     // patient_id: v.id("users"),
     patient_id: v.string(),
-    medical_history: v.any(),
+    medical_history: v.id("history"),
     duration: v.string(),
     profile: v.object({
       user_id: v.optional(v.id("users")),

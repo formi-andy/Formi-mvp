@@ -1,31 +1,3 @@
-export const BASIC_INFORMATION_QUESTIONS = {
-  name: {
-    type: "description",
-    question: "Name",
-    answer: "",
-    placeholder: "",
-  },
-  sex: {
-    type: "select",
-    question: "Sex",
-    answer: null,
-    options: [
-      { value: "Male", label: "Male" },
-      { value: "Female", label: "Female" },
-    ],
-  },
-  age: {
-    type: "number",
-    question: "Age",
-    answer: null,
-  },
-  pediatric_patient: {
-    type: "checkbox",
-    question: "Pediatric patient?",
-    answer: null,
-  },
-};
-
 export const MEDICAL_HISTORY_QUESTIONS = {
   immunizations: {
     type: "checkbox-description",
@@ -76,6 +48,7 @@ export const MEDICAL_HISTORY_QUESTIONS = {
     description: "",
     placeholder: "If yes please describe",
   },
+  // pediatric questions
   birth_type: {
     type: "select",
     question: "Vaginal or C-section birth?",
@@ -84,17 +57,20 @@ export const MEDICAL_HISTORY_QUESTIONS = {
       { value: "vaginal", label: "Vaginal" },
       { value: "c-section", label: "C-section" },
     ],
+    pediatric_question: true,
   },
   weeks_born_at: {
     type: "number",
     question: "Number of weeks born at?",
     answer: null,
+    pediatric_question: true,
   },
   birth_weight: {
     type: "number-select",
     question: "Weight when born?",
     answer: null,
     select: null,
+    pediatric_question: true,
   },
   birth_complications: {
     type: "checkbox-description",
@@ -102,6 +78,7 @@ export const MEDICAL_HISTORY_QUESTIONS = {
     answer: null,
     description: "",
     placeholder: "If yes please describe",
+    pediatric_question: true,
   },
 };
 
@@ -185,11 +162,13 @@ export const SOCIAL_HISTORY_QUESTIONS = {
     description: "",
     placeholder: "If yes do you use protection?",
   },
+  // pediatric_questions
   home_situation: {
     type: "description",
     placeholder: "",
     answer: "",
     question: "Please briefly describe your home situation",
+    pediatric_question: true,
   },
   physical_activity: {
     type: "checkbox-description",
@@ -197,5 +176,6 @@ export const SOCIAL_HISTORY_QUESTIONS = {
     answer: null,
     description: "",
     placeholder: "If yes please describe",
+    pediatric_question: true,
   },
 };

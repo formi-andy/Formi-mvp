@@ -24,6 +24,7 @@ export default function AddProfileModal({
       state: null,
       sexAtBirth: null,
       dateOfBirth: null,
+      pediatricPatient: "",
     },
   });
   const toast = useNetworkToasts();
@@ -90,6 +91,20 @@ export default function AddProfileModal({
             value: state,
           }))}
           {...profileForm.getInputProps("state")}
+        />
+        <Select
+          label="Pediatric Patient?"
+          data={[
+            {
+              label: "Yes",
+              value: "yes",
+            },
+            {
+              label: "No",
+              value: "no",
+            },
+          ]}
+          {...profileForm.getInputProps("pediatricPatient")}
         />
       </div>
       <div className="flex gap-x-4 w-full justify-between">

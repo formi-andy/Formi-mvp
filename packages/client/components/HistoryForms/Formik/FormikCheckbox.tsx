@@ -42,7 +42,7 @@ const FormikCheckbox = memo(function FormikCheckbox({
         >
           <div className="flex gap-x-4">
             <Radio
-              value="Yes"
+              value="yes"
               label="Yes"
               error={error}
               classNames={{
@@ -52,7 +52,7 @@ const FormikCheckbox = memo(function FormikCheckbox({
               }}
             />
             <Radio
-              value="No"
+              value="no"
               label="No"
               error={error}
               classNames={{

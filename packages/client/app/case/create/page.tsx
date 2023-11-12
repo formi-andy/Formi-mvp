@@ -17,6 +17,12 @@ import StepTwo from "@/components/Case/Create/StepTwo";
 import UploadStep from "@/components/Case/Create/UploadStep";
 import ReviewStep from "@/components/Case/Create/ReviewStep";
 import AppLoader from "@/components/Loaders/AppLoader";
+import {
+  MEDICAL_HISTORY_QUESTIONS,
+  SOCIAL_HISTORY_QUESTIONS,
+  FAMILY_HISTORY_QUESTIONS,
+} from "@/commons/constants/historyQuestions";
+import HistoryForm from "@/components/HistoryForms/HistoryForm";
 
 const TOTAL_STEPS = 7;
 
@@ -41,6 +47,7 @@ function useCaseForm(active: number) {
         dateOfBirth: null as Date | null,
         sexAtBirth: null as string | null,
         state: null as string | null,
+        pediatricPatient: null as string | null,
       } as {
         firstName: string;
         lastName: string;
@@ -48,6 +55,7 @@ function useCaseForm(active: number) {
         dateOfBirth: Date | null;
         sexAtBirth: string | null;
         state: string | null;
+        pediatricPatient: string | null;
       },
       duration: "",
       files: [] as {
@@ -63,6 +71,11 @@ function useCaseForm(active: number) {
           answer: string | boolean | null;
         }
       >,
+      history: {
+        medicalHistoryQuestions: { ...MEDICAL_HISTORY_QUESTIONS },
+        familyHistoryQuestions: { ...FAMILY_HISTORY_QUESTIONS },
+        socialHistoryQuestions: { ...SOCIAL_HISTORY_QUESTIONS },
+      },
     },
     validate: (values) => {
       if (active === 0) {
@@ -102,6 +115,42 @@ function useCaseForm(active: number) {
         });
 
         return invalid;
+      }
+
+      if (active === 2 || active === 3 || active === 4) {
+        const errors = {};
+        const questions =
+          active === 2
+            ? form.values.history.medicalHistoryQuestions
+            : active === 3
+            ? form.values.history.familyHistoryQuestions
+            : form.values.history.socialHistoryQuestions;
+        for (const key in questions) {
+          if (
+            questions[key].pediatric_question &&
+            form.values.profile.pediatricPatient === "no"
+          ) {
+            continue;
+          }
+          if (
+            questions[key].type === "number-select" &&
+            (!questions[key].answer || !questions[key].select)
+          ) {
+            errors[key] = {
+              answer: questions[key].answer
+                ? null
+                : "Please answer this question",
+              select: questions[key].select ? null : "Please select an option",
+            };
+          } else if (
+            questions[key].answer === null ||
+            questions[key].answer === undefined ||
+            questions[key].answer === ""
+          ) {
+            errors[key] = "Please answer all questions before continuing";
+          }
+        }
+        return errors;
       }
 
       if (active === 5) {
@@ -147,6 +196,7 @@ const CreatePage = () => {
   // TODO: Preload profiles
   const profiles = useQuery(api.profile.getProfiles);
   const createCase = useMutation(api.medical_case.createMedicalCase);
+  const createHistory = useMutation(api.history.createHistory);
   const router = useRouter();
 
   const form = useCaseForm(active);
@@ -175,7 +225,7 @@ const CreatePage = () => {
     toast.error({
       title: "Can't continue",
       message: "Please fill out all the fields",
-    })
+    });
   };
 
   // TODO: make this a queue job
@@ -200,6 +250,42 @@ const CreatePage = () => {
         template: "convex",
       });
 
+      // create history
+      const historyValues = form.values.history;
+      const cleanedValues = {} as any;
+      const pediatricPatient = form.values.profile.pediatricPatient;
+
+      // clean up values
+      for (const section in historyValues) {
+        for (const key in historyValues[section]) {
+          const question = historyValues[section][key];
+
+          if (question.pediatric_question && pediatricPatient === "no") {
+            cleanedValues[key] = undefined;
+          } else if (question.type === "number-select") {
+            cleanedValues[key] = {
+              answer: parseInt(question.answer),
+              select: question.select,
+            };
+          } else if (question.type === "checkbox-description") {
+            cleanedValues[key] = {
+              answer: question.answer === "yes" ? true : false,
+              description: question.description,
+            };
+          } else if (question.type === "checkbox") {
+            cleanedValues[key] = question.answer === "yes" ? true : false;
+          } else if (question.type === "number") {
+            cleanedValues[key] = parseInt(question.answer);
+          } else {
+            cleanedValues[key] = question.answer;
+          }
+        }
+      }
+
+      const { historyRecord } = await createHistory({
+        ...cleanedValues,
+      });
+
       const dateAsNumber = form.values.patient?.dateOfBirth?.getTime();
       const { caseRecord } = await createCase({
         chief_complaint: form.values.chiefComplaint,
@@ -210,7 +296,7 @@ const CreatePage = () => {
           };
         }),
         duration: form.values.duration,
-        medical_history: {},
+        medical_history: historyRecord,
         profile: {
           first_name: form.values.patient?.firstName as string,
           last_name: form.values.patient?.lastName as string,
@@ -292,7 +378,15 @@ const CreatePage = () => {
       <p className="text-2xl font-medium mb-8">Create a Case</p>
       {active === 0 && <StepOne profiles={profiles} form={form} />}
       {active === 1 && <StepTwo form={form} />}
-      {/* {active === 2 && <Review form={form} />} */}
+      {active === 2 && (
+        <HistoryForm form={form} section="medicalHistoryQuestions" />
+      )}
+      {active === 3 && (
+        <HistoryForm form={form} section="familyHistoryQuestions" />
+      )}
+      {active === 4 && (
+        <HistoryForm form={form} section="socialHistoryQuestions" />
+      )}
       {active === 5 && <UploadStep form={form} />}
       {active === 6 && <ReviewStep form={form} />}
       <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-8 lg:px-16">

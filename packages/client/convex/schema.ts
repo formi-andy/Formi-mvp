@@ -18,7 +18,7 @@ export default defineSchema({
       state: v.string(),
     }),
     questions: v.any(),
-    medical_history: v.any(),
+    medical_history: v.id("history"),
     user_id: v.id("users"),
     patient_id: v.id("users"),
     duration: v.string(),
