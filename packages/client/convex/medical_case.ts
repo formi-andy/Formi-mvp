@@ -223,12 +223,19 @@ export const createMedicalCase = mutation({
   args: {
     questions: v.any(),
     chief_complaint: v.string(),
-    age: v.optional(v.number()),
-    ethnicity: v.optional(v.string()),
     // patient_id: v.id("users"),
     patient_id: v.string(),
     medical_history: v.any(),
     duration: v.string(),
+    profile: v.object({
+      user_id: v.optional(v.id("users")),
+      first_name: v.string(),
+      last_name: v.string(),
+      ethnicity: v.array(v.string()),
+      date_of_birth: v.number(),
+      sex_at_birth: v.string(),
+      state: v.string(),
+    }),
   },
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
@@ -239,24 +246,41 @@ export const createMedicalCase = mutation({
       duration,
       chief_complaint,
       medical_history,
-      age,
-      ethnicity,
+      profile,
     } = args;
 
-    const normalizedId = ctx.db.normalizeId("users", patient_id);
+    const normalizedId = ctx.db.normalizeId("profile", patient_id);
+
+    if (!profile) {
+      throw new ConvexError({
+        message: "Profile is required",
+        code: 400,
+      });
+    }
+
+    if (!normalizedId) {
+      await ctx.db.insert("profile", {
+        ...profile,
+        created_by: user._id,
+      });
+    } else {
+      await ctx.db.patch(normalizedId, profile);
+    }
 
     // update patient's medical history first
 
+    // duplicate medical history and profile to medical case
     const caseRecord = await ctx.db.insert("medical_case", {
       medical_history,
       questions,
-      patient_id: normalizedId ? normalizedId : user._id,
+      patient_id: user._id,
       chief_complaint,
       user_id: user._id,
       reviewers: [],
       status: CaseStatus.CREATED,
       max_reviewers: 3,
       duration,
+      profile,
     });
     return { caseRecord };
   },

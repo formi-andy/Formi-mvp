@@ -8,6 +8,15 @@ export default defineSchema({
     // description: v.optional(v.string()),
     // symptom_areas: v.array(v.string()),
     // symptoms: v.string(),
+    profile: v.object({
+      user_id: v.optional(v.id("users")),
+      first_name: v.string(),
+      last_name: v.string(),
+      ethnicity: v.array(v.string()),
+      date_of_birth: v.number(),
+      sex_at_birth: v.string(),
+      state: v.string(),
+    }),
     questions: v.any(),
     medical_history: v.any(),
     user_id: v.id("users"),
@@ -24,6 +33,18 @@ export default defineSchema({
     ),
     max_reviewers: v.number(),
   }).index("by_user_id", ["user_id"]),
+  profile: defineTable({
+    user_id: v.optional(v.id("users")),
+    created_by: v.id("users"),
+    first_name: v.string(),
+    last_name: v.string(),
+    ethnicity: v.array(v.string()),
+    date_of_birth: v.number(),
+    sex_at_birth: v.string(),
+    state: v.string(),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_created_by", ["created_by"]),
   review: defineTable({
     case_id: v.id("medical_case"),
     user_id: v.id("users"),

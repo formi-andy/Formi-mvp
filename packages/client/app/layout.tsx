@@ -12,6 +12,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "@mantine/notifications/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/carousel/styles.css";
+import "@mantine/dates/styles.css";
 
 export const metadata = {
   title: "Homescope",

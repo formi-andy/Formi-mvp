@@ -24,6 +24,7 @@ import type * as medical_case from "../medical_case";
 import type * as medical_student from "../medical_student";
 import type * as migrations from "../migrations";
 import type * as patient_doctor from "../patient_doctor";
+import type * as profile from "../profile";
 import type * as review from "../review";
 import type * as users from "../users";
 import type * as waitlist from "../waitlist";
@@ -47,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   medical_student: typeof medical_student;
   migrations: typeof migrations;
   patient_doctor: typeof patient_doctor;
+  profile: typeof profile;
   review: typeof review;
   users: typeof users;
   waitlist: typeof waitlist;

@@ -22,11 +22,32 @@ const TOTAL_STEPS = 7;
 function useCaseForm(active: number) {
   const form = useForm({
     initialValues: {
-      patient: "",
       chiefComplaint: "",
       symptoms: [] as string[],
-      age: "" as number | string,
-      ethnicity: "",
+      patient: null as {
+        firstName: string;
+        lastName: string;
+        ethnicity: string[];
+        dateOfBirth: Date | null;
+        sexAtBirth: string | null;
+        state: string | null;
+        id: string;
+      } | null,
+      profile: {
+        firstName: "",
+        lastName: "",
+        ethnicity: [] as string[],
+        dateOfBirth: null as Date | null,
+        sexAtBirth: null as string | null,
+        state: null as string | null,
+      } as {
+        firstName: string;
+        lastName: string;
+        ethnicity: string[];
+        dateOfBirth: Date | null;
+        sexAtBirth: string | null;
+        state: string | null;
+      },
       duration: "",
       files: [] as {
         file: File;
@@ -45,10 +66,6 @@ function useCaseForm(active: number) {
     validate: (values) => {
       if (active === 0) {
         return {
-          patient:
-            values.patient.trim().length === 0
-              ? "Case must have a patient"
-              : null,
           duration:
             values.duration.trim().length === 0
               ? "Symptoms must have a duration"
@@ -57,6 +74,7 @@ function useCaseForm(active: number) {
             values.chiefComplaint.trim().length === 0
               ? "Case must have a chief complaint"
               : null,
+          patient: values.patient === null ? "Case must have a patient" : null,
         };
       }
       if (active === 1) {
@@ -103,6 +121,22 @@ function useCaseForm(active: number) {
 
 export type CaseForm = ReturnType<typeof useCaseForm>;
 
+export function isValidProfile(formProfile: CaseForm["values"]["profile"]) {
+  if (formProfile === null) {
+    return false;
+  }
+  return (
+    formProfile.firstName !== "" &&
+    formProfile.lastName !== "" &&
+    formProfile.sexAtBirth !== null &&
+    formProfile.sexAtBirth !== null &&
+    formProfile.state !== "" &&
+    formProfile.state !== null &&
+    formProfile.dateOfBirth !== null &&
+    formProfile.ethnicity.length > 0
+  );
+}
+
 const Upload = () => {
   const user = useAuth();
   const toast = useNetworkToasts();
@@ -144,16 +178,22 @@ const Upload = () => {
         message: "Please wait while we create your case",
       });
 
+      if (!form.values.profile) {
+        toast.error({
+          title: "Failed to create case",
+          message: "Please select a patient",
+        });
+        return;
+      }
+
       let promises: Promise<string | null>[] = [];
       const token = await user.getToken({
         template: "convex",
       });
 
+      const dateAsNumber = form.values.patient?.dateOfBirth?.getTime();
       const { caseRecord } = await createCase({
-        patient_id: form.values.patient,
         chief_complaint: form.values.chiefComplaint,
-        age: form.values.age === "" ? undefined : Number(form.values.age),
-        ethnicity: form.values.ethnicity,
         questions: Object.keys(form.values.questions).map((key) => {
           return {
             question: form.values.questions[key].question,
@@ -162,6 +202,15 @@ const Upload = () => {
         }),
         duration: form.values.duration,
         medical_history: {},
+        profile: {
+          first_name: form.values.patient?.firstName as string,
+          last_name: form.values.patient?.lastName as string,
+          ethnicity: form.values.patient?.ethnicity as string[],
+          date_of_birth: dateAsNumber as number,
+          sex_at_birth: form.values.patient?.sexAtBirth as string,
+          state: form.values.patient?.state as string,
+        },
+        patient_id: form.values.patient?.id as string,
       });
 
       // upload images to convex

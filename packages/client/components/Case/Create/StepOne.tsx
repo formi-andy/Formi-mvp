@@ -1,4 +1,4 @@
-import { CaseForm } from "@/app/case/create/page";
+import { CaseForm, isValidProfile } from "@/app/case/create/page";
 import {
   ABDOMINAL_QUESTIONS,
   COUGH_QUESTIONS,
@@ -8,6 +8,10 @@ import {
 } from "@/commons/constants/questions";
 import { Chip, Textarea } from "@mantine/core";
 import { LuPersonStanding, LuUserPlus2 } from "react-icons/lu";
+import AddProfileModal from "./AddProfileModal";
+import { useState } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const CHIEF_COMPLAINTS = [
   {
@@ -36,52 +40,109 @@ const CHIEF_COMPLAINTS = [
   // },
 ];
 
-const temp = ["Me", "Someone", "Joe"];
+function renderProfile(form: CaseForm) {
+  if (!isValidProfile(form.values.profile)) return null;
+  return form.values.patient?.id === "new" ? (
+    <button
+      className="flex flex-col items-center gap-2 rounded-lg border p-4 border-white"
+      onClick={() => form.setFieldValue("patient", null)}
+    >
+      <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
+        <LuPersonStanding className="text-center text-formiblue w-1/2 h-1/2" />
+      </div>
+      <p className="text-center text-lg font-medium text-white">
+        {`${form.values.profile.firstName} ${form.values.profile.lastName}`}
+      </p>
+    </button>
+  ) : (
+    <button
+      className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition"
+      onClick={() => {
+        form.setFieldValue("patient", {
+          firstName: form.values.profile.firstName,
+          lastName: form.values.profile.lastName,
+          dateOfBirth: form.values.profile.dateOfBirth,
+          ethnicity: form.values.profile.ethnicity,
+          state: form.values.profile.state,
+          sexAtBirth: form.values.profile.sexAtBirth,
+          id: "new",
+        });
+      }}
+    >
+      <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
+        <LuPersonStanding className="text-center text-formiblue w-1/2 h-1/2" />
+      </div>
+      <p className="text-center text-lg font-medium text-white">
+        {`${form.values.profile.firstName} ${form.values.profile.lastName}`}
+      </p>
+    </button>
+  );
+}
 
 export default function StepOne({ form }: { form: CaseForm }) {
+  const [open, setOpen] = useState(false);
+  const profiles = useQuery(api.profile.getProfiles);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <div className="flex flex-col gap-6 p-6 rounded-lg items-center bg-formiblue">
         <p className="font-semibold text-center text-xl sm:text-2xl text-white">
           Who needs help today?
         </p>
-        <div className="grid grid-cols-2 gap-6 w-full">
-          {temp.map((name) =>
-            form.values.patient === name ? (
-              <button
-                className="flex flex-col items-center gap-2 rounded-lg border p-4 border-white"
-                key={name}
-                onClick={() => form.setFieldValue("patient", "")}
-              >
-                <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
-                  <LuPersonStanding className="text-center text-formiblue w-1/2 h-1/2" />
-                </div>
-                <p className="text-center text-lg font-medium text-white">
-                  {name}
-                </p>
-              </button>
-            ) : (
-              <button
-                className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition"
-                key={name}
-                onClick={() => form.setFieldValue("patient", name)}
-              >
-                <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
-                  <LuPersonStanding className="text-center text-formiblue w-1/2 h-1/2" />
-                </div>
-                <p className="text-center text-lg font-medium text-white">
-                  {name}
-                </p>
-              </button>
-            )
+        <div className="grid grid-cols-2 gap-3 lg:gap-6 w-full">
+          {profiles === undefined ? null : (
+            <>
+              {renderProfile(form)}
+              {profiles.map((profile) =>
+                profile._id === form.values.patient?.id ? (
+                  <button
+                    className="flex flex-col items-center gap-2 rounded-lg border p-4 border-white"
+                    key={profile._id}
+                    onClick={() => form.setFieldValue("patient", null)}
+                  >
+                    <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
+                      <LuPersonStanding className="text-center text-formiblue w-1/2 h-1/2" />
+                    </div>
+                    <p className="text-center text-lg font-medium text-white">
+                      {profile.first_name} {profile.last_name}
+                    </p>
+                  </button>
+                ) : (
+                  <button
+                    className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition"
+                    key={profile._id}
+                    onClick={() => {
+                      form.setFieldValue("patient", {
+                        id: profile._id,
+                        firstName: profile.first_name,
+                        lastName: profile.last_name,
+                        dateOfBirth: new Date(profile.date_of_birth),
+                        sexAtBirth: profile.sex_at_birth,
+                        state: profile.state,
+                        ethnicity: profile.ethnicity,
+                      });
+                    }}
+                  >
+                    <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
+                      <LuPersonStanding className="text-center text-formiblue w-1/2 h-1/2" />
+                    </div>
+                    <p className="text-center text-lg font-medium text-white">
+                      {profile.first_name} {profile.last_name}
+                    </p>
+                  </button>
+                )
+              )}
+            </>
           )}
-          <button className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition">
-            <button
-              className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]"
-              onClick={() => {}}
-            >
+          <button
+            className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
               <LuUserPlus2 className="text-center text-formiblue w-1/2 h-1/2" />
-            </button>
+            </div>
             <p className="text-center text-lg font-medium text-white">Add</p>
           </button>
         </div>
@@ -175,6 +236,7 @@ export default function StepOne({ form }: { form: CaseForm }) {
           rows={5}
         />
       </div>
+      <AddProfileModal open={open} setOpen={setOpen} form={form} />
     </div>
   );
 }

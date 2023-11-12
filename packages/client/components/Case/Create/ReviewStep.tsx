@@ -2,7 +2,6 @@ import { CaseForm } from "@/app/case/create/page";
 import Image from "next/image";
 
 export default function ReviewStep({ form }: { form: CaseForm }) {
-  console.log("FORM", form.values);
   return (
     <div className="text-white grid gap-y-6 gap-x-4 p-8 rounded-lg items-center bg-formiblue">
       <div className="flex justify-center font-semibold text-xl sm:text-2xl">
