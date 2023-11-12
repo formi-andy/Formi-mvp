@@ -93,7 +93,7 @@ export default function Dropzone({ data, setData }: Props) {
       <div
         {...getRootProps()}
         className={`
-          w-full h-full min-h-[20rem] rounded-t-lg cursor-pointer flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out p-4 
+          border-white border-dashed border w-full h-full min-h-[20rem] rounded-lg cursor-pointer flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out p-4 
           ${isDragAccept ? "border-green-500 bg-green-100" : ""} 
           ${isDragReject ? "border-red-500 bg-red-100" : ""} 
           ${
@@ -104,10 +104,10 @@ export default function Dropzone({ data, setData }: Props) {
         `}
       >
         <input {...getInputProps()} />
-        <p className="text-2xl font-medium text-center">
+        <p className="text-2xl font-medium text-center text-white">
           Drag and drop some files here, or click to select files
         </p>
-        <em className="text-center text-sm max-w-[380px]">
+        <em className="text-center text-sm max-w-[380px] text-white">
           Only *.jpeg, *.png, and *.webp images will be accepted. Max file size
           is 5MB.
         </em>

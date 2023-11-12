@@ -5,18 +5,7 @@ import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@mantine/form";
-import axios from "axios";
 
-import {
-  LuCheckCircle,
-  LuClipboardList,
-  LuMessagesSquare,
-  LuSend,
-} from "react-icons/lu";
-import { INITIAL_PARTS_INPUT } from "@/commons/constants/bodyParts";
-import PatientInfo from "@/components/Case/Create/PatientInfo";
-import CaseInfo from "@/components/Case/Create/CaseInfo";
-import Review from "@/components/Case/Create/Review";
 import { BASE_QUESTIONS } from "@/commons/constants/questions";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -25,16 +14,16 @@ import { useRouter } from "next/navigation";
 import CaseDisclaimerModal from "@/components/Disclaimers/CaseDisclaimerModal";
 import StepOne from "@/components/Case/Create/StepOne";
 import StepTwo from "@/components/Case/Create/StepTwo";
+import UploadStep from "@/components/Case/Create/UploadStep";
+import ReviewStep from "@/components/Case/Create/ReviewStep";
 
 const TOTAL_STEPS = 7;
 
 function useCaseForm(active: number) {
   const form = useForm({
     initialValues: {
-      title: "",
       patient: "",
       chiefComplaint: "",
-      description: "",
       symptoms: [] as string[],
       age: "" as number | string,
       ethnicity: "",
@@ -43,20 +32,7 @@ function useCaseForm(active: number) {
         file: File;
         title: string;
       }[],
-      bodyParts: INITIAL_PARTS_INPUT,
-      questions: {
-        ...BASE_QUESTIONS.reduce((acc, question) => {
-          return {
-            ...acc,
-            [question.question]: {
-              question: question.question,
-              type: question.type,
-              placeholder: question.placeholder,
-              answer: question.type === "boolean" ? null : "",
-            },
-          };
-        }, {}),
-      } as Record<
+      questions: {} as Record<
         string,
         {
           question: string;
@@ -73,10 +49,6 @@ function useCaseForm(active: number) {
             values.patient.trim().length === 0
               ? "Case must have a patient"
               : null,
-          // files:
-          //   values.files.length === 0
-          //     ? "Case must have at least one image"
-          //     : null,
           duration:
             values.duration.trim().length === 0
               ? "Symptoms must have a duration"
@@ -111,6 +83,15 @@ function useCaseForm(active: number) {
         });
 
         return invalid;
+      }
+
+      if (active === 5) {
+        return {
+          files:
+            values.files.length === 0
+              ? "Case must have at least one image"
+              : null,
+        };
       }
 
       return {};
@@ -163,35 +144,24 @@ const Upload = () => {
         message: "Please wait while we create your case",
       });
 
-      const symptomAreas: string[] = [];
       let promises: Promise<string | null>[] = [];
       const token = await user.getToken({
         template: "convex",
       });
 
-      for (const key in form.values.bodyParts) {
-        if (form.values.bodyParts[key].selected) {
-          const split = key.split(/(?=[A-Z])/);
-          symptomAreas.push(split.join(" "));
-        }
-      }
-
       const { caseRecord } = await createCase({
-        title: form.values.title,
         patient_id: form.values.patient,
         chief_complaint: form.values.chiefComplaint,
-        description: form.values.description,
-        symptom_areas: symptomAreas,
-        symptoms: form.values.symptoms.join(",").toLowerCase(),
         age: form.values.age === "" ? undefined : Number(form.values.age),
         ethnicity: form.values.ethnicity,
-        medical_history: Object.keys(form.values.questions).map((key) => {
+        questions: Object.keys(form.values.questions).map((key) => {
           return {
             question: form.values.questions[key].question,
             answer: form.values.questions[key].answer,
           };
         }),
-        tags: [],
+        duration: form.values.duration,
+        medical_history: {},
       });
 
       // upload images to convex
@@ -221,30 +191,29 @@ const Upload = () => {
         );
       }
       const attachments = await Promise.all(promises);
-
-      let instructions =
-        "## **Instructions** \n\n You will be given a group of images and a set of questions and answers. Using this information, you will be asked to diagnose the patient. \n\n";
-      instructions += `### Patient Age: ${form.values.age} \n\n`;
-      instructions += `### Patient Ethnicity: ${form.values.ethnicity}\n\n`;
-      instructions += `### Symptom Areas \n\n ${symptomAreas.join(", ")} \n\n`;
-      instructions += `### Symptoms \n\n ${form.values.symptoms} \n\n`;
-      instructions += Object.keys(form.values.questions)
-        .map((key) => {
-          return `### ${form.values.questions[key].question}\n${form.values.questions[key].answer} \n`;
-        })
-        .join("");
-      instructions += "\n\n### **Additional Information** \n\n";
-      instructions += form.values.description;
+      // let instructions =
+      //   "## **Instructions** \n\n You will be given a group of images and a set of questions and answers. Using this information, you will be asked to diagnose the patient. \n\n";
+      // instructions += `### Patient Age: ${form.values.age} \n\n`;
+      // instructions += `### Patient Ethnicity: ${form.values.ethnicity}\n\n`;
+      // instructions += `### Symptom Areas \n\n ${symptomAreas.join(", ")} \n\n`;
+      // instructions += `### Symptoms \n\n ${form.values.symptoms} \n\n`;
+      // instructions += Object.keys(form.values.questions)
+      //   .map((key) => {
+      //     return `### ${form.values.questions[key].question}\n${form.values.questions[key].answer} \n`;
+      //   })
+      //   .join("");
+      // instructions += "\n\n### **Additional Information** \n\n";
+      // instructions += form.values.description;
 
       // create scale batch and task
-      await axios.post(`/api/scale?caseId=${caseRecord}&batchName=${""}`, {
-        attachments,
-        instructions,
-      });
-      toast.success({
-        title: "Case created",
-        message: "Your case has been created successfully",
-      });
+      // await axios.post(`/api/scale?caseId=${caseRecord}&batchName=${""}`, {
+      //   attachments,
+      //   instructions,
+      // });
+      // toast.success({
+      //   title: "Case created",
+      //   message: "Your case has been created successfully",
+      // });
 
       // setActive(0);
       // form.reset();
@@ -263,35 +232,11 @@ const Upload = () => {
   return (
     <>
       <p className="text-2xl font-medium mb-8">Create a Case</p>
-      {/* <Stepper
-        size="sm"
-        classNames={{
-          root: "w-full max-w-[640px] self-center mb-12",
-        }}
-        allowNextStepsSelect={false}
-        active={active}
-        onStepClick={setActive}
-        completedIcon={<LuCheckCircle size={20} />}
-      >
-        <Stepper.Step
-          icon={<LuClipboardList size={20} />}
-          label="Step 1"
-          description="Patient Information"
-        />
-        <Stepper.Step
-          icon={<LuMessagesSquare size={20} />}
-          label="Step 2"
-          description="Case Information"
-        />
-        <Stepper.Step
-          icon={<LuSend size={20} />}
-          label="Step 3"
-          description="Review & Submit"
-        />
-      </Stepper> */}
       {active === 0 && <StepOne form={form} />}
       {active === 1 && <StepTwo form={form} />}
-      {active === 2 && <Review form={form} />}
+      {/* {active === 2 && <Review form={form} />} */}
+      {active === 5 && <UploadStep form={form} />}
+      {active === 6 && <ReviewStep form={form} />}
       <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-8 lg:px-16">
         <Button
           disabled={uploading}
@@ -327,14 +272,14 @@ const Upload = () => {
         <Button
           disabled={uploading}
           variant="action"
-          className="w-32"
+          className="w-40"
           onClick={() => {
             if (form.validate().hasErrors) {
               handleError(form.errors);
               return;
             }
 
-            if (active === 2) {
+            if (active === 6) {
               submitCase();
             } else {
               setActive((current) => {

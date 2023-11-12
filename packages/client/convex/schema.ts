@@ -4,16 +4,16 @@ import { v } from "convex/values";
 export default defineSchema({
   // chief complaint should be high level field
   medical_case: defineTable({
-    title: v.string(),
-    description: v.optional(v.string()),
-    symptom_areas: v.array(v.string()),
-    age: v.optional(v.number()),
-    ethnicity: v.optional(v.string()),
-    symptoms: v.string(),
+    // title: v.string(),
+    // description: v.optional(v.string()),
+    // symptom_areas: v.array(v.string()),
+    // symptoms: v.string(),
+    questions: v.any(),
     medical_history: v.any(),
     user_id: v.id("users"),
     patient_id: v.id("users"),
-    tags: v.array(v.string()),
+    duration: v.string(),
+    // tags: v.array(v.string()),
     chief_complaint: v.string(),
     reviewed_at: v.optional(v.number()),
     reviewers: v.array(v.id("users")),
@@ -23,9 +23,7 @@ export default defineSchema({
       v.literal("COMPLETED")
     ),
     max_reviewers: v.number(),
-  })
-    .index("by_user_id", ["user_id"])
-    .index("by_tags", ["tags"]),
+  }).index("by_user_id", ["user_id"]),
   review: defineTable({
     case_id: v.id("medical_case"),
     user_id: v.id("users"),

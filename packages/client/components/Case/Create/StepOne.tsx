@@ -76,9 +76,12 @@ export default function StepOne({ form }: { form: CaseForm }) {
             )
           )}
           <button className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition">
-            <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
+            <button
+              className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]"
+              onClick={() => {}}
+            >
               <LuUserPlus2 className="text-center text-formiblue w-1/2 h-1/2" />
-            </div>
+            </button>
             <p className="text-center text-lg font-medium text-white">Add</p>
           </button>
         </div>

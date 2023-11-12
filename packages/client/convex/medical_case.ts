@@ -221,52 +221,42 @@ export const addReviewerToMedicalCase = mutation({
 
 export const createMedicalCase = mutation({
   args: {
-    title: v.string(),
-    description: v.optional(v.string()),
-    symptom_areas: v.array(v.string()),
-    medical_history: v.any(),
+    questions: v.any(),
     chief_complaint: v.string(),
-    symptoms: v.string(),
     age: v.optional(v.number()),
     ethnicity: v.optional(v.string()),
     // patient_id: v.id("users"),
     patient_id: v.string(),
-    tags: v.optional(v.array(v.string())),
+    medical_history: v.any(),
+    duration: v.string(),
   },
   async handler(ctx, args) {
     const user = await mustGetCurrentUser(ctx);
 
     const {
-      title,
-      description,
       patient_id,
-      medical_history,
-      tags,
-      symptom_areas,
-      symptoms,
+      questions,
+      duration,
       chief_complaint,
+      medical_history,
       age,
       ethnicity,
     } = args;
 
-    const sanitizedDescription = sanitizeHtml(description || "");
     const normalizedId = ctx.db.normalizeId("users", patient_id);
 
+    // update patient's medical history first
+
     const caseRecord = await ctx.db.insert("medical_case", {
-      title,
-      symptom_areas,
-      symptoms,
-      description: sanitizedDescription,
       medical_history,
-      tags: tags || [],
+      questions,
       patient_id: normalizedId ? normalizedId : user._id,
       chief_complaint,
       user_id: user._id,
-      ethnicity,
-      age,
       reviewers: [],
       status: CaseStatus.CREATED,
-      max_reviewers: 5,
+      max_reviewers: 3,
+      duration,
     });
     return { caseRecord };
   },

@@ -20,10 +20,12 @@ export default function AcceptedFiles({
   const listedFiles = data.map((d, index) => (
     <div key={d.file.name} className="flex flex-col gap-y-2">
       <div className="flex w-full items-center gap-x-4">
-        <p className="truncate w-[calc(100vw-32px-1rem-40px)] sm:w-[calc(60vw-64px-1rem-40px)]">
+        {/* <p className="w-full truncate"> */}
+        <p className="truncate w-full">
           {d.file.name} - {formatBytes(d.file.size)} bytes
         </p>
         <Button
+          className="bg-lightblue text-black"
           variant="outline-danger"
           size="icon"
           onClick={() => {
@@ -38,12 +40,14 @@ export default function AcceptedFiles({
     </div>
   ));
   return (
-    <div className="flex flex-col gap-y-2 mt-4">
-      <p className="text-lg font-medium">Accepted Files</p>
+    <div className="flex flex-col gap-y-2">
+      <p className="text-lg font-medium text-white">Accepted Files</p>
       {listedFiles.length === 0 ? (
-        <p>No accepted file(s)</p>
+        <p className="text-white">No accepted file(s)</p>
       ) : (
-        <ul className="w-full flex flex-col gap-y-2">{listedFiles}</ul>
+        <ul className="w-full flex flex-col gap-y-2 text-white">
+          {listedFiles}
+        </ul>
       )}
     </div>
   );

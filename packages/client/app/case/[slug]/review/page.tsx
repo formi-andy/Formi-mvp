@@ -1,8 +1,8 @@
 "use client";
 
 import { ErrorBoundary } from "react-error-boundary";
-import { useMutation, useQuery } from "convex/react";
-import { useEffect, useRef, useState } from "react";
+import { useQuery } from "convex/react";
+import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import NotFoundPage from "@/app/not-found";
 
@@ -11,7 +11,6 @@ import { MdNotes } from "react-icons/md";
 import { Breadcrumbs } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import dayjs from "dayjs";
-import DOMPurify from "dompurify";
 import Autoplay from "embla-carousel-autoplay";
 
 import Image from "@/components/ui/Image/Image";
@@ -19,9 +18,6 @@ import AppLoader from "@/components/Loaders/AppLoader";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { ConvexError } from "convex/values";
-import { LuChevronDown, LuClipboard } from "react-icons/lu";
-import style from "../case.module.css";
-import { Badge } from "@/components/ui/badge";
 import ReviewCase from "@/components/Case/Review/ReviewCase";
 
 // TODO: Move this to ssr after convex supports server side reactive queries
@@ -35,10 +31,6 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
   });
 
   const router = useRouter();
-  const [expanded, setExpanded] = useState(false);
-  const [notesContainer, setNotesContainer] = useState<HTMLElement | null>(
-    null
-  );
   const autoplay = useRef(Autoplay({ delay: 5000 }));
 
   if (medicalCase === undefined || currentReview === undefined) {
@@ -72,13 +64,12 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           </Breadcrumbs>
         </div>
         <div>
-          <p className="text-4xl font-medium truncate">{medicalCase.title}</p>
-          <p>
+          <p className="text-4xl font-medium truncate">
             Created at{" "}
             {dayjs(medicalCase._creationTime).format("M/DD/YYYY h:mm A")}
           </p>
         </div>
-        <div className="flex flex-col border rounded-lg">
+        {/* <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
             <LuClipboard size={24} /> Patient Info
           </div>
@@ -91,16 +82,8 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
               Chief Complaint - {medicalCase.chief_complaint}
             </p>
           </div>
-        </div>
+        </div> */}
         {/* <p className="text-xl">{image.user_id || "No patient"}</p> */}
-        <div className="flex flex-col border rounded-lg">
-          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <LuClipboard size={24} /> Symptoms
-          </div>
-          <div className="p-4 grid grid-cols-1">
-            <p>{medicalCase.symptoms}</p>
-          </div>
-        </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
             <MdNotes size={24} /> Medical History
@@ -108,7 +91,10 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
           <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
             {Object.keys(medicalCase.medical_history).map((key, index) => {
               let question = medicalCase.medical_history[key];
-              if (question.type === "text") {
+              if (
+                question.type === "textarea" ||
+                question.type === "textinput"
+              ) {
                 return (
                   <div key={`case_info_${index}`}>
                     <p>{question.question}</p>
@@ -125,60 +111,31 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
             })}
           </div>
         </div>
-        <div>
-          <div className="flex flex-col border rounded-lg p-4">
-            <p className="font-medium text-xl mb-2">Symptom Areas</p>
-            <div className="flex flex-wrap gap-4">
-              {medicalCase.symptom_areas.map((part, i) => {
-                return (
-                  <Badge key={i} variant="default">
-                    {part}
-                  </Badge>
-                );
-              })}
-            </div>
-          </div>
-        </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <MdNotes size={24} /> Additional Notes
+            <MdNotes size={24} /> Questions
           </div>
-          <div className="flex flex-col w-full p-4">
-            <div
-              id="notes"
-              className={`rte-content-container ${style.notesContainer}`}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  medicalCase.description || "No notes."
-                ),
-              }}
-            />
-            {notesContainer && notesContainer.scrollHeight > 160 && (
-              <button
-                type="button"
-                aria-label="Toggle notes"
-                aria-expanded={expanded}
-                className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
-                onClick={() => {
-                  let icon = document.getElementById("assetDescriptionIcon");
-                  if (expanded) {
-                    notesContainer.style.maxHeight = "160px";
-                    notesContainer.classList.remove(style.expanded);
-                    icon?.classList.remove(style.rotate);
-                  } else {
-                    notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
-                    notesContainer.classList.add(style.expanded);
-                    icon?.classList.add(style.rotate);
-                  }
-                  setExpanded(!expanded);
-                }}
-              >
-                <LuChevronDown
-                  id="assetDescriptionIcon"
-                  className="transition"
-                />
-              </button>
-            )}
+          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+            {Object.keys(medicalCase.medical_history).map((key, index) => {
+              let question = medicalCase.questions[key];
+              if (
+                question.type === "textarea" ||
+                question.type === "textinput"
+              ) {
+                return (
+                  <div key={`case_info_${index}`}>
+                    <p>{question.question}</p>
+                    <p className="text-sm">{question.answer}</p>
+                  </div>
+                );
+              }
+              return (
+                <div key={`case_info_${index}`}>
+                  <p>{question.question}</p>
+                  <p className="capitalize text-sm">{question.answer}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
         <p className="text-xl font-semibold">Images</p>
