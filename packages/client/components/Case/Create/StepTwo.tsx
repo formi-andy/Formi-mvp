@@ -3,6 +3,7 @@ import Cough from "./Questions/Cough";
 import AbdominalPain from "./Questions/AbdominalPain";
 import Earache from "./Questions/Earache";
 import Rash from "./Questions/Rash";
+import Fever from "./Questions/Fever";
 
 function renderQuestions(form: CaseForm) {
   switch (form.values.chiefComplaint) {
@@ -12,6 +13,8 @@ function renderQuestions(form: CaseForm) {
       return <AbdominalPain form={form} />;
     case "earache":
       return <Earache form={form} />;
+    case "fever":
+      return <Fever form={form} />;
     case "rash":
       return <Rash form={form} />;
   }

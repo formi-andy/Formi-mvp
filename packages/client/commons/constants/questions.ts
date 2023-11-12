@@ -309,7 +309,90 @@ export const EARACHE_QUESTIONS = [
   },
 ];
 
-export const FEVER_QUESTIONS = [];
+export const FEVER_QUESTIONS = [
+  {
+    question: "Describe in your own words what is happening",
+    type: "textarea",
+    placeholder:
+      "Describe the type of pain (shooting, dull, etc.), where in the abdomen, how often it occurs (constant or intermittent), when did it start, what was happening when it started, has it changed over time, is it affecting quality of life.",
+    answer: "",
+  },
+  {
+    question: "What was the temperature?",
+    type: "textinput",
+    placeholder: "",
+    answer: "",
+  },
+  {
+    question: "Duration of the fever",
+    type: "textinput",
+    placeholder: "",
+    answer: "",
+  },
+  {
+    question: "Frequency of urination",
+    type: "textinput",
+    placeholder: "",
+    answer: "",
+  },
+  {
+    question: "Is there anything that helps or worsens symptoms?",
+    type: "textarea",
+    placeholder: "If yes, describe in detail",
+    answer: "",
+  },
+  {
+    question: "Has the fever lasted more than 5 days?",
+    type: "textinput",
+    placeholder: "",
+    answer: "",
+  },
+  {
+    question: "Swelling of neck",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Rash that extends to the palms or soles of feet",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Swelling of hands or feet",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Pink color in or around eyes",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Burning or pain when urinating",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Altered mental status",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Coughing",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Loss of appetite",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Changes in bowel movements",
+    type: "boolean",
+    answer: "",
+  },
+];
 
 export const RASH_QUESTIONS = [
   {
