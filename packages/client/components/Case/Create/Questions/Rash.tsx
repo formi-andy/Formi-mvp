@@ -4,15 +4,16 @@ import { Textarea, TextInput } from "@mantine/core";
 
 const SYMPTOMS = [
   "Fever",
-  "Nausea",
+  "Cough",
+  "Diarrhea",
   "Vomiting",
-  "Sudden weight change",
-  "Weakness or fatigue",
-  "Yellowing of the skin",
-  "Heartburn",
+  "Behavioral changes",
+  "Gastrointestinal issues",
+  "Itchiness",
+  "Pain when touching",
 ];
 
-export default function AbdominalPain({ form }: { form: CaseForm }) {
+export default function Rash({ form }: { form: CaseForm }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 w-full">
       <div className="flex flex-col gap-3 sm:gap-6">
@@ -33,24 +34,20 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
           classNames={{
             label: "text-white font-semibold text-lg",
           }}
-          {...form.getInputProps(
-            "questions.How intense is the pain on a scale from 1-10?.answer"
-          )}
+          {...form.getInputProps("questions.Describe the rash.answer")}
           className="w-full"
-          placeholder="1-10"
-          label="How intense is the pain on a scale from 1-10?"
-          maxLength={50}
+          placeholder="What is the color, texture, shape, size, areas affected, does it move"
+          label="Describe the rash"
+          maxLength={1000}
         />
         <TextInput
           classNames={{
             label: "text-white font-semibold text-lg",
           }}
-          {...form.getInputProps(
-            "questions.Does it occur before or after eating?.answer"
-          )}
+          {...form.getInputProps("questions.Where does the rash occur?.answer")}
           className="w-full"
-          placeholder="Please describe in detail"
-          label="Does it occur before or after eating?"
+          placeholder="Be specific if possible"
+          label="Where does the rash occur?"
           maxLength={1000}
         />
         <TextInput
@@ -58,55 +55,11 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
             label: "text-white font-semibold text-lg",
           }}
           {...form.getInputProps(
-            "questions.Are there any changes in appetite?.answer"
+            "questions.Any recent infections or illnesses?.answer"
           )}
           className="w-full"
-          placeholder="Please describe in detail"
-          label="Are there any changes in appetite?"
-          maxLength={1000}
-        />
-        <TextInput
-          classNames={{
-            label: "text-white font-semibold text-lg",
-          }}
-          {...form.getInputProps(
-            "questions.Please describe the bowel movements.answer"
-          )}
-          className="w-full"
-          placeholder="Color, texture, regularity, diarrhea or constipation"
-          label="Please describe the bowel movements"
-          maxLength={1000}
-        />
-        <div className="flex items-center gap-x-4 w-full justify-between">
-          <p className="text-white text-lg font-medium">
-            Does the person menstruate?
-          </p>
-          <Checkbox
-            size="lg"
-            checked={
-              (form.values.questions["Does the person menstruate?"].answer as
-                | null
-                | boolean) ?? false
-            }
-            onCheckedChange={(checked) => {
-              form.setFieldValue(
-                `questions.Does the person menstruate?.answer`,
-                checked
-              );
-            }}
-          />
-        </div>
-      </div>
-      <div className="flex flex-col gap-3 sm:gap-6">
-        <TextInput
-          classNames={{
-            label: "text-white font-semibold text-lg",
-          }}
-          {...form.getInputProps(
-            "questions.Is the person sexually active?.answer"
-          )}
-          className="w-full"
-          label="Is the person sexually active?"
+          placeholder="If yes, describe in detail"
+          label="Any recent infections or illnesses?"
           maxLength={1000}
         />
         <Textarea
@@ -121,6 +74,8 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
           label="Is there anything that helps or worsens symptoms?"
           maxLength={5000}
         />
+      </div>
+      <div className="flex flex-col gap-3 sm:gap-6">
         <p className="text-white font-semibold text-lg">
           Are any of the following symptoms occuring?
         </p>

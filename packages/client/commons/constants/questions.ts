@@ -311,4 +311,77 @@ export const EARACHE_QUESTIONS = [
 
 export const FEVER_QUESTIONS = [];
 
-export const RASH_QUESTIONS = [];
+export const RASH_QUESTIONS = [
+  {
+    question: "Describe in your own words what is happening",
+    type: "textarea",
+    placeholder:
+      "Describe the type of pain (shooting, dull, etc.), where in the abdomen, how often it occurs (constant or intermittent), when did it start, what was happening when it started, has it changed over time, is it affecting quality of life.",
+    answer: "",
+  },
+  {
+    question: "Describe the rash",
+    type: "textinput",
+    placeholder:
+      "What is the color, texture, shape, size, areas affected, does it move",
+    answer: "",
+  },
+  {
+    question: "Where does the rash occur?",
+    type: "textinput",
+    placeholder: "Be specific if possible",
+    answer: "",
+  },
+  {
+    question: "Any recent infections or illnesses?",
+    type: "textinput",
+    placeholder: "If yes, describe in detail",
+    answer: "",
+  },
+  {
+    question: "Is there anything that helps or worsens symptoms?",
+    type: "textarea",
+    placeholder: "If yes, describe in detail",
+    answer: "",
+  },
+  {
+    question: "Fever",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Cough",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Diarrhea",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Vomiting",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Behavioral changes",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Gastrointestinal issues",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Itchiness",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Pain when touching",
+    type: "boolean",
+    answer: "",
+  },
+];
