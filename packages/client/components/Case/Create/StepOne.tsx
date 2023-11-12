@@ -79,9 +79,16 @@ function renderProfile(form: CaseForm) {
   );
 }
 
-export default function StepOne({ form }: { form: CaseForm }) {
+type Profiles = (typeof api.profile.getProfiles)["_returnType"];
+
+export default function StepOne({
+  profiles,
+  form,
+}: {
+  profiles: Profiles;
+  form: CaseForm;
+}) {
   const [open, setOpen] = useState(false);
-  const profiles = useQuery(api.profile.getProfiles);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

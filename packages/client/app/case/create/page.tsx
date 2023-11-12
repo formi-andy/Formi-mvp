@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "@mantine/form";
 
 import { BASE_QUESTIONS } from "@/commons/constants/questions";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ import StepOne from "@/components/Case/Create/StepOne";
 import StepTwo from "@/components/Case/Create/StepTwo";
 import UploadStep from "@/components/Case/Create/UploadStep";
 import ReviewStep from "@/components/Case/Create/ReviewStep";
+import AppLoader from "@/components/Loaders/AppLoader";
 
 const TOTAL_STEPS = 7;
 
@@ -137,36 +138,44 @@ export function isValidProfile(formProfile: CaseForm["values"]["profile"]) {
   );
 }
 
-const Upload = () => {
+const CreatePage = () => {
   const user = useAuth();
   const toast = useNetworkToasts();
   const [active, setActive] = useState(0);
   const [uploading, setUploading] = useState(false);
+
+  // TODO: Preload profiles
+  const profiles = useQuery(api.profile.getProfiles);
   const createCase = useMutation(api.medical_case.createMedicalCase);
   const router = useRouter();
 
   const form = useCaseForm(active);
 
   const handleError = (errors: typeof form.errors) => {
-    if (errors.title) {
-      toast.error({ message: "Please fill the title field" });
-    } else if (errors.patient) {
-      toast.error({
-        message: "Please select a patient",
-      });
-    } else if (errors.files) {
-      toast.error({
-        message: "Please upload at least one image",
-      });
-    } else if (errors.bodyParts) {
-      toast.error({
-        message: "Please select at least one body part",
-      });
-    } else if (errors.questions) {
-      toast.error({
-        message: "Please answer all questions before continuing",
-      });
-    }
+    // TODO: Refine and fix this
+    // if (errors.title) {
+    //   toast.error({ message: "Please fill the title field" });
+    // } else if (errors.patient) {
+    //   toast.error({
+    //     message: "Please select a patient",
+    //   });
+    // } else if (errors.files) {
+    //   toast.error({
+    //     message: "Please upload at least one image",
+    //   });
+    // } else if (errors.bodyParts) {
+    //   toast.error({
+    //     message: "Please select at least one body part",
+    //   });
+    // } else if (errors.questions) {
+    //   toast.error({
+    //     message: "Please answer all questions before continuing",
+    //   });
+    // }
+    toast.error({
+      title: "Can't continue",
+      message: "Please fill out all the fields",
+    })
   };
 
   // TODO: make this a queue job
@@ -278,31 +287,31 @@ const Upload = () => {
     }
   }
 
-  return (
+  return profiles ? (
     <>
       <p className="text-2xl font-medium mb-8">Create a Case</p>
-      {active === 0 && <StepOne form={form} />}
+      {active === 0 && <StepOne profiles={profiles} form={form} />}
       {active === 1 && <StepTwo form={form} />}
       {/* {active === 2 && <Review form={form} />} */}
       {active === 5 && <UploadStep form={form} />}
       {active === 6 && <ReviewStep form={form} />}
       <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-8 lg:px-16">
-        <Button
-          disabled={uploading}
-          variant="action"
-          className="w-32"
-          onClick={() => {
-            if (active === 0) {
-              router.push("/dashboard");
-            } else {
+        {active > 0 ? (
+          <Button
+            disabled={uploading}
+            variant="action"
+            className="w-32"
+            onClick={() => {
               setActive((current) => {
                 return current - 1;
               });
-            }
-          }}
-        >
-          Back
-        </Button>
+            }}
+          >
+            Back
+          </Button>
+        ) : (
+          <div className="w-32" />
+        )}
         <div className="flex flex-col w-full items-center gap-y-4 relative">
           <div className="flex gap-x-2 items-center">
             {[...Array(TOTAL_STEPS)].map((_, index) => {
@@ -342,7 +351,9 @@ const Upload = () => {
       </div>
       {/* <CaseDisclaimerModal /> */}
     </>
+  ) : (
+    <AppLoader />
   );
 };
 
-export default Upload;
+export default CreatePage;

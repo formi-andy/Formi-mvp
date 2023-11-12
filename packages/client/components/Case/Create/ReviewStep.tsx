@@ -11,7 +11,7 @@ export default function ReviewStep({ form }: { form: CaseForm }) {
         <p className="font-medium text-xl sm:text-2xl mb-2">
           Who needs help today?
         </p>
-        <p>{form.values.patient}</p>
+        <p>{`${form.values.patient?.firstName} ${form.values.patient?.lastName}`}</p>
       </div>
       <div>
         <p className="font-medium text-xl sm:text-2xl mb-2">Chief Complaint</p>
