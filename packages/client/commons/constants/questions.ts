@@ -94,7 +94,7 @@ export const COUGH_QUESTIONS = [
   },
   {
     question: "Is there anything that helps or worsens symptoms?",
-    type: "textinput",
+    type: "textarea",
     placeholder: "If yes, describe in detail",
     answer: "",
   },
@@ -130,6 +130,92 @@ export const COUGH_QUESTIONS = [
   },
   {
     question: "Shortness of breath",
+    type: "boolean",
+    answer: "",
+  },
+];
+
+export const ABDOMINAL_QUESTIONS = [
+  {
+    question: "Describe in your own words what is happening",
+    type: "textarea",
+    placeholder:
+      "Describe the type of pain (shooting, dull, etc.), where in the abdomen, how often it occurs (constant or intermittent), when did it start, what was happening when it started, has it changed over time, is it affecting quality of life.",
+    answer: "",
+  },
+  {
+    question: "How intense is the pain on a scale from 1-10?",
+    type: "textinput",
+    placeholder: "1-10",
+    answer: "",
+  },
+  {
+    question: "Does it occur before or after eating?",
+    type: "textinput",
+    placeholder: "Please describe in detail",
+    answer: "",
+  },
+  {
+    question: "Are there any changes in appetite?",
+    type: "textinput",
+    placeholder: "Please describe in detail",
+    answer: "",
+  },
+  {
+    question: "Please describe the bowel movements",
+    type: "textinput",
+    placeholder: "Color, texture, regularity, diarrhea or constipation",
+    answer: "",
+  },
+  {
+    question: "Does the person menstruate?",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Is the person sexually active?",
+    type: "textinput",
+    placeholder: "",
+    answer: "",
+  },
+  {
+    question: "Is there anything that helps or worsens symptoms?",
+    type: "textarea",
+    placeholder: "",
+    answer: "",
+  },
+  {
+    question: "Fever",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Nausea",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Vomiting",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Sudden weight change",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Weakness or fatigue",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Yellowing of the skin",
+    type: "boolean",
+    answer: "",
+  },
+  {
+    question: "Heartburn",
     type: "boolean",
     answer: "",
   },

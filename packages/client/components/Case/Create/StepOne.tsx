@@ -1,5 +1,8 @@
 import { CaseForm } from "@/app/case/create/page";
-import { COUGH_QUESTIONS } from "@/commons/constants/questions";
+import {
+  ABDOMINAL_QUESTIONS,
+  COUGH_QUESTIONS,
+} from "@/commons/constants/questions";
 import { Chip, Textarea } from "@mantine/core";
 import { LuPersonStanding, LuUserPlus2 } from "react-icons/lu";
 
@@ -96,6 +99,8 @@ export default function StepOne({ form }: { form: CaseForm }) {
             switch (value) {
               case "cough":
                 questions = COUGH_QUESTIONS;
+              case "abdominal_pain":
+                questions = ABDOMINAL_QUESTIONS;
             }
 
             const newQuestions = {
