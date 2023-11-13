@@ -114,7 +114,7 @@ export default async function Home() {
           </div>
           <div className="p-6 bg-lightblue flex flex-col gap-y-3 rounded-2xl shadow-accent-2">
             <div className="flex w-16 h-16 items-center justify-center p-6 rounded-full bg-white">
-              <p className="text-2xl sm:text-3xl font-medium">2</p>
+              <p className="text-2xl sm:text-3xl font-medium">3</p>
             </div>
             <p className="text-2xl sm:text-3xl font-medium">
               Make better health decisions
