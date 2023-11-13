@@ -8,9 +8,7 @@ import { useForm } from "@mantine/form";
 
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
-import CaseDisclaimerModal from "@/components/Disclaimers/CaseDisclaimerModal";
 import StepOne from "@/components/Case/Create/StepOne";
 import StepTwo from "@/components/Case/Create/StepTwo";
 import UploadStep from "@/components/Case/Create/UploadStep";
@@ -18,6 +16,7 @@ import ReviewStep from "@/components/Case/Create/ReviewStep";
 import AppLoader from "@/components/Loaders/AppLoader";
 import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
 import HistoryForm from "@/components/HistoryForms/HistoryForm";
+import CaseDisclaimerModal from "@/components/Disclaimers/CaseDisclaimerModal";
 
 const TOTAL_STEPS = 7;
 
@@ -435,7 +434,7 @@ const CreatePage = () => {
           {active === 6 ? "Create Case" : "Continue"}
         </Button>
       </div>
-      {/* <CaseDisclaimerModal /> */}
+      <CaseDisclaimerModal />
     </>
   ) : (
     <AppLoader />

@@ -56,7 +56,8 @@ export default defineSchema({
     updated_at: v.number(),
   })
     .index("by_case_id", ["case_id"])
-    .index("by_user_id", ["user_id"]),
+    .index("by_user_id", ["user_id"])
+    .index("by_user_id_and_status", ["user_id", "status"]),
   images: defineTable({
     storage_id: v.string(),
     user_id: v.string(),

@@ -78,7 +78,10 @@ export default function ClaimCaseModal({
         <p className="text-center">Case Details</p>
         <div className="bg-slate-100 rounded p-4 my-2 font-mono">
           <p>Title: {caseData.title}</p>
-          <p>Chief Complaint: {caseData.chiefComplaint}</p>
+          <p className="capitalize">
+            Chief Complaint:{" "}
+            {(caseData.chiefComplaint as string).replace(/_/g, " ")}
+          </p>
           <p>Duration: {caseData.duration} minutes</p>
           <p>Pay Out: ${caseData.pay}</p>
         </div>

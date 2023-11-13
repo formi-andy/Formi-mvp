@@ -240,7 +240,7 @@ function CasePage({ params }: { params: { slug: string } }) {
                 switch (question.type) {
                   case "checkbox-description":
                     return (
-                      <div className="grid gap-y-1">
+                      <div className="grid gap-y-1" key={question.question}>
                         <p className="font-medium">{question.question}</p>
                         <p className="">
                           {medicalCase.medical_history[key].answer
@@ -256,7 +256,7 @@ function CasePage({ params }: { params: { slug: string } }) {
                     );
                   case "select":
                     return (
-                      <div className="grid gap-y-1">
+                      <div className="grid gap-y-1" key={question.question}>
                         <p className="font-medium">{question.question}</p>
                         <p className="">
                           {medicalCase.medical_history[key].answer}
@@ -265,7 +265,7 @@ function CasePage({ params }: { params: { slug: string } }) {
                     );
                   case "number-select":
                     return (
-                      <div className="grid gap-y-1">
+                      <div className="grid gap-y-1" key={question.question}>
                         <p className="font-medium">{question.question}</p>
                         <p className="capitalize">
                           {medicalCase.medical_history[key].answer}{" "}
@@ -275,7 +275,7 @@ function CasePage({ params }: { params: { slug: string } }) {
                     );
                   case "checkbox":
                     return (
-                      <div className="grid gap-y-1">
+                      <div className="grid gap-y-1" key={question.question}>
                         <p className="font-medium">{question.question}</p>
                         <p className="">
                           {medicalCase.medical_history[key].answer
@@ -286,7 +286,7 @@ function CasePage({ params }: { params: { slug: string } }) {
                     );
                   case "number":
                     return (
-                      <div className="grid gap-y-1">
+                      <div className="grid gap-y-1" key={question.question}>
                         <p className="font-medium">{question.question}</p>
                         <p className="">
                           {medicalCase.medical_history[key].answer} weeks

@@ -6,6 +6,7 @@ import { mustGetMedicalStudentbyId } from "./medical_student";
 import sanitizeHtml from "sanitize-html";
 import { ReviewStatus } from "../types/review-types";
 import { mustGetMedicalCase } from "./medical_case";
+import { getImageByCaseId } from "./images";
 
 async function attachUsersAndMedicalStudents(
   ctx: QueryCtx,
@@ -226,5 +227,58 @@ export const submitReview = mutation({
         status: ReviewStatus.COMPLETED,
       });
     }
+  },
+});
+
+export const getReviewsByUserAndStatus = query({
+  args: {
+    status: v.union(
+      v.literal(ReviewStatus.CREATED),
+      v.literal(ReviewStatus.COMPLETED)
+    ),
+  },
+  async handler(ctx, args) {
+    const { status } = args;
+
+    const user = await mustGetCurrentUser(ctx);
+
+    const reviews = await ctx.db
+      .query("review")
+      .withIndex("by_user_id_and_status", (q) =>
+        q.eq("user_id", user._id).eq("status", status)
+      )
+      .collect();
+
+    // attach medical case
+    const medicalCaseIds = reviews.map((review) => review.case_id);
+    const medicalCases = await Promise.all(
+      medicalCaseIds.map((id) => mustGetMedicalCase(ctx, id))
+    );
+
+    // get patient
+    const patientIds = medicalCases.map(
+      (medicalCase) => medicalCase.patient_id
+    );
+    const patients = await Promise.all(
+      patientIds.map((id) => mustGetUserById(ctx, id))
+    );
+
+    const reviewsWithMedicalCasesWithImage = await Promise.all(
+      medicalCases.map(async (medicalCase, index) => {
+        const image = await getImageByCaseId(ctx, { case_id: medicalCase._id });
+        const url = (await ctx.storage.getUrl(image.storage_id)) || "";
+
+        return {
+          ...reviews[index],
+          medicalCase: {
+            ...medicalCase,
+            patient: patients[index],
+            image_url: url,
+          },
+        };
+      })
+    );
+
+    return reviewsWithMedicalCasesWithImage;
   },
 });

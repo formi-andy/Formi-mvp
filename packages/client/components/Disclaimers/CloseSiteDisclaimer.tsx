@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { Checkbox } from "@mantine/core";
 
 type Props = {
-  setSlide: Dispatch<SetStateAction<"close" | "medical">>;
+  setSlide: Dispatch<SetStateAction<"close" | "medical" | "hipaa">>;
 };
 
 const CloseSiteDisclaimer = ({ setSlide }: Props) => {
@@ -83,7 +83,7 @@ const CloseSiteDisclaimer = ({ setSlide }: Props) => {
           }}
           label={<p className="text-lg">I understand</p>}
         />
-        <Button disabled={!checked} onClick={() => setSlide("medical")}>
+        <Button disabled={!checked} onClick={() => setSlide("hipaa")}>
           Continue
         </Button>
       </div>
