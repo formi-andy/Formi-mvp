@@ -75,7 +75,6 @@ const Upload = () => {
       });
       setUploadData([]);
     } catch (error) {
-      // console.log("error", error);
       toast.error({
         title: "Error uploading images",
         message: "Please try again later",
