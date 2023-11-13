@@ -19,6 +19,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { ConvexError } from "convex/values";
 import ReviewCase from "@/components/Case/Review/ReviewCase";
+import { LuClipboard } from "react-icons/lu";
+import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
 
 // TODO: Move this to ssr after convex supports server side reactive queries
 function CaseReviewPage({ params }: { params: { slug: string } }) {
@@ -69,43 +71,47 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
             {dayjs(medicalCase._creationTime).format("M/DD/YYYY h:mm A")}
           </p>
         </div>
-        {/* <div className="flex flex-col border rounded-lg">
+        <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
             <LuClipboard size={24} /> Patient Info
           </div>
           <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
-            <p className="text-lg">Age - {medicalCase.age}</p>
-            <p className="text-lg">Birth Sex - {medicalCase.age}</p>
-            <p className="text-lg">Ethnicity - {medicalCase.ethnicity}</p>
-            <p className="text-lg">State - {medicalCase.age}</p>
             <p className="text-lg">
-              Chief Complaint - {medicalCase.chief_complaint}
+              Age -{" "}
+              {dayjs(medicalCase.profile.date_of_birth).format("M/DD/YYYY")}
+            </p>
+            <p className="text-lg capitalize">
+              Birth Sex - {medicalCase.profile.sex_at_birth}
+            </p>
+            <p className="text-lg">
+              Ethnicity - {medicalCase.profile.ethnicity.join(", ")}
+            </p>
+            <p className="text-lg">State - {medicalCase.profile.state}</p>
+            <p className="text-lg capitalize">
+              Chief Complaint - {medicalCase.chief_complaint.replace(/_/g, " ")}
             </p>
           </div>
-        </div> */}
-        {/* <p className="text-xl">{image.user_id || "No patient"}</p> */}
+        </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <MdNotes size={24} /> Medical History
+            <MdNotes size={24} /> Case Questions
           </div>
           <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
-            {Object.keys(medicalCase.medical_history).map((key, index) => {
-              let question = medicalCase.medical_history[key];
-              if (
-                question.type === "textarea" ||
-                question.type === "textinput"
-              ) {
-                return (
-                  <div key={`case_info_${index}`}>
-                    <p>{question.question}</p>
-                    <p className="text-sm">{question.answer}</p>
-                  </div>
-                );
-              }
+            <div className="grid gap-y-1">
+              <p className="font-medium">Symptoms duration</p>
+              <p className="">{medicalCase.duration}</p>
+            </div>
+            {medicalCase.questions.map((question) => {
               return (
-                <div key={`case_info_${index}`}>
-                  <p>{question.question}</p>
-                  <p className="capitalize text-sm">{question.answer}</p>
+                <div className="grid gap-y-1" key={question.question}>
+                  <p className="font-medium">{question.question}</p>
+                  <p className="">
+                    {typeof question.answer === "boolean"
+                      ? question.answer
+                        ? "Yes"
+                        : "No"
+                      : question.answer}
+                  </p>
                 </div>
               );
             })}
@@ -113,28 +119,76 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <MdNotes size={24} /> Questions
+            <MdNotes size={24} /> Medical History
           </div>
           <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
-            {Object.keys(medicalCase.medical_history).map((key, index) => {
-              let question = medicalCase.questions[key];
-              if (
-                question.type === "textarea" ||
-                question.type === "textinput"
-              ) {
-                return (
-                  <div key={`case_info_${index}`}>
-                    <p>{question.question}</p>
-                    <p className="text-sm">{question.answer}</p>
-                  </div>
-                );
-              }
-              return (
-                <div key={`case_info_${index}`}>
-                  <p>{question.question}</p>
-                  <p className="capitalize text-sm">{question.answer}</p>
-                </div>
-              );
+            {Object.keys(INITIAL_HISTORY).map((section) => {
+              return Object.keys(INITIAL_HISTORY[section]).map((key) => {
+                const question = INITIAL_HISTORY[section][key];
+                if (
+                  question.pediatric_question &&
+                  !medicalCase.profile.pediatric_patient
+                ) {
+                  return null;
+                }
+                switch (question.type) {
+                  case "checkbox-description":
+                    return (
+                      <div className="grid gap-y-1">
+                        <p className="font-medium">{question.question}</p>
+                        <p className="">
+                          {medicalCase.medical_history[key].answer
+                            ? "Yes"
+                            : "No"}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {medicalCase.medical_history[key].description
+                            ? medicalCase.medical_history[key].description
+                            : "No description provided."}
+                        </p>
+                      </div>
+                    );
+                  case "select":
+                    return (
+                      <div className="grid gap-y-1">
+                        <p className="font-medium">{question.question}</p>
+                        <p className="">
+                          {medicalCase.medical_history[key].answer}
+                        </p>
+                      </div>
+                    );
+                  case "number-select":
+                    return (
+                      <div className="grid gap-y-1">
+                        <p className="font-medium">{question.question}</p>
+                        <p className="capitalize">
+                          {medicalCase.medical_history[key].answer}{" "}
+                          {medicalCase.medical_history[key].select}
+                        </p>
+                      </div>
+                    );
+                  case "checkbox":
+                    return (
+                      <div className="grid gap-y-1">
+                        <p className="font-medium">{question.question}</p>
+                        <p className="">
+                          {medicalCase.medical_history[key].answer
+                            ? "Yes"
+                            : "No"}
+                        </p>
+                      </div>
+                    );
+                  case "number":
+                    return (
+                      <div className="grid gap-y-1">
+                        <p className="font-medium">{question.question}</p>
+                        <p className="">
+                          {medicalCase.medical_history[key].answer} weeks
+                        </p>
+                      </div>
+                    );
+                }
+              });
             })}
           </div>
         </div>

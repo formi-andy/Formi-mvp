@@ -1,4 +1,5 @@
 import { CaseForm, isValidProfile } from "@/app/case/create/page";
+import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
 import { ETHNICITIES, STATES } from "@/commons/constants/questions";
 import { Button } from "@/components/ui/button";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
@@ -132,6 +133,7 @@ export default function AddProfileModal({
                 ...profileForm.values,
                 id: "new",
               });
+              form.setFieldValue("history", INITIAL_HISTORY);
               setOpen(false);
             }
           }}

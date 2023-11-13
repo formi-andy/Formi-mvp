@@ -12,11 +12,7 @@ import AddProfileModal from "./AddProfileModal";
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import {
-  FAMILY_HISTORY_QUESTIONS,
-  MEDICAL_HISTORY_QUESTIONS,
-  SOCIAL_HISTORY_QUESTIONS,
-} from "@/commons/constants/historyQuestions";
+import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
 
 const CHIEF_COMPLAINTS = [
   {
@@ -50,7 +46,10 @@ function renderProfile(form: CaseForm) {
   return form.values.patient?.id === "new" ? (
     <button
       className="flex flex-col items-center gap-2 rounded-lg border p-4 border-white"
-      onClick={() => form.setFieldValue("patient", null)}
+      onClick={() => {
+        form.setFieldValue("patient", null);
+        form.setFieldValue("history", INITIAL_HISTORY);
+      }}
     >
       <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
         <LuPersonStanding className="text-center text-formiblue w-1/2 h-1/2" />
@@ -71,7 +70,9 @@ function renderProfile(form: CaseForm) {
           state: form.values.profile.state,
           sexAtBirth: form.values.profile.sexAtBirth,
           id: "new",
+          pediatricPatient: form.values.profile.pediatricPatient,
         });
+        form.setFieldValue("history", INITIAL_HISTORY);
       }}
     >
       <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
@@ -84,29 +85,42 @@ function renderProfile(form: CaseForm) {
   );
 }
 
-function updateHistoryQuestions(historyType, history) {
-  for (const question of Object.keys(historyType)) {
-    const historyQuestion = historyType[question];
-    if (historyQuestion.description !== undefined) {
-      historyQuestion.description = history[question].description;
-      if (typeof history[question].answer === "boolean") {
+function updateHistoryQuestions(questions, history, isPediatric: boolean) {
+  for (const question of Object.keys(questions)) {
+    const historyQuestion = questions[question];
+
+    if (!isPediatric && historyQuestion.pediatric_question) {
+      return;
+    }
+    switch (historyQuestion.type) {
+      case "checkbox-description":
+        if (history[question].answer === null) {
+          historyQuestion.answer = null;
+          break;
+        }
         historyQuestion.answer = history[question].answer ? "yes" : "no";
-      } else {
+        historyQuestion.description = history[question].description;
+        break;
+      case "number-select":
         historyQuestion.answer = history[question].answer;
-      }
-    } else if (historyQuestion.select !== undefined) {
-      if (typeof history[question].select === "boolean") {
-        historyQuestion.select = history[question].select ? "yes" : "no";
-      } else {
         historyQuestion.select = history[question].select;
-      }
-      historyQuestion.answer = history[question].answer;
-    } else {
-      if (typeof history[question].answer === "boolean") {
-        historyQuestion.answer = history[question] ? "yes" : "no";
-      } else {
+        break;
+      case "checkbox":
+        if (history[question].answer === null) {
+          historyQuestion.answer = null;
+          break;
+        }
+        historyQuestion.answer = history[question].answer ? "yes" : "no";
+        break;
+      case "select":
         historyQuestion.answer = history[question];
-      }
+        break;
+      case "number":
+        historyQuestion.answer = history[question];
+        break;
+      case "description":
+        historyQuestion.answer = history[question];
+        break;
     }
   }
 }
@@ -139,13 +153,7 @@ export default function StepOne({
                     key={profile._id}
                     onClick={() => {
                       form.setFieldValue("patient", null);
-                      form.setFieldValue("history", {
-                        medicalHistoryQuestions: {
-                          ...MEDICAL_HISTORY_QUESTIONS,
-                        },
-                        familyHistoryQuestions: { ...FAMILY_HISTORY_QUESTIONS },
-                        socialHistoryQuestions: { ...SOCIAL_HISTORY_QUESTIONS },
-                      });
+                      form.setFieldValue("history", INITIAL_HISTORY);
                     }}
                   >
                     <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
@@ -168,32 +176,29 @@ export default function StepOne({
                         sexAtBirth: profile.sex_at_birth,
                         state: profile.state,
                         ethnicity: profile.ethnicity,
+                        pediatricPatient: profile.pediatric_patient
+                          ? "yes"
+                          : "no",
                       });
-                      const history = { ...profile.history };
-                      if (history) {
-                        let newHistory = {
-                          medicalHistoryQuestions: {
-                            ...MEDICAL_HISTORY_QUESTIONS,
-                          },
-                          familyHistoryQuestions: {
-                            ...FAMILY_HISTORY_QUESTIONS,
-                          },
-                          socialHistoryQuestions: {
-                            ...SOCIAL_HISTORY_QUESTIONS,
-                          },
-                        };
+                      if (profile.history) {
+                        let newHistory = JSON.parse(
+                          JSON.stringify(INITIAL_HISTORY)
+                        );
 
                         updateHistoryQuestions(
                           newHistory.familyHistoryQuestions,
-                          history
+                          profile.history,
+                          profile.pediatric_patient
                         );
                         updateHistoryQuestions(
                           newHistory.socialHistoryQuestions,
-                          history
+                          profile.history,
+                          profile.pediatric_patient
                         );
                         updateHistoryQuestions(
                           newHistory.medicalHistoryQuestions,
-                          history
+                          profile.history,
+                          profile.pediatric_patient
                         );
                         form.setFieldValue("history", newHistory);
                       }

@@ -179,3 +179,9 @@ export const SOCIAL_HISTORY_QUESTIONS = {
     pediatric_question: true,
   },
 };
+
+export const INITIAL_HISTORY = {
+  medicalHistoryQuestions: { ...MEDICAL_HISTORY_QUESTIONS },
+  familyHistoryQuestions: { ...FAMILY_HISTORY_QUESTIONS },
+  socialHistoryQuestions: { ...SOCIAL_HISTORY_QUESTIONS },
+};

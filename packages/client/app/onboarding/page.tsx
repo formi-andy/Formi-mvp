@@ -21,7 +21,7 @@ export default async function Onboarding() {
         </p>
         <Tabs defaultValue="user" className="flex flex-col w-80 sm:w-[400px]">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="user">I&apos;m a User</TabsTrigger>
+            <TabsTrigger value="user">I&apos;m a Parent</TabsTrigger>
             <TabsTrigger value="student">I&apos;m a Student</TabsTrigger>
           </TabsList>
           <TabsContent value="user">

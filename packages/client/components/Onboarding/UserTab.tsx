@@ -30,7 +30,7 @@ export default function UserTab() {
               title: "Account set up",
               message: "Let's set up your patient profile",
             });
-            router.push("/account/history");
+            router.push("/dashboard");
           } catch {
             toast.error({
               title: "Error setting up your account",

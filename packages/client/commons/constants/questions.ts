@@ -75,7 +75,7 @@ export const COUGH_QUESTIONS = [
     answer: "",
   },
   {
-    question: "Is there plegm?",
+    question: "Is there phlegm?",
     type: "textinput",
     placeholder: "If yes, describe the color. Is there blood?",
     answer: "",

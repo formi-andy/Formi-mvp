@@ -16,6 +16,7 @@ export default defineSchema({
       date_of_birth: v.number(),
       sex_at_birth: v.string(),
       state: v.string(),
+      pediatric_patient: v.boolean(),
     }),
     questions: v.any(),
     // medical_history: v.id("history"),
@@ -43,6 +44,7 @@ export default defineSchema({
     date_of_birth: v.number(),
     sex_at_birth: v.string(),
     state: v.string(),
+    pediatric_patient: v.boolean(),
   })
     .index("by_user_id", ["user_id"])
     .index("by_created_by", ["created_by"]),

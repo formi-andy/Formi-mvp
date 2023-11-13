@@ -236,6 +236,7 @@ export const createMedicalCase = mutation({
       date_of_birth: v.number(),
       sex_at_birth: v.string(),
       state: v.string(),
+      pediatric_patient: v.boolean(),
     }),
   },
   async handler(ctx, args) {

@@ -20,7 +20,7 @@ function renderTitle(section: string) {
 
 const HistoryForm = ({ form, section }: Props) => {
   const values = form.values.history;
-  const pediatricPatient = form.values.profile.pediatricPatient;
+  const pediatricPatient = form.values.patient?.pediatricPatient;
 
   return (
     <div className="grid gap-y-6 bg-formiblue rounded-lg text-white self-center p-8 max-w-5xl w-full min-w-[400px]">
@@ -31,7 +31,6 @@ const HistoryForm = ({ form, section }: Props) => {
         <div className="flex flex-col gap-y-4">
           {Object.keys(values[section]).map((key) => {
             const question = values[section][key];
-
             if (question.pediatric_question && pediatricPatient === "no") {
               return null;
             }

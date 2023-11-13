@@ -20,7 +20,9 @@ const CaseCard = ({
       className="flex flex-col gap-y-4 relative min-w-[200px] min-h-[200px] aspect-square border p-6 rounded-lg transition hover:bg-slate-50"
     >
       <div className="w-full relative flex flex-col gap-y-1">
-        <p>{chief_complaint}</p>
+        <p className="text-lg md:text-xl truncate font-medium capitalize">
+          {chief_complaint.replace(/_/g, " ")} case
+        </p>
       </div>
       <div className="relative w-full h-full rounded-lg blur-sm">
         <Image url={image_url} alt={"First case image"} />

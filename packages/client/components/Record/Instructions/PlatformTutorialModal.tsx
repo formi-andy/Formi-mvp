@@ -25,8 +25,6 @@ export default function PlatformTutorialModal({
     <Modal
       opened={opened}
       onClose={() => {
-        close();
-
         if (user) {
           const currentMetadata = user.unsafeMetadata;
           delete currentMetadata.tutorial;
@@ -35,6 +33,7 @@ export default function PlatformTutorialModal({
             unsafeMetadata: currentMetadata,
           });
         }
+        close();
       }}
       closeOnClickOutside={finished}
       centered
@@ -44,9 +43,7 @@ export default function PlatformTutorialModal({
         body: "flex flex-col gap-y-4 items-center",
       }}
     >
-      <p className="text-xl font-medium text-center my-2">
-        Welcome to Formi!
-      </p>
+      <p className="text-xl font-medium text-center my-2">Welcome to Formi!</p>
       <Button
         variant="action"
         className={`absolute top-4 right-4 px-8 transition-all ${
@@ -85,7 +82,7 @@ export default function PlatformTutorialModal({
               <p>[place holder picture]</p>
             </div>
             <p className="text-center text-lg px-16">
-            Formi connects you with medical reviewers who look at what you
+              Formi connects you with medical reviewers who look at what you
               submit and generate the most likely issues.
             </p>
           </div>

@@ -16,11 +16,7 @@ import StepTwo from "@/components/Case/Create/StepTwo";
 import UploadStep from "@/components/Case/Create/UploadStep";
 import ReviewStep from "@/components/Case/Create/ReviewStep";
 import AppLoader from "@/components/Loaders/AppLoader";
-import {
-  MEDICAL_HISTORY_QUESTIONS,
-  SOCIAL_HISTORY_QUESTIONS,
-  FAMILY_HISTORY_QUESTIONS,
-} from "@/commons/constants/historyQuestions";
+import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
 import HistoryForm from "@/components/HistoryForms/HistoryForm";
 
 const TOTAL_STEPS = 7;
@@ -38,6 +34,7 @@ function useCaseForm(active: number) {
         sexAtBirth: string | null;
         state: string | null;
         id: string;
+        pediatricPatient: string | null;
       } | null,
       profile: {
         firstName: "",
@@ -70,11 +67,7 @@ function useCaseForm(active: number) {
           answer: string | boolean | null;
         }
       >,
-      history: {
-        medicalHistoryQuestions: { ...MEDICAL_HISTORY_QUESTIONS },
-        familyHistoryQuestions: { ...FAMILY_HISTORY_QUESTIONS },
-        socialHistoryQuestions: { ...SOCIAL_HISTORY_QUESTIONS },
-      },
+      history: INITIAL_HISTORY,
     },
     validate: (values) => {
       if (active === 0) {
@@ -127,7 +120,7 @@ function useCaseForm(active: number) {
         for (const key in questions) {
           if (
             questions[key].pediatric_question &&
-            form.values.profile.pediatricPatient === "no"
+            form.values.patient?.pediatricPatient === "no"
           ) {
             continue;
           }
@@ -251,7 +244,7 @@ const CreatePage = () => {
       // create history
       const historyValues = form.values.history;
       const cleanedValues = {} as any;
-      const pediatricPatient = form.values.profile.pediatricPatient;
+      const pediatricPatient = form.values.patient?.pediatricPatient;
 
       // clean up values
       for (const section in historyValues) {
@@ -302,6 +295,7 @@ const CreatePage = () => {
           date_of_birth: dateAsNumber as number,
           sex_at_birth: form.values.patient?.sexAtBirth as string,
           state: form.values.patient?.state as string,
+          pediatric_patient: form.values.patient?.pediatricPatient === "yes",
         },
         patient_id: form.values.patient?.id as string,
       });

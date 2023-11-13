@@ -33,10 +33,10 @@ export default function Cough({ form }: { form: CaseForm }) {
           classNames={{
             label: "text-white font-normal text-lg",
           }}
-          {...form.getInputProps("questions.Is there plegm?.answer")}
+          {...form.getInputProps("questions.Is there phlegm?.answer")}
           className="w-full"
           placeholder="If yes, describe the color. Is there blood?"
-          label="Is there plegm?"
+          label="Is there phlegm?"
           maxLength={1000}
         />
         <TextInput
