@@ -99,7 +99,8 @@ export default function ReviewCase({
               setReview(content);
             }}
             loadedContent={
-              currentReview?.notes && review === ""
+              currentReview?.notes &&
+              (review === "" || review === currentReview?.notes)
                 ? currentReview?.notes
                 : undefined
             }
