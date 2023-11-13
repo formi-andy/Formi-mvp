@@ -1,7 +1,7 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
-import type { WebhookEvent } from "@clerk/backend";
+import type { WebhookEvent } from "@clerk/clerk-sdk-node";
 import { Webhook } from "svix";
 import { Id } from "./_generated/dataModel";
 
@@ -32,7 +32,7 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
         console.warn("Overwriting user", event.data.id, "with", event.data);
       }
       console.log("creating/updating user", event.data.id);
-      await ctx.runMutation(internal.users.updateOrCreateUser, {
+      await ctx.runAction(internal.users.updateOrCreateUserAction, {
         clerkUser: event.data,
       });
       break;
@@ -189,15 +189,15 @@ http.route({
       }
     );
 
-    const diagnosis = attempts.map((attempt: any) => {
+    const reviews = attempts.map((attempt: any) => {
       return {
         diagnosis: attempt.response.annotations.diagnosis.response[0],
       };
     });
 
-    await ctx.runMutation(internal.medical_case.diagnosisCallback, {
+    await ctx.runMutation(internal.medical_case.reviewCallback, {
       id: medicalCase._id,
-      diagnosis,
+      reviews,
     });
     return new Response(null, {
       status: 200,

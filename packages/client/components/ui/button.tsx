@@ -9,23 +9,24 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "bg-primary text-primary-foreground disabled:bg-primary hover:bg-primary/90",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground disabled:bg-destructive hover:bg-destructive/90",
         outline:
-          "border border-input bg-background border-primary hover:bg-accent hover:text-accent-foreground",
+          "border border-input bg-background border-primary disabled:bg-background disabled:text-primary disabled:border-input hover:bg-accent hover:text-accent-foreground",
         "outline-action":
-          "border border-input bg-background border-primary hover:border-blue-500 hover:bg-blue-500 hover:text-white",
+          "border border-input bg-background border-primary disabled:bg-background disabled:text-primary disabled:border-input hover:border-blue-500 hover:bg-blue-500 hover:text-white",
         "outline-danger":
-          "border border-input bg-background border-primary hover:border-red-500 hover:bg-red-500 hover:text-white",
+          "border border-input bg-background border-primary disabled:bg-background disabled:text-primary disabled:border-input hover:border-red-500 hover:bg-red-500 hover:text-white",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-blue-500 underline-offset-4 hover:underline",
         action:
-          "bg-blue-500 text-white disabled:text-zinc-400 hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-zinc-200",
+          "bg-blue-500 text-white disabled:text-zinc-400 hover:bg-blue-600 disabled:bg-zinc-200",
         danger:
-          "bg-red-500 text-white disabled:text-zinc-400 hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-zinc-200",
+          "bg-red-500 text-white disabled:text-zinc-400 hover:bg-red-600 disabled:bg-zinc-200",
       },
       size: {
         default: "h-10 px-4 py-2",

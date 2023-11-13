@@ -1,5 +1,5 @@
-import { Instructions } from "@/components/Instructions/Instructions";
-import Meeting from "@/components/VideoFeed/Meeting";
+import { Instructions } from "@/components/Record/Instructions/Instructions";
+import Meeting from "@/components/Record/VideoFeed/Meeting";
 
 type Props = {};
 

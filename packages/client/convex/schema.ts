@@ -3,30 +3,61 @@ import { v } from "convex/values";
 
 export default defineSchema({
   // chief complaint should be high level field
-  // should also include field for status w/ respective enum
   medical_case: defineTable({
-    title: v.string(),
-    description: v.optional(v.string()),
-    symptom_areas: v.array(v.string()),
-    age: v.optional(v.number()),
-    ethnicity: v.optional(v.string()),
-    symptoms: v.string(),
+    // title: v.string(),
+    // description: v.optional(v.string()),
+    // symptom_areas: v.array(v.string()),
+    // symptoms: v.string(),
+    profile: v.object({
+      user_id: v.optional(v.id("users")),
+      first_name: v.string(),
+      last_name: v.string(),
+      ethnicity: v.array(v.string()),
+      date_of_birth: v.number(),
+      sex_at_birth: v.string(),
+      state: v.string(),
+      pediatric_patient: v.boolean(),
+    }),
+    questions: v.any(),
+    // medical_history: v.id("history"),
     medical_history: v.any(),
     user_id: v.id("users"),
     patient_id: v.id("users"),
-    tags: v.array(v.string()),
+    duration: v.string(),
+    // tags: v.array(v.string()),
     chief_complaint: v.string(),
-    diagnosis: v.array(
-      v.any()
-      // v.object({
-      //   diagnosis: v.string(),
-      //   notes: v.string(),
-      // })
-    ),
     reviewed_at: v.optional(v.number()),
+    reviewers: v.array(v.id("users")),
+    status: v.union(
+      v.literal("CREATED"),
+      v.literal("REVIEWING"),
+      v.literal("COMPLETED")
+    ),
+    max_reviewers: v.number(),
+  }).index("by_user_id", ["user_id"]),
+  profile: defineTable({
+    user_id: v.optional(v.id("users")),
+    created_by: v.id("users"),
+    first_name: v.string(),
+    last_name: v.string(),
+    ethnicity: v.array(v.string()),
+    date_of_birth: v.number(),
+    sex_at_birth: v.string(),
+    state: v.string(),
+    pediatric_patient: v.boolean(),
   })
     .index("by_user_id", ["user_id"])
-    .index("by_tags", ["tags"]),
+    .index("by_created_by", ["created_by"]),
+  review: defineTable({
+    case_id: v.id("medical_case"),
+    user_id: v.id("users"),
+    notes: v.string(),
+    status: v.union(v.literal("CREATED"), v.literal("COMPLETED")),
+    updated_at: v.number(),
+  })
+    .index("by_case_id", ["case_id"])
+    .index("by_user_id", ["user_id"])
+    .index("by_user_id_and_status", ["user_id", "status"]),
   images: defineTable({
     storage_id: v.string(),
     user_id: v.string(),
@@ -39,11 +70,21 @@ export default defineSchema({
     .index("by_case_id", ["case_id"])
     .index("by_user_id", ["user_id"]),
   users: defineTable({
-    // this is UserJSON from @clerk/backend
+    // this is UserJSON from @clerk/node-sdk
     clerkUser: v.any(),
     color: v.string(),
-    role: v.string(),
+    role: v.union(v.string(), v.null()), //TODO: enum
   }).index("by_clerk_id", ["clerkUser.id"]),
+  medical_student: defineTable({
+    user_id: v.id("users"),
+    school: v.string(),
+    email: v.string(),
+    bio: v.optional(v.string()),
+    blurb: v.optional(v.string()),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_school", ["school"])
+    .index("by_email", ["email"]),
   action_item: defineTable({
     user_id: v.string(),
     created_by: v.string(),
@@ -116,4 +157,106 @@ export default defineSchema({
     subject: v.string(),
     message: v.string(),
   }),
+  history: defineTable({
+    user_id: v.optional(v.id("users")),
+    profile_id: v.id("profile"),
+    created_by: v.id("users"),
+    // medical history questions
+    immunizations: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    allergies_medical: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    medications: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    chronic_conditions: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    reproductive_issues: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    surgeries: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    hospitalizations: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    birth_type: v.optional(v.string()),
+    weeks_born_at: v.optional(v.number()),
+    birth_weight: v.optional(
+      v.object({
+        answer: v.number(),
+        select: v.string(),
+      })
+    ),
+    birth_complications: v.optional(
+      v.object({
+        answer: v.boolean(),
+        description: v.optional(v.string()),
+      })
+    ),
+    // family history questions
+    asthma: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    allergies_family: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    cancer: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    diabetes: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    hypertension: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    gastrointestinal: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    other: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    // social history questions
+    smoking: v.boolean(),
+    alcohol: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    drugs: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    sexual_activity: v.object({
+      answer: v.boolean(),
+      description: v.optional(v.string()),
+    }),
+    home_situation: v.optional(v.string()),
+    physical_activity: v.optional(
+      v.object({
+        answer: v.boolean(),
+        description: v.optional(v.string()),
+      })
+    ),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_created_by", ["created_by"])
+    .index("by_user_id_and_created_by", ["user_id", "created_by"])
+    .index("by_profile_id", ["profile_id"]),
 });

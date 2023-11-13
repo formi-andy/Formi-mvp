@@ -40,7 +40,7 @@ const AboutPage = (props: Props) => {
           <div className="flex flex-col gap-y-1 text-left flex-1">
             <p className="text-2xl font-medium leading-none">Compatible</p>
             <p className="text-neutral-600">
-              Homescope integrate with all EMR systems and devices.
+              Formi integrate with all EMR systems and devices.
             </p>
           </div>
         </div>

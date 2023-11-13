@@ -1,29 +1,27 @@
-"use client";
+import { auth, clerkClient } from "@clerk/nextjs";
 
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-
-import AppLoader from "@/components/Loaders/AppLoader";
-import PatientInvites from "@/components/Invite/PatientInvites";
-import DoctorInvites from "@/components/Invite/DoctorInvites";
+import PatientInvites from "@/components/CareTeam/Invite/PatientInvites";
+import DoctorInvites from "@/components/CareTeam/Invite/DoctorInvites";
 import NotFoundPage from "../not-found";
-import InviteTop from "@/components/Invite/InviteTop";
+import InviteTop from "@/components/CareTeam/Invite/InviteTop";
 
-export default function Invite() {
-  const user = useQuery(api.users.currentUser);
+export default async function Invite() {
+  const { userId } = auth();
 
-  if (user === undefined) {
-    return <AppLoader />;
-  }
-
-  if (!user) {
+  if (!userId) {
     return <NotFoundPage />;
   }
 
+  const user = await clerkClient.users.getUser(userId);
+
   return (
     <div className="flex flex-col gap-6 md:gap-10">
-      <InviteTop role={user.role} />
-      {user.role === "doctor" ? <DoctorInvites /> : <PatientInvites />}
+      <InviteTop role={user.publicMetadata.role as string} />
+      {user.publicMetadata.role === "doctor" ? (
+        <DoctorInvites />
+      ) : (
+        <PatientInvites />
+      )}
     </div>
   );
 }

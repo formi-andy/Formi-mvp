@@ -235,3 +235,7 @@
   width: 24px !important;
   height: 24px !important;
 }
+
+.mantine-DatePickerInput-day[data-selected] {
+  @apply bg-formiblue;
+}

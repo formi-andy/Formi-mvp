@@ -16,7 +16,13 @@ export const doMigration = internalMutation(async ({ db }) => {
   // const medicalCases = await db.query("medical_case").collect();
   // for (const medicalCase of medicalCases) {
   //   await db.patch(medicalCase._id, {
-  //     chief_complaint: "migrated complaint",
+  //     reviews: undefined,
+  //   });
+  // }
+  // const reviews = await db.query("review").collect();
+  // for (const review of reviews) {
+  //   await db.patch(review._id, {
+  //     updated_at: Date.now(),
   //   });
   // }
 });

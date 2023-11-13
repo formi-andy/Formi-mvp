@@ -2,19 +2,20 @@
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useQuery } from "convex/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import NotFoundPage from "../../not-found";
+import NotFoundPage from "@/app/not-found";
 
 import Link from "next/link";
 import { MdNotes } from "react-icons/md";
-import { Breadcrumbs } from "@mantine/core";
+import { Breadcrumbs, Spoiler } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 import Autoplay from "embla-carousel-autoplay";
+import { capitalize } from "lodash";
 
-import Image from "@/components/Image/Image";
+import Image from "@/components/ui/Image/Image";
 import AppLoader from "@/components/Loaders/AppLoader";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -23,6 +24,7 @@ import { ConvexError } from "convex/values";
 import { LuChevronDown, LuClipboard, LuWorkflow } from "react-icons/lu";
 import style from "./case.module.css";
 import { Badge } from "@/components/ui/badge";
+import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
 
 function renderTags(tags: string[]) {
   if (tags.length === 0) {
@@ -44,9 +46,12 @@ function renderTags(tags: string[]) {
 function CasePage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   // cast to Id<"medical_case"> to satisfy type checker
-  const medicalCase = useQuery(api.medical_case.getMedicalCase, {
-    id: slug as Id<"medical_case">,
-  });
+  const medicalCase = useQuery(
+    api.medical_case.getMedicalCaseWithImageAndPatient,
+    {
+      id: slug as Id<"medical_case">,
+    }
+  );
   const user = useQuery(api.users.currentUser);
   const toast = useNetworkToasts();
   const router = useRouter();
@@ -54,6 +59,17 @@ function CasePage({ params }: { params: { slug: string } }) {
   const [notesContainer, setNotesContainer] = useState<HTMLElement | null>(
     null
   );
+  useEffect(() => {
+    if (medicalCase === undefined) return;
+    setNotesContainer(document.getElementById("notes"));
+  }, [medicalCase]);
+
+  useEffect(() => {
+    if (notesContainer && notesContainer.scrollHeight > 160) {
+      notesContainer.classList.add(style.hidden);
+    }
+  }, [notesContainer]);
+
   const autoplay = useRef(Autoplay({ delay: 5000 }));
 
   if (medicalCase === undefined) {
@@ -107,90 +123,104 @@ function CasePage({ params }: { params: { slug: string } }) {
           </Breadcrumbs>
         </div>
         <div>
-          <p className="!text-4xl font-medium !h-10 overflow-visible !border-0 disabled:bg-transparent disabled:opacity-100 disabled:text-black disabled:cursor-text">
-            {medicalCase.title}
+          <p className="!text-4xl capitalize font-medium !h-10 overflow-visible !border-0 disabled:bg-transparent disabled:opacity-100 disabled:text-black disabled:cursor-text">
+            {medicalCase.chief_complaint.replace(/_/g, " ")} case
           </p>
-          <p className="text-lg">{medicalCase.chief_complaint}</p>
         </div>
-        {/* <p className="text-xl">{image.user_id || "No patient"}</p> */}
         <div>
           <p>
             Created at{" "}
             {dayjs(medicalCase._creationTime).format("M/DD/YYYY h:mm A")}
           </p>
           <p>
-            {medicalCase.diagnosis.length === 0
-              ? "Pending Review"
-              : `Reviewed at ${dayjs(medicalCase.reviewed_at).format(
-                  "M/DD/YYYY h:mm A"
-                )}`}
+            {medicalCase.status === "COMPLETED" ? (
+              <span>Reviewed</span>
+            ) : (
+              <span>{capitalize(medicalCase.status)}</span>
+            )}
           </p>
         </div>
         <div className="flex flex-col border rounded-lg">
           <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <MdNotes size={24} /> Notes
-          </div>
-          <div className="flex flex-col w-full p-4">
-            <div
-              id="notes"
-              className={`rte-content-container ${style.notesContainer}`}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  medicalCase.description || "No notes yet."
-                ),
-              }}
-            />
-            {notesContainer && notesContainer.scrollHeight > 160 && (
-              <button
-                type="button"
-                aria-label="Toggle notes"
-                aria-expanded={expanded}
-                className="flex items-center self-center justify-center w-1/2 mt-4 hover:bg-gray-50 border hover:dark:bg-zinc-700 py-1 rounded transition"
-                onClick={() => {
-                  let icon = document.getElementById("assetDescriptionIcon");
-                  if (expanded) {
-                    notesContainer.style.maxHeight = "160px";
-                    notesContainer.classList.remove(style.expanded);
-                    icon?.classList.remove(style.rotate);
-                  } else {
-                    notesContainer.style.maxHeight = `${notesContainer.scrollHeight}px`;
-                    notesContainer.classList.add(style.expanded);
-                    icon?.classList.add(style.rotate);
-                  }
-                  setExpanded(!expanded);
-                }}
-              >
-                <LuChevronDown
-                  id="assetDescriptionIcon"
-                  className="transition"
-                />
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col border rounded-lg">
-          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <LuWorkflow size={24} /> Medical Assessment
-          </div>
-          <div className="flex flex-col w-full p-4">
-            {medicalCase.diagnosis.length === 0 ? (
-              <p className="text-lg">No medical assessment yet.</p>
-            ) : (
-              <div className="text-lg">
-                {
-                  medicalCase.diagnosis[medicalCase.diagnosis.length - 1]
-                    .diagnosis
-                }
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col border rounded-lg">
-          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
-            <LuClipboard size={24} /> Symptoms
+            <LuClipboard size={24} /> Patient Info
           </div>
           <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
-            <p className="text-lg">{medicalCase.symptoms}</p>
+            <p className="text-lg">
+              Name - {medicalCase.profile.first_name}{" "}
+              {medicalCase.profile.last_name}
+            </p>
+            <p className="text-lg">
+              Age -{" "}
+              {dayjs(medicalCase.profile.date_of_birth).format("M/DD/YYYY")}
+            </p>
+            <p className="text-lg capitalize">
+              Birth Sex - {medicalCase.profile.sex_at_birth}
+            </p>
+            <p className="text-lg">
+              Ethnicity - {medicalCase.profile.ethnicity.join(", ")}
+            </p>
+            <p className="text-lg">State - {medicalCase.profile.state}</p>
+            <p className="text-lg capitalize">
+              Chief Complaint - {medicalCase.chief_complaint.replace(/_/g, " ")}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col border rounded-lg">
+          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
+            <LuWorkflow size={24} /> Reviews
+          </div>
+          <div className="flex flex-col w-full p-4">
+            {medicalCase.reviews.length === 0 ? (
+              <p className="text-lg">No reviews yet.</p>
+            ) : (
+              medicalCase.reviews.map((review, index) => {
+                return (
+                  <div key={`review_${index}`}>
+                    <p className="font-medium mb-2">
+                      {`${review.user.clerkUser.first_name} ${review.user.clerkUser.last_name}`}
+                    </p>
+                    <Spoiler
+                      maxHeight={160}
+                      showLabel="Show more"
+                      hideLabel="Hide"
+                    >
+                      <div
+                        id={`review_${index}`}
+                        className="rte-content-container"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(review.notes),
+                        }}
+                      />
+                    </Spoiler>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col border rounded-lg">
+          <div className="flex items-center w-full border-b p-4 text-xl font-semibold gap-x-4">
+            <MdNotes size={24} /> Case Questions
+          </div>
+          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+            <div className="grid gap-y-1">
+              <p className="font-medium">Symptoms duration</p>
+              <p className="">{medicalCase.duration}</p>
+            </div>
+            {medicalCase.questions.map((question) => {
+              return (
+                <div className="grid gap-y-1" key={question.question}>
+                  <p className="font-medium">{question.question}</p>
+                  <p className="">
+                    {typeof question.answer === "boolean"
+                      ? question.answer
+                        ? "Yes"
+                        : "No"
+                      : question.answer}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
         <div className="flex flex-col border rounded-lg">
@@ -198,69 +228,82 @@ function CasePage({ params }: { params: { slug: string } }) {
             <MdNotes size={24} /> Medical History
           </div>
           <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
-            {Object.keys(medicalCase.medical_history).map((key, index) => {
-              let question = medicalCase.medical_history[key];
-              if (question.type === "text") {
-                return (
-                  <div key={`case_info_${index}`}>
-                    <p>{question.question}</p>
-                    <p className="text-sm">{question.answer}</p>
-                  </div>
-                );
-              }
-              return (
-                <div key={`case_info_${index}`}>
-                  <p>{question.question}</p>
-                  <p className="capitalize text-sm">{question.answer}</p>
-                </div>
-              );
+            {Object.keys(INITIAL_HISTORY).map((section) => {
+              return Object.keys(INITIAL_HISTORY[section]).map((key) => {
+                const question = INITIAL_HISTORY[section][key];
+                if (
+                  question.pediatric_question &&
+                  !medicalCase.profile.pediatric_patient
+                ) {
+                  return null;
+                }
+                switch (question.type) {
+                  case "checkbox-description":
+                    return (
+                      <div className="grid gap-y-1" key={question.question}>
+                        <p className="font-medium">{question.question}</p>
+                        <p className="">
+                          {medicalCase.medical_history[key].answer
+                            ? "Yes"
+                            : "No"}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {medicalCase.medical_history[key].description
+                            ? medicalCase.medical_history[key].description
+                            : "No description provided."}
+                        </p>
+                      </div>
+                    );
+                  case "select":
+                    return (
+                      <div className="grid gap-y-1" key={question.question}>
+                        <p className="font-medium">{question.question}</p>
+                        <p className="">
+                          {medicalCase.medical_history[key].answer}
+                        </p>
+                      </div>
+                    );
+                  case "number-select":
+                    return (
+                      <div className="grid gap-y-1" key={question.question}>
+                        <p className="font-medium">{question.question}</p>
+                        <p className="capitalize">
+                          {medicalCase.medical_history[key].answer}{" "}
+                          {medicalCase.medical_history[key].select}
+                        </p>
+                      </div>
+                    );
+                  case "checkbox":
+                    return (
+                      <div className="grid gap-y-1" key={question.question}>
+                        <p className="font-medium">{question.question}</p>
+                        <p className="">
+                          {medicalCase.medical_history[key].answer
+                            ? "Yes"
+                            : "No"}
+                        </p>
+                      </div>
+                    );
+                  case "number":
+                    return (
+                      <div className="grid gap-y-1" key={question.question}>
+                        <p className="font-medium">{question.question}</p>
+                        <p className="">
+                          {medicalCase.medical_history[key].answer} weeks
+                        </p>
+                      </div>
+                    );
+                }
+              });
             })}
           </div>
         </div>
-        <div>
-          <div className="flex flex-col border rounded-lg p-4">
-            <p className="font-medium text-xl mb-2">Symptom Areas</p>
-            <div className="flex flex-wrap gap-4">
-              {medicalCase.symptom_areas.map((part, i) => {
-                return (
-                  <Badge key={i} variant="default">
-                    {part}
-                  </Badge>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-        {/* <div className="flex flex-col border rounded-lg">
-          <div className="items-center flex w-full border-b p-4 text-xl font-medium gap-x-4">
-            <LuTags />
-            Tags
-          </div>
-          <div className="flex flex-row p-4 flex-wrap gap-4">
-            {editing ? (
-              <TagsInput
-                label="Press Enter to submit a tag"
-                placeholder="Enter tag"
-                value={form.values.tags}
-                onChange={(value) => {
-                  form.setFieldValue("tags", value);
-                }}
-                classNames={{
-                  root: "w-full",
-                }}
-              />
-            ) : (
-              renderTags(case.tags)
-            )}
-          </div>
-        </div> */}
       </div>
     </div>
   );
 }
 
 function fallbackRender({ error, resetErrorBoundary }) {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
   if (error instanceof ConvexError) {
     switch ((error.data as { code: number }).code) {
       case 404:
@@ -282,12 +325,7 @@ function fallbackRender({ error, resetErrorBoundary }) {
     }
   }
 
-  return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <pre style={{ color: "red" }}>{error.message}</pre>
-    </div>
-  );
+  return <NotFoundPage />;
 }
 
 export default function Page({ params }: { params: { slug: string } }) {

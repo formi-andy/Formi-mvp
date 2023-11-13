@@ -18,8 +18,8 @@ export default async function Home() {
         Comprehensive Remote Physical Exams From the Comfort of Home
       </p>
       <p className="text-center text-xl">
-        Homescope is the platform that gives patients and their doctors easy
-        access to 24/7 monitoring of their health.
+        Formi is the platform that gives patients and their doctors easy access
+        to 24/7 monitoring of their health.
       </p>
       <div className="flex flex-col md:flex-row gap-y-4 gap-x-8">
         <Link

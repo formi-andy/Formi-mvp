@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Dropzone from "@/components/DropZone/DropZone";
+import Dropzone from "@/components/ui/DropZone/DropZone";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
@@ -92,10 +92,7 @@ const Upload = () => {
       </p>
       <div className="w-full h-full flex flex-col items-center">
         <div className="relative gap-y-4 divide-y flex flex-col items-center max-w-2xl w-full rounded-lg shadow-accent-2">
-          <Dropzone
-            data={uploadData}
-            setData={setUploadData}
-          />
+          <Dropzone data={uploadData} setData={setUploadData} />
           <div className="py-4 rounded-b-lg bg-zinc-50 w-full flex justify-center items-center">
             <Button
               variant="action"

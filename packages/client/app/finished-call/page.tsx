@@ -9,7 +9,7 @@ const FinishedCall = () => {
 
   return (
     <div className="w-full flex flex-col gap-y-4 items-center justify-center min-h-[calc(100vh_-_152px)]">
-      <p className="text-2xl text-center">Thanks for using Homescope!</p>
+      <p className="text-2xl text-center">Thanks for using Formi!</p>
       <div className="w-fit flex flex-col sm:flex-row gap-4">
         <Link
           className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white rounded-lg transition h-12 w-52"
