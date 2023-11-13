@@ -12,7 +12,7 @@ type Props = {};
 const CaseDisclaimerModal = (props: Props) => {
   const [opened, { open, close }] = useDisclosure(true);
   const [slide, setSlide] = useState<"hipaa" | "close" | "medical">("close");
-  const isMobile = useMediaQuery("(max-width: 820px)");
+  const isMobile = useMediaQuery("(max-width: 640)");
 
   return (
     <Modal
@@ -21,7 +21,7 @@ const CaseDisclaimerModal = (props: Props) => {
       withCloseButton={false}
       closeOnClickOutside={false}
       centered
-      size={isMobile ? "80%" : "800"}
+      size={isMobile ? "80%" : "600"}
     >
       <div className="overflow-x-hidden">
         <div

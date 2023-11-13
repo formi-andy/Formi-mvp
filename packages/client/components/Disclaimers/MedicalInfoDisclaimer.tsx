@@ -12,7 +12,7 @@ const MedicalInfoDisclaimer = ({ close }: Props) => {
   const [checked, setChecked] = useState(false);
 
   return (
-    <div className="flex flex-col justify-between h-full items-center px-16 py-4 gap-y-4">
+    <div className="flex flex-col justify-between h-full items-center p-4 gap-y-4">
       <div className="flex flex-col gap-y-8">
         <p className="text-2xl text-center">
           Formi Does Not Provide Medical Advice
