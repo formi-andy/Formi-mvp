@@ -77,7 +77,7 @@ export function ContactForm() {
         />
         <TextInput
           label="Email"
-          placeholder="hello@homescape.us"
+          placeholder="hello@formi.health"
           name="email"
           {...form.getInputProps("email")}
         />
