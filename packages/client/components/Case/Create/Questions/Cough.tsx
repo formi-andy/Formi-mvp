@@ -15,10 +15,10 @@ const SYMPTOMS = [
 export default function Cough({ form }: { form: CaseForm }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 w-full">
-      <div className="flex flex-col gap-3 sm:gap-6">
+      <div className="flex flex-col gap-3 sm:gap-6 w-full">
         <Textarea
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Describe in your own words what is happening.answer"
@@ -31,7 +31,7 @@ export default function Cough({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps("questions.Is there plegm?.answer")}
           className="w-full"
@@ -41,7 +41,7 @@ export default function Cough({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.What is the frequency of coughing?.answer"
@@ -53,7 +53,7 @@ export default function Cough({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Any recent infections or illnesses?.answer"
@@ -65,7 +65,7 @@ export default function Cough({ form }: { form: CaseForm }) {
         />
         <Textarea
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Is there anything that helps or worsens symptoms?.answer"
@@ -77,8 +77,8 @@ export default function Cough({ form }: { form: CaseForm }) {
           maxLength={5000}
         />
       </div>
-      <div className="flex flex-col gap-3 sm:gap-6">
-        <p className="text-white font-semibold text-lg">
+      <div className="flex flex-col gap-3 sm:gap-6 w-full">
+        <p className="text-white font-normal text-lg">
           Are any of the following symptoms occuring?
         </p>
         {SYMPTOMS.map((item) => {
@@ -87,7 +87,7 @@ export default function Cough({ form }: { form: CaseForm }) {
               key={item}
               className="flex items-center gap-x-4 w-full justify-between"
             >
-              <p className="text-white text-lg font-medium">{item}</p>
+              <p className="text-white text-lg font-normal">{item}</p>
               <Checkbox
                 size="lg"
                 checked={

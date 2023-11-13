@@ -128,6 +128,10 @@ export default function AddProfileModal({
               });
             } else {
               form.setFieldValue("profile", profileForm.values);
+              form.setFieldValue("patient", {
+                ...profileForm.values,
+                id: "new",
+              });
               setOpen(false);
             }
           }}

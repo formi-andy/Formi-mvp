@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function ReviewStep({ form }: { form: CaseForm }) {
   return (
-    <div className="text-white grid gap-y-6 gap-x-4 p-8 rounded-lg items-center bg-formiblue">
+    <div className="text-white grid gap-y-6 gap-x-4 p-8 rounded-lg items-center bg-formiblue max-w-5xl w-full min-w-[400px] self-center">
       <div className="flex justify-center font-semibold text-xl sm:text-2xl">
         Review
       </div>

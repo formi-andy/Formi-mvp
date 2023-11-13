@@ -15,10 +15,10 @@ const SYMPTOMS = [
 export default function AbdominalPain({ form }: { form: CaseForm }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 w-full">
-      <div className="flex flex-col gap-3 sm:gap-6">
+      <div className="flex flex-col gap-3 sm:gap-6 w-full">
         <Textarea
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Describe in your own words what is happening.answer"
@@ -31,7 +31,7 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.How intense is the pain on a scale from 1-10?.answer"
@@ -43,7 +43,7 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Does it occur before or after eating?.answer"
@@ -55,7 +55,7 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Are there any changes in appetite?.answer"
@@ -67,7 +67,7 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Please describe the bowel movements.answer"
@@ -78,7 +78,7 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
           maxLength={1000}
         />
         <div className="flex items-center gap-x-4 w-full justify-between">
-          <p className="text-white text-lg font-medium">
+          <p className="text-white text-lg font-normal">
             Does the person menstruate?
           </p>
           <Checkbox
@@ -97,10 +97,10 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-3 sm:gap-6">
+      <div className="flex flex-col gap-3 sm:gap-6 w-full">
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Is the person sexually active?.answer"
@@ -111,7 +111,7 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
         />
         <Textarea
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-normal text-lg",
           }}
           {...form.getInputProps(
             "questions.Is there anything that helps or worsens symptoms?.answer"
@@ -121,7 +121,7 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
           label="Is there anything that helps or worsens symptoms?"
           maxLength={5000}
         />
-        <p className="text-white font-semibold text-lg">
+        <p className="text-white font-normal text-lg">
           Are any of the following symptoms occuring?
         </p>
         {SYMPTOMS.map((item) => {
@@ -130,7 +130,7 @@ export default function AbdominalPain({ form }: { form: CaseForm }) {
               key={item}
               className="flex items-center gap-x-4 w-full justify-between"
             >
-              <p className="text-white text-lg font-medium">{item}</p>
+              <p className="text-white text-lg font-normal">{item}</p>
               <Checkbox
                 size="lg"
                 checked={

@@ -5,7 +5,7 @@ import React from "react";
 
 export default function UploadStep({ form }: { form: CaseForm }) {
   return (
-    <div className="self-center flex flex-col gap-6 p-8 rounded-lg items-center bg-formiblue w-fit max-w-[80vw] min-w-[400px]">
+    <div className="self-center flex flex-col gap-6 p-8 rounded-lg items-center bg-formiblue max-w-5xl w-full min-w-[400px]">
       <p className="font-semibold text-center text-xl sm:text-2xl text-white">
         Submit Images
       </p>

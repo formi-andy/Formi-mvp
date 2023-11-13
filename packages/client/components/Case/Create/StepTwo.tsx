@@ -22,9 +22,9 @@ function renderQuestions(form: CaseForm) {
 
 export default function StepTwo({ form }: { form: CaseForm }) {
   return (
-    <div className="self-center flex flex-col gap-6 p-8 rounded-lg items-center bg-formiblue w-fit min-w-[400px]">
+    <div className="self-center flex flex-col gap-6 p-8 rounded-lg items-center bg-formiblue max-w-5xl w-full min-w-[400px]">
       <p className="font-semibold text-center text-xl sm:text-2xl text-white">
-        Tell us more about the {form.values.chiefComplaint.replace(/_/g, ' ')}
+        Tell us more about the {form.values.chiefComplaint.replace(/_/g, " ")}
       </p>
       {renderQuestions(form)}
     </div>

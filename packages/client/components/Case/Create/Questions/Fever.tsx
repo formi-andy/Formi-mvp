@@ -17,10 +17,10 @@ const SYMPTOMS = [
 export default function Fever({ form }: { form: CaseForm }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 w-full">
-      <div className="flex flex-col gap-3 sm:gap-6">
+      <div className="flex flex-col gap-3 sm:gap-6 w-full">
         <Textarea
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-medium text-lg",
           }}
           {...form.getInputProps(
             "questions.Describe in your own words what is happening.answer"
@@ -33,7 +33,7 @@ export default function Fever({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-medium text-lg",
           }}
           {...form.getInputProps("questions.What was the temperature?.answer")}
           className="w-full"
@@ -42,7 +42,7 @@ export default function Fever({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-medium text-lg",
           }}
           {...form.getInputProps("questions.Duration of the fever.answer")}
           className="w-full"
@@ -51,7 +51,7 @@ export default function Fever({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-medium text-lg",
           }}
           {...form.getInputProps("questions.Frequency of urination.answer")}
           className="w-full"
@@ -60,7 +60,7 @@ export default function Fever({ form }: { form: CaseForm }) {
         />
         <Textarea
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-medium text-lg",
           }}
           {...form.getInputProps(
             "questions.Is there anything that helps or worsens symptoms?.answer"
@@ -72,7 +72,7 @@ export default function Fever({ form }: { form: CaseForm }) {
         />
         <TextInput
           classNames={{
-            label: "text-white font-semibold text-lg",
+            label: "text-white font-medium text-lg",
           }}
           {...form.getInputProps(
             "questions.Has the fever lasted more than 5 days?.answer"
@@ -83,8 +83,8 @@ export default function Fever({ form }: { form: CaseForm }) {
           maxLength={1000}
         />
       </div>
-      <div className="flex flex-col gap-3 sm:gap-6">
-        <p className="text-white font-semibold text-lg">
+      <div className="flex flex-col gap-3 sm:gap-6 w-full">
+        <p className="text-white font-medium text-lg">
           Are any of the following symptoms occuring?
         </p>
         {SYMPTOMS.map((item) => {
