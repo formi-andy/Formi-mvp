@@ -28,7 +28,7 @@ export default function UserTab() {
             await updateRole();
             toast.success({
               title: "Account set up",
-              message: "Let's set up your patient profile",
+              message: "Navigating to dashboard",
             });
             router.push("/dashboard");
           } catch {
