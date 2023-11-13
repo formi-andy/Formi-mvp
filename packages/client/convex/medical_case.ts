@@ -14,6 +14,7 @@ import sanitizeHtml from "sanitize-html";
 import { getImageByCaseId, getImagesByCaseId } from "./images";
 import { getReviewsByCaseId, getReviewsByUser } from "./review";
 import { ReviewStatus } from "../types/review-types";
+import { createHistory, getHistoryByProfile, updateHistory } from "./history";
 
 export const getMedicalCase = internalQuery({
   args: {
@@ -225,7 +226,7 @@ export const createMedicalCase = mutation({
     chief_complaint: v.string(),
     // patient_id: v.id("users"),
     patient_id: v.string(),
-    medical_history: v.id("history"),
+    medical_history: v.any(),
     duration: v.string(),
     profile: v.object({
       user_id: v.optional(v.id("users")),
@@ -259,15 +260,30 @@ export const createMedicalCase = mutation({
     }
 
     if (!normalizedId) {
-      await ctx.db.insert("profile", {
+      const profileRecord = await ctx.db.insert("profile", {
         ...profile,
         created_by: user._id,
       });
+      await createHistory(ctx, {
+        profile_id: profileRecord,
+        ...medical_history,
+      });
     } else {
       await ctx.db.patch(normalizedId, profile);
+      const previousHistory = await getHistoryByProfile(ctx, {
+        profile_id: normalizedId,
+      });
+      if (!previousHistory) {
+        throw new ConvexError({
+          message: "Medical history not found",
+          code: 404,
+        });
+      }
+      await updateHistory(ctx, {
+        id: previousHistory._id,
+        ...medical_history,
+      });
     }
-
-    // update patient's medical history first
 
     // duplicate medical history and profile to medical case
     const caseRecord = await ctx.db.insert("medical_case", {

@@ -12,6 +12,11 @@ import AddProfileModal from "./AddProfileModal";
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import {
+  FAMILY_HISTORY_QUESTIONS,
+  MEDICAL_HISTORY_QUESTIONS,
+  SOCIAL_HISTORY_QUESTIONS,
+} from "@/commons/constants/historyQuestions";
 
 const CHIEF_COMPLAINTS = [
   {
@@ -79,6 +84,33 @@ function renderProfile(form: CaseForm) {
   );
 }
 
+function updateHistoryQuestions(historyType, history) {
+  for (const question of Object.keys(historyType)) {
+    const historyQuestion = historyType[question];
+    if (historyQuestion.description !== undefined) {
+      historyQuestion.description = history[question].description;
+      if (typeof history[question].answer === "boolean") {
+        historyQuestion.answer = history[question].answer ? "yes" : "no";
+      } else {
+        historyQuestion.answer = history[question].answer;
+      }
+    } else if (historyQuestion.select !== undefined) {
+      if (typeof history[question].select === "boolean") {
+        historyQuestion.select = history[question].select ? "yes" : "no";
+      } else {
+        historyQuestion.select = history[question].select;
+      }
+      historyQuestion.answer = history[question].answer;
+    } else {
+      if (typeof history[question].answer === "boolean") {
+        historyQuestion.answer = history[question] ? "yes" : "no";
+      } else {
+        historyQuestion.answer = history[question];
+      }
+    }
+  }
+}
+
 type Profiles = (typeof api.profile.getProfiles)["_returnType"];
 
 export default function StepOne({
@@ -105,7 +137,16 @@ export default function StepOne({
                   <button
                     className="flex flex-col items-center gap-2 rounded-lg border p-4 border-white"
                     key={profile._id}
-                    onClick={() => form.setFieldValue("patient", null)}
+                    onClick={() => {
+                      form.setFieldValue("patient", null);
+                      form.setFieldValue("history", {
+                        medicalHistoryQuestions: {
+                          ...MEDICAL_HISTORY_QUESTIONS,
+                        },
+                        familyHistoryQuestions: { ...FAMILY_HISTORY_QUESTIONS },
+                        socialHistoryQuestions: { ...SOCIAL_HISTORY_QUESTIONS },
+                      });
+                    }}
                   >
                     <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">
                       <LuPersonStanding className="text-center text-formiblue w-1/2 h-1/2" />
@@ -128,6 +169,34 @@ export default function StepOne({
                         state: profile.state,
                         ethnicity: profile.ethnicity,
                       });
+                      const history = { ...profile.history };
+                      if (history) {
+                        let newHistory = {
+                          medicalHistoryQuestions: {
+                            ...MEDICAL_HISTORY_QUESTIONS,
+                          },
+                          familyHistoryQuestions: {
+                            ...FAMILY_HISTORY_QUESTIONS,
+                          },
+                          socialHistoryQuestions: {
+                            ...SOCIAL_HISTORY_QUESTIONS,
+                          },
+                        };
+
+                        updateHistoryQuestions(
+                          newHistory.familyHistoryQuestions,
+                          history
+                        );
+                        updateHistoryQuestions(
+                          newHistory.socialHistoryQuestions,
+                          history
+                        );
+                        updateHistoryQuestions(
+                          newHistory.medicalHistoryQuestions,
+                          history
+                        );
+                        form.setFieldValue("history", newHistory);
+                      }
                     }}
                   >
                     <div className="border-4 border-lightblue bg-white flex items-center justify-center rounded-full aspect-square w-3/4 min-w-[80px] max-w-[160px]">

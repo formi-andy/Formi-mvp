@@ -6,7 +6,6 @@ import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@mantine/form";
 
-import { BASE_QUESTIONS } from "@/commons/constants/questions";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -196,7 +195,6 @@ const CreatePage = () => {
   // TODO: Preload profiles
   const profiles = useQuery(api.profile.getProfiles);
   const createCase = useMutation(api.medical_case.createMedicalCase);
-  const createHistory = useMutation(api.history.createHistory);
   const router = useRouter();
 
   const form = useCaseForm(active);
@@ -282,9 +280,9 @@ const CreatePage = () => {
         }
       }
 
-      const { historyRecord } = await createHistory({
-        ...cleanedValues,
-      });
+      // const { historyRecord } = await createHistory({
+      //   ...cleanedValues,
+      // });
 
       const dateAsNumber = form.values.patient?.dateOfBirth?.getTime();
       const { caseRecord } = await createCase({
@@ -296,7 +294,7 @@ const CreatePage = () => {
           };
         }),
         duration: form.values.duration,
-        medical_history: historyRecord,
+        medical_history: cleanedValues,
         profile: {
           first_name: form.values.patient?.firstName as string,
           last_name: form.values.patient?.lastName as string,
@@ -354,10 +352,10 @@ const CreatePage = () => {
       //   attachments,
       //   instructions,
       // });
-      // toast.success({
-      //   title: "Case created",
-      //   message: "Your case has been created successfully",
-      // });
+      toast.success({
+        title: "Case created",
+        message: "Your case has been created successfully",
+      });
 
       // setActive(0);
       // form.reset();

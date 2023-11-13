@@ -22,8 +22,6 @@ const HistoryForm = ({ form, section }: Props) => {
   const values = form.values.history;
   const pediatricPatient = form.values.profile.pediatricPatient;
 
-  console.log(form.values);
-
   return (
     <div className="grid gap-y-6 bg-formiblue rounded-lg text-white self-center p-8 max-w-5xl w-full min-w-[400px]">
       <div className="flex flex-col gap-y-2" key={section}>
@@ -41,7 +39,10 @@ const HistoryForm = ({ form, section }: Props) => {
             switch (question.type) {
               case "checkbox-description":
                 return (
-                  <div className="flex flex-col gap-y-3">
+                  <div
+                    className="flex flex-col gap-y-3"
+                    key={question.question}
+                  >
                     <div className="flex justify-between items-center">
                       <p className="col-span-8 md:col-span-3 truncate transition-all">
                         {question.question}
@@ -84,7 +85,10 @@ const HistoryForm = ({ form, section }: Props) => {
                 );
               case "select":
                 return (
-                  <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                  <div
+                    className="flex flex-col sm:flex-row gap-3 sm:items-center"
+                    key={question.question}
+                  >
                     <p className="transition-all">{question.question}</p>
                     <Select
                       required
@@ -102,7 +106,10 @@ const HistoryForm = ({ form, section }: Props) => {
                 );
               case "number-select":
                 return (
-                  <div className="flex items-center gap-x-3 justify-between">
+                  <div
+                    key={question.question}
+                    className="flex items-center gap-x-3 justify-between"
+                  >
                     <p className="col-span-8 md:col-span-3 transition-all">
                       {question.question}
                     </p>
@@ -154,7 +161,10 @@ const HistoryForm = ({ form, section }: Props) => {
                 );
               case "checkbox":
                 return (
-                  <div className="flex justify-between items-center">
+                  <div
+                    key={question.question}
+                    className="flex justify-between items-center"
+                  >
                     <p className="col-span-8 md:col-span-3 transition-all">
                       {question.question}
                     </p>
@@ -192,7 +202,10 @@ const HistoryForm = ({ form, section }: Props) => {
                 );
               case "number":
                 return (
-                  <div className="flex items-center justify-between">
+                  <div
+                    key={question.question}
+                    className="flex items-center justify-between"
+                  >
                     <p className="transition-all">{question.question}</p>
                     <NumberInput
                       value={question.answer as string}
@@ -209,7 +222,10 @@ const HistoryForm = ({ form, section }: Props) => {
                 );
               case "description":
                 return (
-                  <div className="grid grid-cols-12 gap-4 items-center">
+                  <div
+                    key={question.question}
+                    className="grid grid-cols-12 gap-4 items-center"
+                  >
                     <p className="col-span-12 md:col-span-3 transition-all">
                       {question.question}
                     </p>

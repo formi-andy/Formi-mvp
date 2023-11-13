@@ -18,7 +18,8 @@ export default defineSchema({
       state: v.string(),
     }),
     questions: v.any(),
-    medical_history: v.id("history"),
+    // medical_history: v.id("history"),
+    medical_history: v.any(),
     user_id: v.id("users"),
     patient_id: v.id("users"),
     duration: v.string(),
@@ -155,6 +156,7 @@ export default defineSchema({
   }),
   history: defineTable({
     user_id: v.optional(v.id("users")),
+    profile_id: v.id("profile"),
     created_by: v.id("users"),
     // medical history questions
     immunizations: v.object({
@@ -252,5 +254,6 @@ export default defineSchema({
   })
     .index("by_user_id", ["user_id"])
     .index("by_created_by", ["created_by"])
-    .index("by_user_id_and_created_by", ["user_id", "created_by"]),
+    .index("by_user_id_and_created_by", ["user_id", "created_by"])
+    .index("by_profile_id", ["profile_id"]),
 });
