@@ -1,4 +1,4 @@
-import { CaseForm, isValidProfile } from "@/app/case/create/page";
+import { CaseForm } from "@/app/case/create/page";
 import {
   ABDOMINAL_QUESTIONS,
   COUGH_QUESTIONS,
@@ -40,6 +40,22 @@ const CHIEF_COMPLAINTS = [
   //   value: "other",
   // },
 ];
+
+export function isValidProfile(formProfile: CaseForm["values"]["profile"]) {
+  if (formProfile === null) {
+    return false;
+  }
+  return (
+    formProfile.firstName !== "" &&
+    formProfile.lastName !== "" &&
+    formProfile.sexAtBirth !== null &&
+    formProfile.sexAtBirth !== null &&
+    formProfile.state !== "" &&
+    formProfile.state !== null &&
+    formProfile.dateOfBirth !== null &&
+    formProfile.ethnicity.length > 0
+  );
+}
 
 function renderProfile(form: CaseForm) {
   if (!isValidProfile(form.values.profile)) return null;

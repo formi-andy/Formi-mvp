@@ -162,22 +162,6 @@ function useCaseForm(active: number) {
 
 export type CaseForm = ReturnType<typeof useCaseForm>;
 
-export function isValidProfile(formProfile: CaseForm["values"]["profile"]) {
-  if (formProfile === null) {
-    return false;
-  }
-  return (
-    formProfile.firstName !== "" &&
-    formProfile.lastName !== "" &&
-    formProfile.sexAtBirth !== null &&
-    formProfile.sexAtBirth !== null &&
-    formProfile.state !== "" &&
-    formProfile.state !== null &&
-    formProfile.dateOfBirth !== null &&
-    formProfile.ethnicity.length > 0
-  );
-}
-
 const CreatePage = () => {
   const user = useAuth();
   const toast = useNetworkToasts();

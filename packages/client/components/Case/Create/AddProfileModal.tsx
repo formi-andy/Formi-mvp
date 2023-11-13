@@ -1,4 +1,4 @@
-import { CaseForm, isValidProfile } from "@/app/case/create/page";
+import { CaseForm } from "@/app/case/create/page";
 import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
 import { ETHNICITIES, STATES } from "@/commons/constants/questions";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Modal, TextInput, Select, MultiSelect } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { Dispatch, SetStateAction, useState } from "react";
+import { isValidProfile } from "./StepOne";
 
 export default function AddProfileModal({
   open,
