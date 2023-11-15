@@ -351,19 +351,21 @@ const CreatePage = () => {
   return profiles ? (
     <>
       <p className="text-2xl font-medium mb-8">Create a Case</p>
-      {active === 0 && <StepOne profiles={profiles} form={form} />}
-      {active === 1 && <StepTwo form={form} />}
-      {active === 2 && (
-        <HistoryForm form={form} section="medicalHistoryQuestions" />
-      )}
-      {active === 3 && (
-        <HistoryForm form={form} section="familyHistoryQuestions" />
-      )}
-      {active === 4 && (
-        <HistoryForm form={form} section="socialHistoryQuestions" />
-      )}
-      {active === 5 && <UploadStep form={form} />}
-      {active === 6 && <ReviewStep form={form} />}
+      <div className="flex items-center justify-center w-full">
+        {active === 0 && <StepOne profiles={profiles} form={form} />}
+        {active === 1 && <StepTwo form={form} />}
+        {active === 2 && (
+          <HistoryForm form={form} section="medicalHistoryQuestions" />
+        )}
+        {active === 3 && (
+          <HistoryForm form={form} section="familyHistoryQuestions" />
+        )}
+        {active === 4 && (
+          <HistoryForm form={form} section="socialHistoryQuestions" />
+        )}
+        {active === 5 && <UploadStep form={form} />}
+        {active === 6 && <ReviewStep form={form} />}
+      </div>
       <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-8 lg:px-16">
         {active > 0 ? (
           <Button
