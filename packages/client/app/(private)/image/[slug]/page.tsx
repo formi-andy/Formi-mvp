@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import NotFoundPage from "../../not-found";
+import NotFoundPage from "../../../not-found";
 
 import Link from "next/link";
 import NextImage from "next/image";

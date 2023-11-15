@@ -1,15 +1,15 @@
 import { ReactNode } from "react";
+import "@mantine/notifications/styles.css";
+
 import "./globals.css";
 import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import NextTopLoader from "nextjs-toploader";
-import ConvexClientProvider from "@/context/ConvexClientProvider";
 import { Inter } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
-import "@mantine/notifications/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
@@ -48,9 +48,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             }}
           >
             <Notifications autoClose={3000} />
-            <div className="w-full flex flex-col h-fit">
-              <ConvexClientProvider>{children}</ConvexClientProvider>
-            </div>
+            {children}
           </MantineProvider>
         </body>
       </html>

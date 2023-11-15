@@ -3,25 +3,45 @@ import LandingTypeWriter from "@/components/Landing/Typewriter";
 import { auth } from "@clerk/nextjs";
 import LandingProviderInfo from "@/components/Landing/ProviderInfo";
 
-import style from "./landing.module.css";
+import style from "../landing.module.css";
 import WaitList from "@/components/WaitList/WaitList";
+import Image from "next/image";
+import { Montserrat } from "next/font/google";
 
-export default async function Home() {
+const mont = Montserrat({ subsets: ["latin"] });
+
+export default async function Temp() {
   const { userId } = auth();
+
   return (
-    <main className="flex min-h-screen flex-col items-center gap-y-12 px-6 py-40">
-      <div className="text-6xl font-bold text-center mb-8">
-        <p>Built for</p>
-        <LandingTypeWriter />
+    <main className="flex min-h-screen flex-col">
+      <div className="text-6xl text-center h-screen bg-lightblue w-full flex flex-col lg:flex-row justify-around items-center">
+        <div
+          className={
+            mont.className +
+            " w-full px-8 lg:w-1/2 text-center lg:text-left flex flex-col gap-y-8"
+          }
+        >
+          <p className="text-5xl text-formiblue font-semibold">
+            Know when to see a doctor.
+          </p>
+          <p className="text-2xl text-darktext">
+            Take the guesswork out of pediatric visits. Understand when your
+            child needs medical attention, with multiple opinions at once.
+          </p>
+          <p className="text-2xl text-darktext">Coming soon.</p>
+          <WaitList buttonColor="bg-formiblue" />
+        </div>
+        <div className="w-1/3 h-2/3 aspect-auto relative hidden lg:block">
+          <Image
+            src="/assets/formi_parent_iPhone.png"
+            layout="fill"
+            alt="Formi Parent Image"
+            objectFit="contain"
+          />
+        </div>
       </div>
-      <p className="text-2xl font-semibold text-center">
-        Know when to see a doctor
-      </p>
-      <p className="text-center text-xl">
-        Take the guesswork out of pediatric visits. Figure out if your child
-        needs medical attention, with multiple opinions all at once.
-      </p>
-      <div className="flex flex-col md:flex-row gap-y-12 gap-x-8">
+      {/* <div className="flex flex-col md:flex-row gap-y-12 gap-x-8">
         <Link
           href={userId ? "/dashboard" : "/signup"}
           className="flex items-center text-center justify-center border border-black bg-black hover:bg-zinc-700 hover:border-zinc-700 text-white font-medium h-12 w-40 rounded-lg transition"
@@ -34,15 +54,19 @@ export default async function Home() {
             Learn More
           </Link>
         </div>
-      </div>
-      <WaitList />
-      <div className="flex flex-col gap-y-16 mt-40 items-center">
+      </div> */}
+      <div
+        className={
+          mont.className +
+          " flex flex-col gap-y-16 justify-center items-center bg-[#E4E0E4] min-h-screen text-darktext px-8 py-32 lg:py-8"
+        }
+      >
         <p className="text-4xl sm:text-5xl font-medium text-center">
           Parent with confidence
         </p>
         <div className="flex flex-col gap-y-6 max-w-5xl">
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
-            <div className="flex flex-col justify-between gap-y-12 bg-formiblue text-white rounded-2xl p-6 shadow-accent-2">
+            <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
               <p className="text-xl sm:text-2xl font-medium">
                 On-demand answers
               </p>
@@ -51,18 +75,18 @@ export default async function Home() {
                 clock.
               </p>
             </div>
-            <div className="flex flex-col justify-between gap-y-12 bg-formiblue text-white rounded-2xl p-6 shadow-accent-2">
+            <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
               <p className="text-xl sm:text-2xl font-medium">Real people</p>
               <p>View answers from 3 medical students at the same time.</p>
             </div>
-            <div className="flex flex-col justify-between gap-y-12 bg-formiblue text-white rounded-2xl p-6 shadow-accent-2">
+            <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
               <p className="text-xl sm:text-2xl font-medium">Know when to go</p>
               <p>
                 Invest in a pediatrician&apos;s visit with more certainty than
                 ever before.
               </p>
             </div>
-            <div className="flex flex-col justify-between gap-y-12 bg-formiblue text-white rounded-2xl p-6 shadow-accent-2">
+            <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
               <p className="text-xl sm:text-2xl font-medium">
                 Keep your pediatrician
               </p>
@@ -72,7 +96,7 @@ export default async function Home() {
               </p>
             </div>
           </div>
-          <div className="flex flex-col justify-between gap-y-12 bg-formiblue text-white rounded-2xl p-6 shadow-accent-2">
+          <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
             <p className="text-xl sm:text-2xl font-medium">Education</p>
             <p>
               The only thing worse than taking off work for an unnecessary
@@ -83,7 +107,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-y-16 mt-40 mb-16 items-center">
+      <div className="flex flex-col gap-y-16 mt-40 mb-16 items-center px-8 py-32 lg:py-8">
         <p className="text-4xl sm:text-5xl font-medium text-center">
           How Formi Works
         </p>
@@ -96,7 +120,7 @@ export default async function Home() {
               Set up your profile
             </p>
             <p className="text-lg sm:text-xl font-light">
-              Share basic medical history and we’ll create profiles for the
+              Share basic medical history and we&apos;ll create profiles for the
               whole family.
             </p>
           </div>
@@ -126,13 +150,21 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <WaitList
-        text={
-          <p className="text-3xl sm:text-4xl mb-4 font-semibold text-center">
-            Ready to get started?
-          </p>
-        }
-      />
+      <div className="lg:p-0 lg:h-[50vh] flex flex-col items-center justify-center bg-formiblue">
+        <div className="w-2/3">
+          <WaitList
+            text={
+              <p
+                className={`${mont.className} text-3xl sm:text-4xl mb-4 text-center text-white`}
+              >
+                Ready to get started?
+              </p>
+            }
+            buttonColor="bg-[#F6DDB3]"
+            buttonText="text-formiblue"
+          />
+        </div>
+      </div>
     </main>
   );
 }
