@@ -2,7 +2,7 @@ import { auth, clerkClient } from "@clerk/nextjs";
 
 import PatientInvites from "@/components/CareTeam/Invite/PatientInvites";
 import DoctorInvites from "@/components/CareTeam/Invite/DoctorInvites";
-import NotFoundPage from "../not-found";
+import NotFoundPage from "../../not-found";
 import InviteTop from "@/components/CareTeam/Invite/InviteTop";
 
 export default async function Invite() {

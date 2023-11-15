@@ -1,4 +1,4 @@
-import { CaseForm } from "@/app/case/create/page";
+import { CaseForm } from "@/app/(private)/case/create/page";
 import AcceptedFiles from "@/components/ui/DropZone/AcceptedFiles";
 import Dropzone from "@/components/ui/DropZone/DropZone";
 import React from "react";

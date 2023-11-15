@@ -19,6 +19,7 @@ module.exports = {
         foreground: "hsl(var(--foreground))",
         formiblue: "#2A3453",
         lightblue: "#CAD2E7",
+        darktext: "#5C525E",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

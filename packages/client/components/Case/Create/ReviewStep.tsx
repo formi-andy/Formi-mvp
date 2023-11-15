@@ -1,4 +1,4 @@
-import { CaseForm } from "@/app/case/create/page";
+import { CaseForm } from "@/app/(private)/case/create/page";
 import Image from "next/image";
 
 export default function ReviewStep({ form }: { form: CaseForm }) {
