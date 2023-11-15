@@ -6,7 +6,7 @@ export const metadata = {
   description: "",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       <div className="w-full flex flex-col h-fit">

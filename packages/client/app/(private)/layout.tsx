@@ -6,7 +6,7 @@ export const metadata = {
   description: "",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function PrivateLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col h-fit min-h-screen">
       <ConvexClientProvider>{children}</ConvexClientProvider>

@@ -15,10 +15,11 @@ export default async function Header() {
       <Link href="/" className={styles.headerLogo}>
         <Image
           priority
-          src="/assets/logo.svg"
+          // src="/assets/logo.svg"
+          src="/assets/formi_ant_black.svg"
           alt="Formi Logo"
-          width={20}
-          height={20}
+          width={32}
+          height={32}
         />
         Formi
       </Link>

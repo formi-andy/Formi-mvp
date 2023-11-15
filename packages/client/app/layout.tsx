@@ -1,18 +1,17 @@
 import { ReactNode } from "react";
-import "@mantine/notifications/styles.css";
 
-import "./globals.css";
 import "@mantine/core/styles.css";
-import "@mantine/carousel/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import NextTopLoader from "nextjs-toploader";
 import { Inter } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
+import "@mantine/notifications/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
+import "./globals.css";
 
 export const metadata = {
   title: "Formi",
