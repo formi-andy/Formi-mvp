@@ -29,14 +29,20 @@ export default async function PublicHeader() {
         />
         Formi
       </Link>
-      <div className="flex gap-x-16 items-center w-1/2 justify-center">
-        <Link href="/" className="h-full text-darktext text-xl">
+      <div className="gap-x-16 items-center w-1/2 hidden lg:flex justify-center">
+        <Link href="/" className="h-full text-darktext text-base lg:text-lg">
           Home
         </Link>
-        <Link href="/about" className="h-full text-darktext text-xl">
+        <Link
+          href="/about"
+          className="h-full text-darktext text-base lg:text-lg"
+        >
           About
         </Link>
-        <Link href="/students" className="h-full text-darktext text-xl">
+        <Link
+          href="/students"
+          className="h-full text-darktext text-base lg:text-lg"
+        >
           For Students
         </Link>
       </div>
@@ -51,12 +57,12 @@ export default async function PublicHeader() {
                 >
                   Dashboard
                 </Link>
-                <Link
+                {/* <Link
                   href="/record"
                   className="h-full px-6 rounded-3xl flex items-center py-1 bg-formiblue text-white font-light"
                 >
                   Record
-                </Link>
+                </Link> */}
                 <div className="h-full flex items-center relative">
                   <UserButton afterSignOutUrl="/login" />
                 </div>
@@ -83,17 +89,6 @@ export default async function PublicHeader() {
             )}
           </div>
           <div className="flex justify-between h-full lg:hidden items-center group text-formiblue">
-            <Link href="/" className={styles.headerLogo}>
-              <Image
-                priority
-                // src="/assets/logo.svg"
-                src="/assets/formi_ant_blue.svg"
-                alt="Formi Logo"
-                width={32}
-                height={32}
-              />
-              Formi
-            </Link>
             <SideButton />
           </div>
         </nav>
