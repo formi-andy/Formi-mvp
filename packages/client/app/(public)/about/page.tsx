@@ -105,7 +105,7 @@ const AboutPage = (props: Props) => {
           />
         </div>
       </div>
-      <div className="h-[25vh] w-full lg:h-[50vh] flex flex-col items-center justify-center bg-formiblue">
+      <div className="h-[33vh] w-full lg:h-[50vh] flex flex-col items-center justify-center bg-formiblue">
         <div className="w-2/3">
           <WaitList
             text={

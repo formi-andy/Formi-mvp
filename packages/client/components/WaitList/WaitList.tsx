@@ -62,7 +62,7 @@ export default function WaitList({ text, buttonColor, buttonText }: Props) {
   return (
     <div className="flex flex-col gap-y-4 w-full">
       {text}
-      <div className="flex flex-col md:flex-row gap-y-4 gap-x-1 items-center justify-center">
+      <div className="flex flex-col lg:flex-row gap-y-4 gap-x-1 items-center justify-center">
         <TextInput
           placeholder="Enter your email"
           className="w-full"
