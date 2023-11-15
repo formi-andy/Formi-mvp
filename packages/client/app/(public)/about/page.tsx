@@ -62,41 +62,41 @@ const AboutPage = (props: Props) => {
       </div> */}
       <div className="text-center h-[50vh] bg-lightblue w-full flex justify-center items-center">
         <p
-          className={`${mont.className} text-5xl lg:text-left text-center w-5/6 text-formiblue font-semibold`}
+          className={`${mont.className} text-3xl lg:text-5xl lg:text-left text-center w-5/6 text-formiblue font-semibold`}
         >
           We&apos;re radically changing how you get medical information online
         </p>
       </div>
       <div
-        className={`${mont.className} text-6xl text-center h-screen bg-[#E4E0E4] w-full flex flex-col lg:flex-row justify-around items-center`}
+        className={`${mont.className} text-center py-16 h-fit min-h-screen bg-[#E4E0E4] w-full flex flex-col lg:flex-row justify-around items-center`}
       >
         <div className="w-full px-8 lg:w-1/2 text-center lg:text-left flex flex-col gap-y-8">
-          <p className="text-5xl text-formiblue font-semibold">
+          <p className="text-3xl lg:text-5xl text-formiblue font-semibold">
             Parenting is hard enough. You shouldn&apos;t have to scour the
             internet for answers.
           </p>
-          <p className="text-2xl text-darktext">
+          <p className="text-lg lg:text-2xl text-darktext">
             More time than ever is spent online looking for answers to health
             concerns, and with so much information available, it&apos;s tough to
             know where to look and who to listen to.
           </p>
-          <p className="text-2xl text-darktext">
+          <p className="text-lg lg:text-2xl text-darktext">
             Despite all this work, 20% of visits to the pediatrician are for
             issues that should have been monitored at home. That means a wasted
             day off of work, needless stress, and an avoidable bill, equating to
             over $65B in unnecessary healthcare expenditure.
           </p>
-          <p className="text-2xl text-darktext">
+          <p className="text-lg lg:text-2xl text-darktext">
             We built formi to be your first line of defense when seeking care
             and to take the guesswork out of your child&apos;s health.
           </p>
-          <p className="text-2xl text-darktext">
+          <p className="text-lg lg:text-2xl text-darktext">
             With formi, get all the information you need to make good healthcare
             decisions, and be better equipped to advocate for your child&apos;s
             health when you do need a visit.
           </p>
         </div>
-        <div className="w-1/3 h-2/3 aspect-auto relative hidden lg:block">
+        <div className="w-1/3 h-[66vh] aspect-auto relative hidden lg:block">
           <Image
             src="/assets/formi_case_complete_parent_iPhone.png"
             layout="fill"
@@ -105,7 +105,7 @@ const AboutPage = (props: Props) => {
           />
         </div>
       </div>
-      <div className="h-[33vh] w-full lg:h-[50vh] flex flex-col items-center justify-center bg-formiblue">
+      <div className="w-full h-[50vh] flex flex-col items-center justify-center bg-formiblue">
         <div className="w-2/3">
           <WaitList
             text={

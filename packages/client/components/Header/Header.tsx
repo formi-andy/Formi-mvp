@@ -16,7 +16,7 @@ export default async function Header() {
         <Image
           priority
           // src="/assets/logo.svg"
-          src="/assets/formi_ant_black.svg"
+          src="/assets/formi_word.svg"
           alt="Formi Logo"
           width={32}
           height={32}

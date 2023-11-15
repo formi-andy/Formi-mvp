@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useHeader } from "@/context/HeaderContext";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { ReactNode } from "react";
+import SideButton from "./SideButton.header";
 
 function MobileNavLink({
   to,

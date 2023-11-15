@@ -107,50 +107,52 @@ export default async function Temp() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-y-16 mt-40 mb-16 items-center px-8 py-32 lg:py-8">
+      <div
+        className={`${mont.className} flex flex-col gap-y-16 mt-40 mb-16 items-center px-8 py-32 lg:py-8`}
+      >
         <p className="text-4xl sm:text-5xl font-medium text-center">
           How Formi Works
         </p>
         <div className="flex flex-col gap-y-6 max-w-5xl">
           <div className="p-6 bg-lightblue flex flex-col gap-y-3 rounded-2xl shadow-accent-2">
             <div className="flex w-16 h-16 items-center justify-center p-6 rounded-full bg-white">
-              <p className="text-2xl sm:text-3xl font-medium">1</p>
+              <p className="text-xl sm:text-2xl font-medium">1</p>
             </div>
-            <p className="text-2xl sm:text-3xl font-medium">
+            <p className="text-xl sm:text-2xl font-medium">
               Set up your profile
             </p>
-            <p className="text-lg sm:text-xl font-light">
+            <p className="font-light">
               Share basic medical history and we&apos;ll create profiles for the
               whole family.
             </p>
           </div>
           <div className="p-6 bg-lightblue flex flex-col gap-y-3 rounded-2xl shadow-accent-2">
             <div className="flex w-16 h-16 items-center justify-center p-6 rounded-full bg-white">
-              <p className="text-2xl sm:text-3xl font-medium">2</p>
+              <p className="text-xl sm:text-2xl font-medium">2</p>
             </div>
-            <p className="text-2xl sm:text-3xl font-medium">
+            <p className="text-xl sm:text-2xl font-medium">
               Tell us what&apos;s wrong
             </p>
-            <p className="text-lg sm:text-xl font-light">
+            <p className="font-light">
               Answer a few short questions and submit an image of the area of
               concern.
             </p>
           </div>
           <div className="p-6 bg-lightblue flex flex-col gap-y-3 rounded-2xl shadow-accent-2">
             <div className="flex w-16 h-16 items-center justify-center p-6 rounded-full bg-white">
-              <p className="text-2xl sm:text-3xl font-medium">3</p>
+              <p className="text-xl sm:text-2xl font-medium">3</p>
             </div>
-            <p className="text-2xl sm:text-3xl font-medium">
+            <p className="text-xl sm:text-2xl font-medium">
               Make better health decisions
             </p>
-            <p className="text-lg sm:text-xl font-light">
+            <p className="font-light">
               See answers from three of the country&apos;s top medical students
               and make your own decisions.
             </p>
           </div>
         </div>
       </div>
-      <div className="h-[33vh] lg:h-[50vh] flex flex-col items-center justify-center bg-formiblue">
+      <div className="h-[50vh] flex flex-col items-center justify-center bg-formiblue">
         <div className="w-2/3">
           <WaitList
             text={

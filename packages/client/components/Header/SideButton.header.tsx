@@ -12,7 +12,7 @@ export default function SideButton() {
       classNames={{
         burger: `${
           opened === false && "bg-brandBlack group-hover:bg-blue-500"
-        } before:bg-brandBlack after:bg-brandBlack group-hover:before:bg-blue-500 group-hover:after:bg-blue-500`,
+        } before:bg-brandBlack after:bg-brandBlack group-hover:before:bg-blue-500 group-hover:after:bg-blue-500 z-[150]`,
       }}
       opened={opened}
       onClick={() => setOpened((o) => !o)}
