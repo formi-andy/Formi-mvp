@@ -8,13 +8,11 @@ const mont = Montserrat({ subsets: ["latin"] });
 
 export default async function Temp() {
   return (
-    <main className="flex min-h-screen flex-col">
-      <div className="text-6xl text-center h-screen bg-lightblue w-full flex flex-col lg:flex-row justify-around items-center">
+    <main className="flex min-h-screen h-full flex-col">
+      <div className="text-6xl text-center min-h-screen bg-lightblue w-full flex flex-col lg:flex-row justify-around items-center">
         <div
-          className={
-            mont.className +
-            " w-full px-8 lg:w-1/2 text-center lg:text-left flex flex-col gap-y-8"
-          }
+          className={`${mont.className}
+            w-full px-8 lg:w-1/2 text-center lg:text-left flex flex-col gap-y-8`}
         >
           <p className="text-5xl text-formiblue font-semibold">
             Learn with real patient data.
@@ -26,7 +24,7 @@ export default async function Temp() {
           <p className="text-2xl text-darktext">Coming soon.</p>
           <WaitList buttonColor="bg-formiblue" />
         </div>
-        <div className="w-1/3 h-2/3 aspect-auto relative hidden lg:block">
+        <div className="w-1/3 h-[66vh] aspect-auto relative hidden lg:block">
           <Image
             src="/assets/formi_student_iPhone.png"
             layout="fill"
@@ -80,7 +78,9 @@ export default async function Temp() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-y-16 mt-40 mb-16 items-center px-8 py-32 lg:py-8">
+      <div
+        className={`${mont.className} flex flex-col gap-y-16 mt-40 mb-16 items-center px-8 lg:px-64 py-32`}
+      >
         <p className="text-4xl sm:text-5xl font-medium text-center">
           How Formi Works
         </p>
@@ -119,7 +119,7 @@ export default async function Temp() {
           </div>
         </div>
       </div>
-      <div className="h-[33vh] lg:h-[50vh] flex flex-col items-center justify-center bg-formiblue">
+      <div className="h-[50vh] flex flex-col items-center justify-center bg-formiblue">
         <div className="w-2/3">
           <WaitList
             text={
