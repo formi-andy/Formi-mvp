@@ -56,6 +56,9 @@ export default function MobileMenu() {
           <MobileNavLink to={`/case/create`} onClick={() => setOpened(false)}>
             Create Case
           </MobileNavLink>
+          <MobileNavLink to={`/students`} onClick={() => setOpened(false)}>
+            For Students
+          </MobileNavLink>
           <div className="relative left-4 md:left-8">
             <UserButton afterSignOutUrl="/login" />
           </div>
@@ -63,6 +66,9 @@ export default function MobileMenu() {
         <SignedOut>
           <MobileNavLink to={`/about`} onClick={() => setOpened(false)}>
             About
+          </MobileNavLink>
+          <MobileNavLink to={`/students`} onClick={() => setOpened(false)}>
+            For Students
           </MobileNavLink>
           <MobileNavLink to={`/contact`} onClick={() => setOpened(false)}>
             Contact
