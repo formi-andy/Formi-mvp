@@ -190,26 +190,42 @@ export default function StudentTab() {
                     await emailAddress.destroy();
                   }
                 } else {
-                  toast.loading({
-                    title: "Adding email...",
-                    message: "Please wait",
-                  });
+                  const existingEmail = clerk.user?.emailAddresses.find(
+                    (emailAddress) => emailAddress.emailAddress === email
+                  );
+                  if (existingEmail) {
+                    toast.loading({
+                      title: "Verifying email...",
+                      message: "Please wait",
+                    });
+                    await verifyEmail({ email });
+                    toast.success({
+                      title: "Email verified",
+                      message: "Navigating to dashboard",
+                    });
+                    router.push("/dashboard");
+                  } else {
+                    toast.loading({
+                      title: "Adding email...",
+                      message: "Please wait",
+                    });
+                    const emailAddress = await clerk.user?.createEmailAddress({
+                      email,
+                    });
+                    await Promise.all([
+                      emailAddress?.prepareVerification({
+                        strategy: "email_code",
+                      }),
+                      setEmailMetadata({ email }),
+                    ]);
+                    setEmailSent(true);
+                    toast.success({
+                      title: "Email set",
+                      message: "Verification email sent",
+                    });
+                    setChangeEmail(false);
+                  }
                 }
-                const emailAddress = await clerk.user?.createEmailAddress({
-                  email,
-                });
-                await Promise.all([
-                  emailAddress?.prepareVerification({
-                    strategy: "email_code",
-                  }),
-                  setEmailMetadata({ email }),
-                ]);
-                setEmailSent(true);
-                toast.success({
-                  title: "Email set",
-                  message: "Verification email sent",
-                });
-                setChangeEmail(false);
               } catch (error) {
                 toast.error({
                   title: "Error setting email",
