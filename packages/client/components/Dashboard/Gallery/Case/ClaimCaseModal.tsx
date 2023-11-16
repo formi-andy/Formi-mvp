@@ -71,7 +71,7 @@ export default function ClaimCaseModal({
       }}
     >
       <p className="text-xl font-medium text-center">
-        Review Case #{caseData.id}
+        Review Case #{(caseData.id as string).slice(0, 6)}
       </p>
       <p>Pressing confirm will start the review process</p>
       <div>

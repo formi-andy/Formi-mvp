@@ -366,7 +366,7 @@ const CreatePage = () => {
         {active === 5 && <UploadStep form={form} />}
         {active === 6 && <ReviewStep form={form} />}
       </div>
-      <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-8 lg:px-16">
+      <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-0 sm:px-8 lg:px-16">
         {active > 0 ? (
           <Button
             disabled={uploading}

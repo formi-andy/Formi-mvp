@@ -113,7 +113,7 @@ function CasePage({ params }: { params: { slug: string } }) {
         </Carousel>
       </div>
       <div className="flex flex-col w-full lg:w-3/5 gap-y-4">
-        <div className="flex items-center flex-wrap justify-between gap-y-4">
+        <div className="items-center flex-wrap justify-between gap-y-4 hidden sm:flex">
           <Breadcrumbs
             classNames={{
               separator: "!text-blue-500",

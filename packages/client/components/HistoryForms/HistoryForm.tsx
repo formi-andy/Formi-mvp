@@ -23,7 +23,7 @@ const HistoryForm = ({ form, section }: Props) => {
   const pediatricPatient = form.values.patient?.pediatricPatient;
 
   return (
-    <div className="grid gap-y-6 bg-formiblue rounded-lg text-white self-center p-8 max-w-5xl w-full min-w-[400px]">
+    <div className="flex flex-col gap-y-6 bg-formiblue rounded-lg text-white self-center p-8 max-w-5xl w-full">
       <div className="flex flex-col gap-y-2" key={section}>
         <p className="text-xl font-semibold self-center text-center sm:text-2xl">
           {renderTitle(section)}
@@ -43,9 +43,7 @@ const HistoryForm = ({ form, section }: Props) => {
                     key={question.question}
                   >
                     <div className="flex justify-between items-center">
-                      <p className="col-span-8 md:col-span-3 truncate transition-all">
-                        {question.question}
-                      </p>
+                      <p className="transition-all">{question.question}</p>
                       <Radio.Group
                         required
                         {...form.getInputProps(
@@ -109,9 +107,7 @@ const HistoryForm = ({ form, section }: Props) => {
                     key={question.question}
                     className="flex items-center gap-x-3 justify-between"
                   >
-                    <p className="col-span-8 md:col-span-3 transition-all">
-                      {question.question}
-                    </p>
+                    <p className="transition-all">{question.question}</p>
                     <div className="flex items-center gap-x-3">
                       <Radio.Group
                         required
@@ -164,9 +160,7 @@ const HistoryForm = ({ form, section }: Props) => {
                     key={question.question}
                     className="flex justify-between items-center"
                   >
-                    <p className="col-span-8 md:col-span-3 transition-all">
-                      {question.question}
-                    </p>
+                    <p className="transition-all">{question.question}</p>
                     <Radio.Group
                       required
                       value={question.answer as string}

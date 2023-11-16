@@ -120,7 +120,7 @@ function ImagePage({ params }: { params: { slug: string } }) {
         <Image url={image.url} alt={image.title} />
       </div>
       <div className="flex flex-col w-full lg:w-3/5 gap-y-4">
-        <div className="flex items-center flex-wrap justify-between gap-y-4">
+        <div className="sm:flex hidden items-center flex-wrap justify-between gap-y-4">
           <Breadcrumbs
             classNames={{
               separator: "!text-blue-500",
