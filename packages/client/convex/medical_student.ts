@@ -73,6 +73,13 @@ export const deleteMedicalStudentByUserId = internalMutation({
 export const verifyEmail = action({
   args: { email: v.string() },
   handler: async (ctx, { email }) => {
+    if (!email.endsWith(".edu")) {
+      throw new ConvexError({
+        message: "Email not .edu",
+        code: 401,
+      });
+    }
+
     const clerkUserId = await ctx.runMutation(
       internal.users.getClerkUserForAction
     );

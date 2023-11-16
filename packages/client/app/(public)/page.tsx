@@ -37,7 +37,8 @@ export default async function Temp() {
             src="/assets/formi_parent_iPhone.png"
             layout="fill"
             alt="Formi Parent Image"
-            objectFit="contain"
+            className="object-contain"
+            priority
           />
         </div>
       </div>

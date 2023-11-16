@@ -29,7 +29,8 @@ export default async function Temp() {
             src="/assets/formi_student_iPhone.png"
             layout="fill"
             alt="Formi Iphone Image"
-            objectFit="contain"
+            className="object-contain"
+            priority
           />
         </div>
       </div>

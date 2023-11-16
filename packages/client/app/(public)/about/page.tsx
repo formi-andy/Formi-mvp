@@ -101,7 +101,8 @@ const AboutPage = (props: Props) => {
             src="/assets/formi_case_complete_parent_iPhone.png"
             layout="fill"
             alt="Formi Iphone Image"
-            objectFit="contain"
+            className="object-contain"
+            priority
           />
         </div>
       </div>
