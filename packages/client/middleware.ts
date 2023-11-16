@@ -14,6 +14,7 @@ export default authMiddleware({
     "/students",
     "/api/auth/signin",
     "/api/auth/signout",
+    "/api/check-password",
   ],
   async afterAuth(auth, req, evt) {
     if (auth.isPublicRoute) {
