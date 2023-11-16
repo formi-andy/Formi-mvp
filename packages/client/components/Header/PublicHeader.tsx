@@ -17,17 +17,16 @@ export default async function PublicHeader() {
     <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 bg-lightblue border-none">
       <Link
         href="/"
-        className={`${styles.headerLogo} w-1/4 flex justify-start text-formiblue`}
+        className={`${styles.headerLogo} w-1/2 lg:w-1/4 flex justify-start text-formiblue`}
       >
         <Image
           priority
           // src="/assets/logo.svg"
-          src="/assets/formi_ant_blue.svg"
+          src="/assets/formi_wordmark_grey.svg"
           alt="Formi Logo"
-          width={32}
+          width={128}
           height={32}
         />
-        Formi
       </Link>
       <div className="gap-x-16 items-center w-1/2 hidden lg:flex justify-center">
         <Link href="/" className="h-full text-darktext text-base lg:text-lg">

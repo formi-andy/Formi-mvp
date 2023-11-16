@@ -108,7 +108,7 @@ export default async function Temp() {
         </div>
       </div>
       <div
-        className={`${mont.className} flex flex-col gap-y-16 mt-40 mb-16 items-center px-8 py-32 lg:py-8`}
+        className={`${mont.className} flex flex-col gap-y-16 mb-16 items-center px-8 py-32 lg:py-8`}
       >
         <p className="text-4xl sm:text-5xl font-medium text-center">
           How Formi Works

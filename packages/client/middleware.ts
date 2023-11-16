@@ -11,6 +11,7 @@ export default authMiddleware({
     "/about",
     "/contact",
     "/not-found",
+    "/students",
     "/api/auth/signin",
     "/api/auth/signout",
   ],
