@@ -16,12 +16,11 @@ export default async function Header() {
         <Image
           priority
           // src="/assets/logo.svg"
-          src="/assets/formi_word.svg"
+          src="/assets/formi_wordmark_grey.svg"
           alt="Formi Logo"
-          width={32}
+          width={128}
           height={32}
         />
-        Formi
       </Link>
       <HeaderContext>
         <nav className={styles.headerNav}>
