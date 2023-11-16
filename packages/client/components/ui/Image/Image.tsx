@@ -21,7 +21,6 @@ export default function Image({ url, alt }: { url: string; alt: string }) {
           opacity: loading ? 0 : 1,
         }}
         className="rounded-lg object-cover"
-        objectFit="cover"
       />
     </>
   );
