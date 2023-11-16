@@ -21,6 +21,8 @@ import { ConvexError } from "convex/values";
 import ReviewCase from "@/components/Case/Review/ReviewCase";
 import { LuClipboard } from "react-icons/lu";
 import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
+import { useDisclosure } from "@mantine/hooks";
+import ReviewCarouselModal from "@/components/Carousels/ReviewCarouselModal";
 
 // TODO: Move this to ssr after convex supports server side reactive queries
 function CaseReviewPage({ params }: { params: { slug: string } }) {
@@ -34,6 +36,8 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
 
   const router = useRouter();
   const autoplay = useRef(Autoplay({ delay: 5000 }));
+
+  const [opened, { open, close }] = useDisclosure(false);
 
   if (medicalCase === undefined || currentReview === undefined) {
     return <AppLoader />;
@@ -56,7 +60,7 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
   return (
     <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
       <div className="flex flex-col w-full lg:w-3/5 min-w-[200px] gap-y-4">
-        <div className="flex items-center flex-wrap justify-between gap-y-4">
+        <div className="sm:flex items-center flex-wrap justify-between gap-y-4 hidden">
           <Breadcrumbs
             classNames={{
               separator: "!text-blue-500",
@@ -205,6 +209,7 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
               control: "bg-white transition border",
               indicator: "bg-white transition data-[active]:w-[4rem]",
             }}
+            onClick={open}
           >
             {medicalCase.images.map((image, index) => (
               <Carousel.Slide key={index}>
@@ -215,6 +220,13 @@ function CaseReviewPage({ params }: { params: { slug: string } }) {
         </div>
       </div>
       <ReviewCase caseId={slug} currentReview={currentReview} />
+      <ReviewCarouselModal
+        opened={opened}
+        close={close}
+        medicalCase={medicalCase}
+        caseId={slug}
+        currentReview={currentReview}
+      />
     </div>
   );
 }

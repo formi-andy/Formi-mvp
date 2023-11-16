@@ -19,9 +19,11 @@ type currentReview = (typeof api.review.getUserReviewByCaseId)["_returnType"];
 export default function ReviewCase({
   currentReview,
   caseId,
+  classNames = "",
 }: {
   currentReview: currentReview;
   caseId: string;
+  classNames?: string;
 }) {
   const [loading, setLoading] = useState(false);
   const [review, setReview] = useState("");
@@ -51,7 +53,7 @@ export default function ReviewCase({
   }, [currentReview, review]);
 
   return (
-    <div className="flex flex-col w-full lg:w-2/5 gap-y-4">
+    <div className={"flex flex-col w-full lg:w-2/5 gap-y-4 " + classNames}>
       <p className="text-xl font-semibold">
         {currentReview?.status === ReviewStatus.COMPLETED
           ? "Submitted Review"

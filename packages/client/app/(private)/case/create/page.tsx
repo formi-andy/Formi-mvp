@@ -366,7 +366,7 @@ const CreatePage = () => {
         {active === 5 && <UploadStep form={form} />}
         {active === 6 && <ReviewStep form={form} />}
       </div>
-      <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-8 lg:px-16">
+      <div className="flex items-center gap-x-4 lg:gap-x-8 mt-4 px-0 sm:px-8 lg:px-16">
         {active > 0 ? (
           <Button
             disabled={uploading}
@@ -388,7 +388,7 @@ const CreatePage = () => {
             {[...Array(TOTAL_STEPS)].map((_, index) => {
               return (
                 <div
-                  className={`w-4 h-4 rounded-full ${
+                  className={`sm:w-4 sm:h-4 w-2 h-2 rounded-full ${
                     index > active ? "bg-blue-200" : "bg-formiblue"
                   }`}
                   key={index}
