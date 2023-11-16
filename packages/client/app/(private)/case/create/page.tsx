@@ -388,7 +388,7 @@ const CreatePage = () => {
             {[...Array(TOTAL_STEPS)].map((_, index) => {
               return (
                 <div
-                  className={`w-4 h-4 rounded-full ${
+                  className={`sm:w-4 sm:h-4 w-2 h-2 rounded-full ${
                     index > active ? "bg-blue-200" : "bg-formiblue"
                   }`}
                   key={index}
