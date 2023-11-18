@@ -30,7 +30,7 @@ const ClaimCaseGallery: React.FC = () => {
   });
 
   const currentReviewCase = useQuery(api.review.getReviewsByUserAndStatus, {
-    status: ReviewStatus.CREATED,
+    status: ReviewStatus.Created,
   });
 
   if (currentReviewCase === undefined) {

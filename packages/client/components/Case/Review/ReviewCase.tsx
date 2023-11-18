@@ -55,11 +55,11 @@ export default function ReviewCase({
   return (
     <div className={"flex flex-col w-full lg:w-2/5 gap-y-4 " + classNames}>
       <p className="text-xl font-semibold">
-        {currentReview?.status === ReviewStatus.COMPLETED
+        {currentReview?.status === ReviewStatus.Completed
           ? "Submitted Review"
           : "Review"}
       </p>
-      {currentReview?.status === ReviewStatus.COMPLETED ? (
+      {currentReview?.status === ReviewStatus.Completed ? (
         <>
           <div
             id="review"

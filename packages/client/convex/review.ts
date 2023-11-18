@@ -90,8 +90,8 @@ export const getReviewsByUser = query({
   args: {
     status: v.optional(
       v.union(
-        v.literal(ReviewStatus.COMPLETED),
-        v.literal(ReviewStatus.CREATED)
+        v.literal(ReviewStatus.Completed),
+        v.literal(ReviewStatus.Created)
       )
     ),
   },
@@ -103,14 +103,14 @@ export const getReviewsByUser = query({
       .withIndex("by_user_id", (q) => q.eq("user_id", user._id));
 
     switch (args.status) {
-      case ReviewStatus.COMPLETED:
+      case ReviewStatus.Completed:
         query = query.filter((q) =>
-          q.eq(q.field("status"), ReviewStatus.COMPLETED)
+          q.eq(q.field("status"), ReviewStatus.Completed)
         );
         break;
-      case ReviewStatus.CREATED:
+      case ReviewStatus.Created:
         query = query.filter((q) =>
-          q.eq(q.field("status"), ReviewStatus.CREATED)
+          q.eq(q.field("status"), ReviewStatus.Created)
         );
         break;
       default:
@@ -145,7 +145,7 @@ export const saveReview = mutation({
       });
     }
 
-    if (existingReview.status === ReviewStatus.COMPLETED) {
+    if (existingReview.status === ReviewStatus.Completed) {
       throw new ConvexError({
         message: "Review already completed",
         code: 400,
@@ -189,7 +189,7 @@ export const submitReview = mutation({
       });
     }
 
-    if (existingReview.status === ReviewStatus.COMPLETED) {
+    if (existingReview.status === ReviewStatus.Completed) {
       throw new ConvexError({
         message: "Review already completed",
         code: 400,
@@ -200,7 +200,7 @@ export const submitReview = mutation({
 
     await ctx.db.patch(existingReview._id, {
       notes: sanitizedNotes,
-      status: ReviewStatus.COMPLETED,
+      status: ReviewStatus.Completed,
       updated_at: Date.now(),
     });
 
@@ -210,13 +210,13 @@ export const submitReview = mutation({
       if (review.user_id === user._id) {
         existingReviews[i] = {
           ...review,
-          status: ReviewStatus.COMPLETED,
+          status: ReviewStatus.Completed,
         };
       }
     }
 
     const allReviewsCompleted = existingReviews.every(
-      (review) => review.status === ReviewStatus.COMPLETED
+      (review) => review.status === ReviewStatus.Completed
     );
 
     if (
@@ -224,7 +224,7 @@ export const submitReview = mutation({
       existingReviews.length >= medicalCase.max_reviewers
     ) {
       await ctx.db.patch(case_id, {
-        status: ReviewStatus.COMPLETED,
+        status: ReviewStatus.Completed,
       });
     }
   },
@@ -233,8 +233,8 @@ export const submitReview = mutation({
 export const getReviewsByUserAndStatus = query({
   args: {
     status: v.union(
-      v.literal(ReviewStatus.CREATED),
-      v.literal(ReviewStatus.COMPLETED)
+      v.literal(ReviewStatus.Created),
+      v.literal(ReviewStatus.Completed)
     ),
   },
   async handler(ctx, args) {
