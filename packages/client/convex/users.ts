@@ -16,6 +16,7 @@ import {
   getMedicalStudent,
 } from "./medical_student";
 import { internal } from "./_generated/api";
+import { UserRole } from "../types/role-types";
 
 /**
  * Whether the current user is fully logged in, including having their information
@@ -79,7 +80,7 @@ export const updateOrCreateUser = internalMutation({
         return;
       }
 
-      if (userRecord.role === "patient" || userRecord.role === null) {
+      if (userRecord.role === UserRole.Patient || userRecord.role === null) {
         await ctx.db.patch(userRecord._id, { clerkUser });
         return;
       }
@@ -132,7 +133,7 @@ export const setPatientRole = internalMutation({
   args: {},
   async handler(ctx) {
     const user = await mustGetCurrentUser(ctx);
-    await ctx.db.patch(user._id, { role: "patient" });
+    await ctx.db.patch(user._id, { role: UserRole.Patient });
     return user;
   },
 });
@@ -143,7 +144,7 @@ export const setPatientAction = action({
     const user = await ctx.runMutation(internal.users.setPatientRole);
     await clerkClient.users.updateUserMetadata(user.clerkUser.id, {
       publicMetadata: {
-        role: "patient",
+        role: UserRole.Patient,
         student_email: null,
       },
     });

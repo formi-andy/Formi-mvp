@@ -4,7 +4,6 @@ type Payload = {
 
 export async function POST(request: Request) {
   const requestData: Payload = await request.json();
-  console.log("REQ DATA", requestData);
 
   return new Response(
     JSON.stringify({

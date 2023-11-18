@@ -1,4 +1,4 @@
 export enum ReviewStatus {
-  CREATED = "CREATED",
-  COMPLETED = "COMPLETED",
+  Created = "CREATED",
+  Completed = "COMPLETED",
 }

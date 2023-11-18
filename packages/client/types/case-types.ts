@@ -1,9 +1,9 @@
 import { api } from "../convex/_generated/api";
 
 export enum CaseStatus {
-  CREATED = "CREATED",
-  REVIEWING = "REVIEWING",
-  COMPLETED = "COMPLETED",
+  Created = "CREATED",
+  Reviewing = "REVIEWING",
+  Completed = "COMPLETED",
 }
 
 export type MedicalCasesByDate =

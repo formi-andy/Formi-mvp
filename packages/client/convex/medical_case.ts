@@ -15,6 +15,7 @@ import { getImageByCaseId, getImagesByCaseId } from "./images";
 import { getReviewsByCaseId, getReviewsByUser } from "./review";
 import { ReviewStatus } from "../types/review-types";
 import { createHistory, getHistoryByProfile, updateHistory } from "./history";
+import { UserRole } from "../types/role-types";
 
 export const getMedicalCase = internalQuery({
   args: {
@@ -64,7 +65,7 @@ export const getMedicalCaseWithImageAndPatient = query({
     ]);
 
     const completedReviews = reviews.filter(
-      (review) => review.status === ReviewStatus.COMPLETED
+      (review) => review.status === ReviewStatus.Completed
     );
 
     // get urls for all images
@@ -101,7 +102,7 @@ export const getAnonymizedMedicalCase = query({
     const medicalCase = await mustGetMedicalCase(ctx, id);
 
     if (
-      user.role !== "medical_student" ||
+      user.role !== UserRole.MedicalStudent ||
       !medicalCase.reviewers.includes(user._id)
     ) {
       throw new ConvexError({
@@ -158,7 +159,7 @@ export const addReviewerToMedicalCase = mutation({
     const { id } = args;
     const user = await mustGetCurrentUser(ctx);
 
-    if (user.role !== "medical_student") {
+    if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Invalid permissions",
         code: 403,
@@ -187,7 +188,7 @@ export const addReviewerToMedicalCase = mutation({
     const reviews = await ctx.db
       .query("review")
       .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
-      .filter((q) => q.eq(q.field("status"), ReviewStatus.CREATED))
+      .filter((q) => q.eq(q.field("status"), ReviewStatus.Created))
       .collect();
 
     if (reviews.length > 0) {
@@ -201,14 +202,14 @@ export const addReviewerToMedicalCase = mutation({
 
     await Promise.all([
       ctx.db.patch(id, {
-        status: CaseStatus.REVIEWING,
+        status: CaseStatus.Reviewing,
         reviewers,
       }),
       ctx.db.insert("review", {
         case_id: id,
         user_id: user._id,
         notes: "",
-        status: ReviewStatus.CREATED,
+        status: ReviewStatus.Created,
         updated_at: Date.now(),
       }),
     ]);
@@ -294,7 +295,7 @@ export const createMedicalCase = mutation({
       chief_complaint,
       user_id: user._id,
       reviewers: [],
-      status: CaseStatus.CREATED,
+      status: CaseStatus.Created,
       max_reviewers: 3,
       duration,
       profile,
@@ -310,7 +311,7 @@ export const getCompletedMedicalCasesByReviewer = query({
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
 
-    if (user.role !== "medical_student") {
+    if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Invalid permissions",
         code: 400,
@@ -320,7 +321,7 @@ export const getCompletedMedicalCasesByReviewer = query({
 
     // TODO: need to make this more efficient
     const reviews = await getReviewsByUser(ctx, {
-      status: ReviewStatus.COMPLETED,
+      status: ReviewStatus.Completed,
     });
     const reviewsWithCases = await Promise.all(
       reviews.map(async (review) => {
@@ -428,7 +429,7 @@ export const listClaimableMedicalCases = query({
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
 
-    if (user.role !== "medical_student") {
+    if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Invalid permissions",
         code: 400,
