@@ -12,6 +12,7 @@ import { ConvexError, v } from "convex/values";
 import { Doc, Id } from "./_generated/dataModel";
 import { clerkClient, UserJSON } from "@clerk/clerk-sdk-node";
 import { internal } from "./_generated/api";
+import { UserRole } from "../types/role-types";
 
 export const createMedicalStudent = internalMutation({
   args: {
@@ -30,7 +31,7 @@ export const createMedicalStudent = internalMutation({
       blurb,
     });
     await ctx.db.patch(user._id, {
-      role: "medical_student",
+      role: UserRole.MedicalStudent,
     });
     return medicalStudent;
   },
@@ -101,7 +102,7 @@ export const verifyEmail = action({
       clerkClient.users.updateUserMetadata(clerkUser.id, {
         publicMetadata: {
           student_email: email,
-          role: "medical_student",
+          role: UserRole.MedicalStudent,
         },
       }),
       ctx.runMutation(internal.medical_student.createMedicalStudent, {

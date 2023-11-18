@@ -1,6 +1,7 @@
 import DoctorDashboardView from "@/components/Dashboard/DoctorDashboardView";
 import PatientCaseGallery from "@/components/Dashboard/Gallery/PatientCaseGallery";
 import PlatformTutorial from "@/components/Record/Instructions/PlatformTutorial";
+import { UserRole } from "@/types/role-types";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { auth } from "@clerk/nextjs";
 // import Gallery from "@/components/Gallery/Gallery";
@@ -21,7 +22,7 @@ export default async function Dashboard() {
         <ActionItems />
       </div> */}
       <div className="w-full flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
-        {user.publicMetadata.role === "patient" ? (
+        {user.publicMetadata.role === UserRole.Patient ? (
           <>
             {/* {"tutorial" in user?.unsafeMetadata && <PlatformTutorial />} */}
             <PatientCaseGallery />

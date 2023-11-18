@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import CaseCard from "./CaseCard";
 import { useUser } from "@clerk/nextjs";
+import { UserRole } from "@/types/role-types";
 
 type Props = {
   date: any;
@@ -30,7 +31,7 @@ const CaseRow = ({ date, medicalCases, renderCaseComponent }: Props) => {
               ) : (
                 <Link
                   href={
-                    user.user?.publicMetadata.role === "medical_student"
+                    user.user?.publicMetadata.role === UserRole.MedicalStudent
                       ? `/case/${medicalCase._id}/review`
                       : `/case/${medicalCase._id}`
                   }
@@ -38,9 +39,9 @@ const CaseRow = ({ date, medicalCases, renderCaseComponent }: Props) => {
                   <CaseCard
                     medicalCase={medicalCase}
                     type={
-                      user.user?.publicMetadata.role === "medical_student"
-                        ? "medical_student"
-                        : "patient"
+                      user.user?.publicMetadata.role === UserRole.MedicalStudent
+                        ? UserRole.MedicalStudent
+                        : UserRole.Patient
                     }
                   />
                 </Link>

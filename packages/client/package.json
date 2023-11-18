@@ -78,6 +78,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@types/sanitize-html": "^2.9.1",
+    "eslint-config-prettier": "^9.0.0",
     "postcss": "8.4.24",
     "postcss-preset-mantine": "^1.7.0",
     "postcss-simple-vars": "^7.0.1",

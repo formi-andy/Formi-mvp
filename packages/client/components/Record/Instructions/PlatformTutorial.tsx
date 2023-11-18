@@ -7,6 +7,7 @@ import { api } from "@/convex/_generated/api";
 import AppLoader from "@/components/Loaders/AppLoader";
 import NotFoundPage from "@/app/not-found";
 import PlatformTutorialModal from "./PlatformTutorialModal";
+import { UserRole } from "@/types/role-types";
 
 const PlatformTutorial = () => {
   const [opened, { open, close }] = useDisclosure(true);
@@ -20,7 +21,7 @@ const PlatformTutorial = () => {
     return <NotFoundPage />;
   }
 
-  if (user.role === "patient") {
+  if (user.role === UserRole.Patient) {
     return <PlatformTutorialModal opened={opened} close={close} />;
   } // else return platform tutorial for doctors
 

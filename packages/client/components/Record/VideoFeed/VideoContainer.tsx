@@ -35,6 +35,7 @@ export default function VideoContainer({
       });
       setSignature(res.data.signature);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meetingId]);
 
   return (

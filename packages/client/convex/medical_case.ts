@@ -15,6 +15,7 @@ import { getImageByCaseId, getImagesByCaseId } from "./images";
 import { getReviewsByCaseId, getReviewsByUser } from "./review";
 import { ReviewStatus } from "../types/review-types";
 import { createHistory, getHistoryByProfile, updateHistory } from "./history";
+import { UserRole } from "../types/role-types";
 
 export const getMedicalCase = internalQuery({
   args: {
@@ -101,7 +102,7 @@ export const getAnonymizedMedicalCase = query({
     const medicalCase = await mustGetMedicalCase(ctx, id);
 
     if (
-      user.role !== "medical_student" ||
+      user.role !== UserRole.MedicalStudent ||
       !medicalCase.reviewers.includes(user._id)
     ) {
       throw new ConvexError({
@@ -158,7 +159,7 @@ export const addReviewerToMedicalCase = mutation({
     const { id } = args;
     const user = await mustGetCurrentUser(ctx);
 
-    if (user.role !== "medical_student") {
+    if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Invalid permissions",
         code: 403,
@@ -310,7 +311,7 @@ export const getCompletedMedicalCasesByReviewer = query({
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
 
-    if (user.role !== "medical_student") {
+    if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Invalid permissions",
         code: 400,
@@ -428,7 +429,7 @@ export const listClaimableMedicalCases = query({
   handler: async (ctx, args) => {
     const user = await mustGetCurrentUser(ctx);
 
-    if (user.role !== "medical_student") {
+    if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Invalid permissions",
         code: 400,

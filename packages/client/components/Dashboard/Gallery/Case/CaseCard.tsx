@@ -3,13 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import Image from "@/components/ui/Image/Image";
 
 import { MedicalCase } from "@/types/case-types";
+import { UserRole } from "@/types/role-types";
 
 const CaseCard = ({
   medicalCase,
   type,
 }: {
   medicalCase: MedicalCase;
-  type: "medical_student" | "patient";
+  type: UserRole.MedicalStudent | UserRole.Patient;
 }) => {
   const { _id, _creationTime, status, image_url, chief_complaint } =
     medicalCase;
@@ -30,7 +31,7 @@ const CaseCard = ({
 
       <div className="flex justify-between items-center">
         <p className="text-sm">
-          {type === "medical_student" ? "Reviewed" : "Created"} at{" "}
+          {type === UserRole.MedicalStudent ? "Reviewed" : "Created"} at{" "}
           {dayjs(_creationTime).format("h:mm A")}
         </p>
       </div>
