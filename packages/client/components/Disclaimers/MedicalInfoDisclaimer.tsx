@@ -25,7 +25,7 @@ const MedicalInfoDisclaimer = ({ close }: Props) => {
         </p>
         <p className="text-lg">
           Always seek the advice of your physician or other qualified health
-          provider with any questions you any have regarding a medical
+          provider with any questions you may have regarding a medical
           condition.
         </p>
         <p className="text-lg">

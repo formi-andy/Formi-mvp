@@ -28,7 +28,7 @@ const HipaaDisclaimer = ({ setSlide }: Props) => {
         </p>
         <p className="text-lg">
           By checking this box you acknowledge that the submission of real
-          patient data is at the risk of the user
+          patient data is at the risk of the user.
         </p>
       </div>
       <div className="flex flex-col gap-y-4 items-center">
