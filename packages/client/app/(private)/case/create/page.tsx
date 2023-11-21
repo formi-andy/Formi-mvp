@@ -6,7 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@mantine/form";
 
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import StepOne from "@/components/Case/Create/StepOne";
@@ -170,7 +170,7 @@ const CreatePage = () => {
 
   // TODO: Preload profiles
   const profiles = useQuery(api.profile.getProfiles);
-  const createCase = useMutation(api.medical_case.createMedicalCase);
+  const createCase = useAction(api.medical_case.createMedicalCaseAction);
   const router = useRouter();
 
   const form = useCaseForm(active);

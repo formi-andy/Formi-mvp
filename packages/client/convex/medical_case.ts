@@ -1,4 +1,6 @@
 import {
+  action,
+  internalAction,
   internalMutation,
   internalQuery,
   mutation,
@@ -16,6 +18,7 @@ import { getReviewsByCaseId, getReviewsByUser } from "./review";
 import { ReviewStatus } from "../types/review-types";
 import { createHistory, getHistoryByProfile, updateHistory } from "./history";
 import { UserRole } from "../types/role-types";
+import { internal } from "./_generated/api";
 
 export const getMedicalCase = internalQuery({
   args: {
@@ -221,7 +224,7 @@ export const addReviewerToMedicalCase = mutation({
   },
 });
 
-export const createMedicalCase = mutation({
+export const createMedicalCase = internalMutation({
   args: {
     questions: v.any(),
     chief_complaint: v.string(),
@@ -299,6 +302,44 @@ export const createMedicalCase = mutation({
       max_reviewers: 3,
       duration,
       profile,
+    });
+
+    return { caseRecord, userId: user._id };
+  },
+});
+
+export const createMedicalCaseAction = action({
+  args: {
+    questions: v.any(),
+    chief_complaint: v.string(),
+    // patient_id: v.id("users"),
+    patient_id: v.string(),
+    medical_history: v.any(),
+    duration: v.string(),
+    profile: v.object({
+      user_id: v.optional(v.id("users")),
+      first_name: v.string(),
+      last_name: v.string(),
+      ethnicity: v.array(v.string()),
+      date_of_birth: v.number(),
+      sex_at_birth: v.string(),
+      state: v.string(),
+      pediatric_patient: v.boolean(),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const { profile } = args;
+    const res = await ctx.runMutation(
+      internal.medical_case.createMedicalCase,
+      args
+    );
+    const caseRecord: Id<"medical_case"> = res.caseRecord;
+    const userId = res.userId;
+    await slackCaseCreation(ctx, {
+      user_id: userId,
+      case_id: caseRecord,
+      first_name: profile.first_name,
+      last_name: profile.last_name,
     });
     return { caseRecord };
   },
@@ -570,3 +611,43 @@ export async function mustGetMedicalCase(
     });
   return caseRecord;
 }
+
+export const slackCaseCreation = internalAction({
+  args: {
+    user_id: v.id("users"),
+    case_id: v.id("medical_case"),
+    first_name: v.string(),
+    last_name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { user_id, case_id, first_name, last_name } = args;
+    await fetch(
+      "https://hooks.slack.com/services/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",
+      {
+        method: "post",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+        },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: "header",
+              text: {
+                type: "plain_text",
+                text: "Case Created",
+                emoji: true,
+              },
+            },
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: `Case ID: ${case_id}\n User ID: ${user_id}\nName: ${first_name} ${last_name}`,
+              },
+            },
+          ],
+        }),
+      }
+    );
+  },
+});
