@@ -52,7 +52,7 @@ export default function ReviewStep({ form }: { form: CaseForm }) {
             return (
               <div key={`case_info_${index}`}>
                 <p className="text-lg font-medium">{question.question}</p>
-                <p>{question.answer ? "True" : "False"}</p>
+                <p>{question.answer ? "Yes" : "No"}</p>
               </div>
             );
           })}
