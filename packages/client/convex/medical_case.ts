@@ -620,6 +620,12 @@ export const slackCaseCreation = internalAction({
     last_name: v.string(),
   },
   handler: async (ctx, args) => {
+    const isProd = !!process.env.PROD;
+
+    if (!isProd) {
+      return;
+    }
+
     const { user_id, case_id, first_name, last_name } = args;
     await fetch(process.env.SLACK_WEBHOOK_URL || "", {
       method: "post",
