@@ -61,7 +61,7 @@ function renderProfile(form: CaseForm) {
   if (!isValidProfile(form.values.profile)) return null;
   return form.values.patient?.id === "new" ? (
     <button
-      className="flex flex-col items-center gap-2 rounded-lg border p-4 border-white"
+      className="flex flex-col items-center gap-2 rounded-lg border-2 p-4 border-white"
       onClick={() => {
         form.setFieldValue("patient", null);
         form.setFieldValue("history", INITIAL_HISTORY);
@@ -76,7 +76,7 @@ function renderProfile(form: CaseForm) {
     </button>
   ) : (
     <button
-      className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition"
+      className="flex flex-col items-center gap-2 rounded-lg border-2 p-4 border-transparent hover:border-white transition"
       onClick={() => {
         form.setFieldValue("patient", {
           firstName: form.values.profile.firstName,
@@ -165,7 +165,7 @@ export default function StepOne({
               {profiles.map((profile) =>
                 profile._id === form.values.patient?.id ? (
                   <button
-                    className="flex flex-col items-center gap-2 rounded-lg border p-4 border-white"
+                    className="flex flex-col items-center gap-2 rounded-lg border-2 p-4 border-white"
                     key={profile._id}
                     onClick={() => {
                       form.setFieldValue("patient", null);
@@ -181,7 +181,7 @@ export default function StepOne({
                   </button>
                 ) : (
                   <button
-                    className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition"
+                    className="flex flex-col items-center gap-2 rounded-lg border-2 p-4 border-transparent hover:border-white transition"
                     key={profile._id}
                     onClick={() => {
                       form.setFieldValue("patient", {
@@ -232,7 +232,7 @@ export default function StepOne({
             </>
           )}
           <button
-            className="flex flex-col items-center gap-2 rounded-lg border p-4 border-transparent hover:border-white transition"
+            className="flex flex-col items-center gap-2 rounded-lg border-2 p-4 border-transparent hover:border-white transition"
             onClick={() => {
               setOpen(true);
             }}
