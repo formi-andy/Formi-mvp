@@ -621,33 +621,30 @@ export const slackCaseCreation = internalAction({
   },
   handler: async (ctx, args) => {
     const { user_id, case_id, first_name, last_name } = args;
-    await fetch(
-      "https://hooks.slack.com/services/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",
-      {
-        method: "post",
-        headers: {
-          Accept: "application/json, text/plain, */*",
-        },
-        body: JSON.stringify({
-          blocks: [
-            {
-              type: "header",
-              text: {
-                type: "plain_text",
-                text: "Case Created",
-                emoji: true,
-              },
+    await fetch(process.env.SLACK_WEBHOOK_URL || "", {
+      method: "post",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+      },
+      body: JSON.stringify({
+        blocks: [
+          {
+            type: "header",
+            text: {
+              type: "plain_text",
+              text: "Case Created",
+              emoji: true,
             },
-            {
-              type: "section",
-              text: {
-                type: "mrkdwn",
-                text: `Case ID: ${case_id}\n User ID: ${user_id}\nName: ${first_name} ${last_name}`,
-              },
+          },
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `Case ID: ${case_id}\n User ID: ${user_id}\nName: ${first_name} ${last_name}`,
             },
-          ],
-        }),
-      }
-    );
+          },
+        ],
+      }),
+    });
   },
 });
