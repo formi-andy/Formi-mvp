@@ -573,6 +573,33 @@ export const reviewCallback = internalMutation({
   },
 });
 
+export const caseFeedback = mutation({
+  args: {
+    id: v.id("medical_case"),
+    feedback: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await mustGetCurrentUser(ctx);
+
+    const { id, feedback } = args;
+
+    const medicalCase = await mustGetMedicalCase(ctx, id);
+
+    if (medicalCase.user_id !== user._id) {
+      throw new ConvexError({
+        message: "Unauthorized call to delete image",
+        code: 401,
+      });
+    }
+
+    // send notifs to reviewers?
+
+    return ctx.db.patch(id, {
+      feedback,
+    });
+  },
+});
+
 // Helpers
 export async function verifyCareTeam(
   ctx: QueryCtx,
