@@ -29,18 +29,18 @@ export default async function PublicHeader() {
         />
       </Link>
       <div className="gap-x-16 items-center w-1/2 hidden lg:flex justify-center">
-        <Link href="/" className="h-full text-darktext text-base lg:text-lg">
+        <Link href="/" className="h-full hover:text-blue-500 transition text-base lg:text-lg">
           Home
         </Link>
         <Link
           href="/about"
-          className="h-full text-darktext text-base lg:text-lg"
+          className="h-full hover:text-blue-500 transition text-base lg:text-lg"
         >
           About
         </Link>
         <Link
           href="/students"
-          className="h-full text-darktext text-base lg:text-lg"
+          className="h-full hover:text-blue-500 transition text-base lg:text-lg"
         >
           For Students
         </Link>

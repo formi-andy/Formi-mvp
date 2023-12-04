@@ -61,7 +61,7 @@ const CloseSiteDisclaimer = ({ setSlide }: Props) => {
         </li>
         <li>
           <p className="text-lg">
-            Is under 15 months of age and has a feever over 100.4°F
+            Is under 15 months of age and has a fever over 100.4°F
           </p>
         </li>
         <li>
