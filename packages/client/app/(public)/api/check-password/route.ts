@@ -7,7 +7,7 @@ export async function POST(request: Request) {
 
   return new Response(
     JSON.stringify({
-      verified: requestData.password === "WelcomeToFormiHealth",
+      verified: requestData.password === "Homescope",
     }),
     {
       headers: { "Content-Type": "application/json" },
