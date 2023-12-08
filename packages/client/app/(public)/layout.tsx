@@ -8,10 +8,8 @@ export const metadata = {
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
-    <div>
-      <div className="w-full flex flex-col h-fit">
-        <PublicConvexClientProvider>{children}</PublicConvexClientProvider>
-      </div>
+    <div className="w-full flex flex-col h-fit">
+      <PublicConvexClientProvider>{children}</PublicConvexClientProvider>
     </div>
   );
 }

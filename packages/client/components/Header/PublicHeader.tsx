@@ -17,7 +17,7 @@ export default async function PublicHeader() {
     <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 bg-lightblue border-none">
       <Link
         href="/"
-        className={`${styles.headerLogo} w-1/2 lg:w-1/4 flex justify-start text-formiblue`}
+        className={`${styles.headerLogo} w-1/2 lg:w-1/4 flex justify-start text-black`}
       >
         <Image
           priority
@@ -29,7 +29,10 @@ export default async function PublicHeader() {
         />
       </Link>
       <div className="gap-x-16 items-center w-1/2 hidden lg:flex justify-center">
-        <Link href="/" className="h-full hover:text-blue-500 transition text-base lg:text-lg">
+        <Link
+          href="/"
+          className="h-full hover:text-blue-500 transition text-base lg:text-lg"
+        >
           Home
         </Link>
         <Link
@@ -52,7 +55,7 @@ export default async function PublicHeader() {
               <div className="flex gap-x-4 h-full items-center">
                 <Link
                   href="/dashboard"
-                  className="h-full px-6 rounded-3xl flex items-center py-1 bg-white text-formiblue font-light"
+                  className="h-full px-6 rounded-3xl flex items-center py-1 bg-white text-black"
                 >
                   Dashboard
                 </Link>
@@ -73,7 +76,7 @@ export default async function PublicHeader() {
                 <div className="flex gap-x-4 items-center">
                   <Link
                     href="/login"
-                    className="h-full px-6 rounded-3xl flex items-center py-1 bg-white text-formiblue font-light"
+                    className="font-medium rounded h-fit px-4 py-1 hover:bg-blue-500 bg-white hover:text-white transition"
                   >
                     Log In
                   </Link>
@@ -87,7 +90,7 @@ export default async function PublicHeader() {
               </div>
             )}
           </div>
-          <div className="flex justify-between h-full lg:hidden items-center group text-formiblue">
+          <div className="flex justify-between h-full lg:hidden items-center group text-black">
             <SideButton />
           </div>
         </nav>

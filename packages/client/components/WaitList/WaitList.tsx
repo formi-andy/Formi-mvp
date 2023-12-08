@@ -76,10 +76,10 @@ export default function WaitList({ text, buttonColor, buttonText }: Props) {
           onClick={submit}
           disabled={loading}
           className={
-            "lg:w-72 w-35 text-white lg:rounded-l-none lg:rounded-r-2xl font-medium " +
-            buttonColor +
+            "lg:w-72 w-35 lg:rounded-l-none lg:rounded-r-2xl font-medium transition " +
+            (buttonColor ?? "bg-formiblue hover:bg-[#3e4864ff]") +
             " " +
-            buttonText
+            (buttonText ?? "text-white hover:text-white")
           }
         >
           Join the waitlist

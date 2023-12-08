@@ -23,6 +23,7 @@ export default function LockedAuth({
           <p className="opacity-60">to continue to Formi</p>
         </div>
         <PasswordInput
+          placeholder="The Formi team gave this to you"
           value={password}
           onChange={(e) => {
             setPassword(e.currentTarget.value);
