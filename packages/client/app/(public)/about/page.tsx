@@ -116,7 +116,7 @@ const AboutPage = (props: Props) => {
                 Want to learn more?
               </p>
             }
-            buttonColor="bg-[#F6DDB3]"
+            buttonColor="bg-[#F6DDB3] hover:bg-[#f5e4cdff]"
             buttonText="text-formiblue"
           />
         </div>

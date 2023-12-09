@@ -22,7 +22,7 @@ export default async function Temp() {
             residency. Oh, and get paid while you do it.
           </p>
           <p className="text-2xl text-darktext">Coming soon.</p>
-          <WaitList buttonColor="bg-formiblue" />
+          <WaitList />
         </div>
         <div className="w-1/3 h-[66vh] aspect-auto relative hidden lg:block">
           <Image
@@ -130,7 +130,7 @@ export default async function Temp() {
                 Ready to start earning?
               </p>
             }
-            buttonColor="bg-[#F6DDB3]"
+            buttonColor="bg-[#F6DDB3] hover:bg-[#f5e4cdff]"
             buttonText="text-formiblue"
           />
         </div>

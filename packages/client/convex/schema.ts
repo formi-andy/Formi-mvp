@@ -34,6 +34,7 @@ export default defineSchema({
       v.literal("COMPLETED")
     ),
     max_reviewers: v.number(),
+    feedback: v.optional(v.string()),
   }).index("by_user_id", ["user_id"]),
   profile: defineTable({
     user_id: v.optional(v.id("users")),

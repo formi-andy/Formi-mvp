@@ -10,7 +10,7 @@ import { Montserrat } from "next/font/google";
 
 const mont = Montserrat({ subsets: ["latin"] });
 
-export default async function Temp() {
+export default async function Home() {
   const { userId } = auth();
 
   return (
@@ -30,7 +30,7 @@ export default async function Temp() {
             child needs medical attention, with multiple opinions at once.
           </p>
           <p className="text-2xl text-darktext">Coming soon.</p>
-          <WaitList buttonColor="bg-formiblue" />
+          <WaitList />
         </div>
         <div className="w-1/3 h-2/3 aspect-auto relative hidden lg:block">
           <Image
@@ -163,7 +163,7 @@ export default async function Temp() {
                 Ready to get started?
               </p>
             }
-            buttonColor="bg-[#F6DDB3]"
+            buttonColor="bg-[#F6DDB3] hover:bg-[#f5e4cdff]"
             buttonText="text-formiblue"
           />
         </div>
