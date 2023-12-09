@@ -55,7 +55,7 @@ export default async function PublicHeader() {
               <div className="flex gap-x-4 h-full items-center">
                 <Link
                   href="/dashboard"
-                  className="h-full px-6 rounded-3xl flex items-center py-1 bg-white text-black"
+                  className="h-full px-6 rounded-3xl flex items-center py-1 bg-white hover:text-blue-500 transition text-black"
                 >
                   Dashboard
                 </Link>

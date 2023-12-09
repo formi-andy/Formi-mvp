@@ -1,14 +1,13 @@
 "use client";
 
 import { ErrorBoundary } from "react-error-boundary";
-import { useQuery } from "convex/react";
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "convex/react";
+import { use, useEffect, useRef, useState } from "react";
 import NotFoundPage from "@/app/not-found";
 
 import Link from "next/link";
 import { MdNotes } from "react-icons/md";
-import { Breadcrumbs, Spoiler } from "@mantine/core";
+import { Breadcrumbs, Spoiler, Textarea } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
@@ -22,25 +21,9 @@ import { Id } from "@/convex/_generated/dataModel";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
 import { LuChevronDown, LuClipboard, LuWorkflow } from "react-icons/lu";
-import style from "./case.module.css";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
-
-function renderTags(tags: string[]) {
-  if (tags.length === 0) {
-    return "No tags yet";
-  }
-  return tags.map((tag, index) => {
-    return (
-      <span
-        key={`${tag}_${index}`}
-        className="border rounded px-2 py-1.5 text-sm"
-      >
-        {tag}
-      </span>
-    );
-  });
-}
+import { CaseStatus } from "@/types/case-types";
 
 // TODO: Move this to ssr after convex supports server side reactive queries
 function CasePage({ params }: { params: { slug: string } }) {
@@ -52,28 +35,85 @@ function CasePage({ params }: { params: { slug: string } }) {
       id: slug as Id<"medical_case">,
     }
   );
-  const user = useQuery(api.users.currentUser);
+  const saveFeedback = useMutation(api.medical_case.caseFeedback);
+
+  const [feedback, setFeedback] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const toast = useNetworkToasts();
-  const router = useRouter();
-  const [expanded, setExpanded] = useState(false);
-  const [notesContainer, setNotesContainer] = useState<HTMLElement | null>(
-    null
-  );
-  useEffect(() => {
-    if (medicalCase === undefined) return;
-    setNotesContainer(document.getElementById("notes"));
-  }, [medicalCase]);
-
-  useEffect(() => {
-    if (notesContainer && notesContainer.scrollHeight > 160) {
-      notesContainer.classList.add(style.hidden);
-    }
-  }, [notesContainer]);
-
   const autoplay = useRef(Autoplay({ delay: 5000 }));
 
   if (medicalCase === undefined) {
     return <AppLoader />;
+  }
+
+  function renderFeedback(
+    status: `${CaseStatus}`,
+    feedback: string,
+    caseFeedback?: string
+  ) {
+    if (status !== CaseStatus.Completed) {
+      return null;
+    }
+
+    if (!caseFeedback) {
+      return (
+        <div className="flex flex-col w-full mt-4">
+          <p className="font-medium mb-1">Feedback for Reviewers</p>
+          <Textarea
+            minRows={3}
+            maxRows={6}
+            placeholder="Leave feedback for the reviewers here!"
+            value={feedback}
+            onChange={(event) => {
+              setFeedback(event.currentTarget.value);
+            }}
+            maxLength={2000}
+          />
+          <Button
+            className="w-fit mt-4"
+            variant="action"
+            disabled={loading || feedback.length === 0}
+            onClick={async () => {
+              try {
+                setLoading(true);
+                toast.loading({
+                  title: "Submitting feedback...",
+                  message: "Please wait",
+                });
+                await saveFeedback({
+                  id: slug as Id<"medical_case">,
+                  feedback,
+                });
+                toast.success({
+                  title: "Feedback submitted",
+                  message: "Your feedback will be sent to the reviewers",
+                });
+              } catch (error) {
+                toast.error({
+                  title: "Error submitting feedback",
+                  message:
+                    error instanceof ConvexError
+                      ? (error.data as { message: string }).message
+                      : undefined,
+                });
+              } finally {
+                setLoading(false);
+              }
+            }}
+          >
+            Submit
+          </Button>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex flex-col w-full mt-4">
+          <p className="font-medium mb-1">Feedback for Reviewers</p>
+          <p className="text-sm">{caseFeedback}</p>
+        </div>
+      );
+    }
   }
 
   const items = [
@@ -133,7 +173,7 @@ function CasePage({ params }: { params: { slug: string } }) {
             {dayjs(medicalCase._creationTime).format("M/DD/YYYY h:mm A")}
           </p>
           <p>
-            {medicalCase.status === "COMPLETED" ? (
+            {medicalCase.status === CaseStatus.Completed ? (
               <span>Reviewed</span>
             ) : (
               <span>{capitalize(medicalCase.status)}</span>
@@ -196,6 +236,7 @@ function CasePage({ params }: { params: { slug: string } }) {
                 );
               })
             )}
+            {renderFeedback(medicalCase.status, feedback, medicalCase.feedback)}
           </div>
         </div>
         <div className="flex flex-col border rounded-lg">
