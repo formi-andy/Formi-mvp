@@ -25,6 +25,9 @@ export const createMedicalStudent = internalMutation({
     const user = await mustGetCurrentUser(ctx);
     const medicalStudent = await ctx.db.insert("medical_student", {
       user_id: user._id,
+      total_reviews: 0,
+      correct_reviews: 0,
+      incorrect_reviews: 0,
       school,
       email,
       bio,

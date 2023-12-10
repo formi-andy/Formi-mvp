@@ -78,6 +78,9 @@ export default defineSchema({
   }).index("by_clerk_id", ["clerkUser.id"]),
   medical_student: defineTable({
     user_id: v.id("users"),
+    total_reviews: v.number(),
+    correct_reviews: v.number(),
+    incorrect_reviews: v.number(),
     school: v.string(),
     email: v.string(),
     bio: v.optional(v.string()),
