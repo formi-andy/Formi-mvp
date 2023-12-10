@@ -260,4 +260,19 @@ export default defineSchema({
     .index("by_created_by", ["created_by"])
     .index("by_user_id_and_created_by", ["user_id", "created_by"])
     .index("by_profile_id", ["profile_id"]),
+  practice_questions: defineTable({
+    question: v.string(),
+    choices: v.array(v.string()),
+    answer: v.number(),
+    explanation: v.array(v.string()),
+    summary: v.string(),
+  })
+    .index("by_question", ["question"])
+    .index("by_answer", ["answer"]),
+  practice_question_tags: defineTable({
+    practice_question_id: v.id("practice_questions"),
+    tag: v.string(),
+  })
+    .index("by_practice_question_id", ["practice_question_id"])
+    .index("by_tag", ["tag"]),
 });
