@@ -140,32 +140,35 @@ export const updatePracticeQuestion = internalMutation({
 
     // find new tags, delete tags, and existing tags
     const submittedTagsSet = new Set(tags);
-
     // Extracting tag strings from existingTags objects
-    const existingTagStrings = new Set([...existingTags].map((obj) => obj.tag));
+    const existingTagStrings = new Set(
+      Array.from(new Set(existingTags)).map((obj) => obj.tag)
+    );
 
     // Find new tags to add (in submittedTagsSet but not in existingTagStrings)
     const tagsToAdd = new Set(
-      [...submittedTagsSet].filter((tag) => !existingTagStrings.has(tag))
+      Array.from(new Set(submittedTagsSet)).filter(
+        (tag) => !existingTagStrings.has(tag)
+      )
     );
 
     // Find tags to delete (in existingTagStrings but not in submittedTagsSet)
     const tagsToDelete = new Set(
-      [...existingTags]
+      Array.from(new Set(existingTags))
         .filter((tagObj) => !submittedTagsSet.has(tagObj.tag))
         .map((tagObj) => tagObj._id)
     );
 
     // Delete tags
     await Promise.all(
-      [...tagsToDelete].map(async (tag) => {
+      Array.from(new Set(tagsToDelete)).map(async (tag) => {
         await ctx.db.delete(tag);
       })
     );
 
     // Add new tags
     await Promise.all(
-      [...tagsToAdd].map(async (tag) => {
+      Array.from(new Set(tagsToAdd)).map(async (tag) => {
         await ctx.db.insert("practice_question_tags", {
           practice_question_id: practiceQuestionId,
           tag,
