@@ -6,6 +6,10 @@ import Link from "next/link";
 
 const NotFoundPage = () => {
   const router = useRouter();
+  const url =
+    process.env.NODE_ENV === "production"
+      ? "https://formi.health"
+      : "http://localhost:3000";
 
   return (
     <section className="bg-white">
@@ -44,7 +48,7 @@ const NotFoundPage = () => {
             </button>
 
             <Link
-              href="/"
+              href={url}
               className="w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto hover:bg-blue-600 "
             >
               Take me home
