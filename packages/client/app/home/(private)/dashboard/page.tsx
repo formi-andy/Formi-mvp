@@ -1,6 +1,5 @@
-import DoctorDashboardView from "@/components/Dashboard/DoctorDashboardView";
+import DoctorDashboard from "@/components/Dashboard/DoctorDashboard";
 import PatientCaseGallery from "@/components/Dashboard/Gallery/PatientCaseGallery";
-import PlatformTutorial from "@/components/Record/Instructions/PlatformTutorial";
 import { UserRole } from "@/types/role-types";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { auth } from "@clerk/nextjs";
@@ -13,7 +12,7 @@ export default async function Dashboard() {
   const user = await clerkClient.users.getUser(userId || "");
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row gap-4 md:gap-6 lg:gap-8">
+    <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
       {/* <div className="w-full lg:w-3/5 flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
         <Gallery />
       </div>
@@ -21,16 +20,11 @@ export default async function Dashboard() {
         <CareTeam />
         <ActionItems />
       </div> */}
-      <div className="w-full flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
-        {user.publicMetadata.role === UserRole.Patient ? (
-          <>
-            {/* {"tutorial" in user?.unsafeMetadata && <PlatformTutorial />} */}
-            <PatientCaseGallery />
-          </>
-        ) : (
-          <DoctorDashboardView />
-        )}
-      </div>
+      {user.publicMetadata.role === UserRole.Patient ? (
+        <PatientCaseGallery />
+      ) : (
+        <DoctorDashboard />
+      )}
     </div>
   );
 }

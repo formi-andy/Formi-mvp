@@ -1,6 +1,4 @@
 import DoctorCaseGallery from "@/components/Dashboard/DoctorCaseGallery";
-import DoctorDashboard from "@/components/Dashboard/DoctorDashboard";
-import PatientCaseGallery from "@/components/Dashboard/Gallery/PatientCaseGallery";
 import { UserRole } from "@/types/role-types";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { auth } from "@clerk/nextjs";

@@ -4,7 +4,7 @@ import { SignUp as ClerkSignUp, useAuth } from "@clerk/nextjs";
 import LockedSignup from "@/components/Locked/LockedAuth";
 import { useState } from "react";
 import AppLoader from "@/components/Loaders/AppLoader";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 const SIGNUP_URLS = [
   "/signup/sso-callback",
@@ -14,6 +14,7 @@ const SIGNUP_URLS = [
 
 const SignUp = () => {
   const pathname = usePathname();
+
   const { isSignedIn, isLoaded } = useAuth();
   const [verified, setVerified] = useState(false);
 

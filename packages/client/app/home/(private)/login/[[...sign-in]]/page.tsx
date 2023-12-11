@@ -6,7 +6,7 @@ import { useState } from "react";
 import AppLoader from "@/components/Loaders/AppLoader";
 import { usePathname } from "next/navigation";
 
-const SIGNIN_URLS = ["/login/factor-one"];
+const SIGNIN_URLS = ["/login/factor-one", "/login/sso-callback"];
 
 const Login = () => {
   const pathname = usePathname();
