@@ -11,7 +11,7 @@ import "@mantine/notifications/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
-import "./globals.css";
+import "../globals.css";
 
 export const metadata = {
   title: "Formi",
@@ -25,32 +25,33 @@ const inter = Inter({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <ClerkProvider
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-    >
-      <html lang="en">
-        <head>
-          <link rel="icon" href="/favicon.ico" sizes="any" />
-          <link
-            rel="apple-touch-icon"
-            href="/apple-touch-icon.png"
-            type="image/png"
-            sizes="180x180"
-          />
-          <ColorSchemeScript />
-        </head>
-        <body className={`h-fit ${inter.className}`}>
-          <NextTopLoader showSpinner={false} />
-          <MantineProvider
-            theme={{
-              fontFamily: "var(--inter-font)",
-            }}
-          >
-            <Notifications autoClose={3000} />
-            {children}
-          </MantineProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    // <ClerkProvider
+    //   publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    // >
+    //   <html lang="en">
+    //     <head>
+    //       <link rel="icon" href="/favicon.ico" sizes="any" />
+    //       <link
+    //         rel="apple-touch-icon"
+    //         href="/apple-touch-icon.png"
+    //         type="image/png"
+    //         sizes="180x180"
+    //       />
+    //       <ColorSchemeScript />
+    //     </head>
+    //     <body className={`h-fit ${inter.className}`}>
+    //       <NextTopLoader showSpinner={false} />
+    //       <MantineProvider
+    //         theme={{
+    //           fontFamily: "var(--inter-font)",
+    //         }}
+    //       >
+    //         <Notifications autoClose={3000} />
+    //         {children}
+    //       </MantineProvider>
+    //     </body>
+    //   </html>
+    // </ClerkProvider>
+    <div>{children}</div>
   );
 }

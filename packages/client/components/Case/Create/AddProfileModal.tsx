@@ -1,4 +1,4 @@
-import { CaseForm } from "@/app/(private)/case/create/page";
+import { CaseForm } from "@/app/home/(private)/case/create/page";
 import { INITIAL_HISTORY } from "@/commons/constants/historyQuestions";
 import { ETHNICITIES, STATES } from "@/commons/constants/questions";
 import { Button } from "@/components/ui/button";
