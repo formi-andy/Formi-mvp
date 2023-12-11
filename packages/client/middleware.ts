@@ -30,7 +30,6 @@ export default authMiddleware({
     "/api/auth/signout",
     "/api/check-password",
   ],
-  authorizedParties: ["http://localhost:3000", "http://admin.localhost:3000"],
   debug: true,
   beforeAuth: (req) => {
     const url = req.nextUrl;
