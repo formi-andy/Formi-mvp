@@ -95,13 +95,6 @@ export default authMiddleware({
   async afterAuth(auth, req, evt) {
     const { hostname } = getURLParts(req);
 
-    console.log(
-      "====================== HOSTNAME: ",
-      hostname,
-      "======================"
-    );
-    console.log("auth", auth);
-
     if (
       auth.isPublicRoute ||
       hostname === `admin.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
@@ -164,41 +157,6 @@ function getURLParts(req: NextRequest) {
 
   return { hostname, path, url };
 }
-
-// export default authMiddleware({
-//   publicRoutes: ["/", "/home", "/[domain]/"],
-//   beforeAuth(req) {
-//     return rewrites(req)
-//   },
-//   afterAuth(auth, req) {
-//     const subdomain = getSubdomain(req);
-//     if (!auth.userId && subdomain === "app") {
-//       return redirectToSignIn({ returnBackUrl: req.url.replace("localhost", "app.localhost") })
-//     } else {
-//       return NextResponse.next()
-//     }
-//   },
-// })
-
-// export default authMiddleware({
-//   // publicRoutes: ["/", "/home", "/[domain]/"],
-//   beforeAuth(req) {
-//     return rewrites(req);
-//   },
-//   afterAuth(auth, req) {
-//     console.log("req", req);
-//     console.log("auth", auth);
-
-//     const subdomain = getSubdomain(req);
-//     if (!auth.userId && subdomain === "admin") {
-//       return redirectToSignIn({
-//         returnBackUrl: req.url.replace("localhost", "admin.localhost"),
-//       });
-//     } else {
-//       return NextResponse.next();
-//     }
-//   },
-// });
 
 function getSubdomain(req: NextRequest) {
   const hostname = req.headers.get("host") ?? req.nextUrl.host;

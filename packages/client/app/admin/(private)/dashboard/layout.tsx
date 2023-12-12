@@ -12,8 +12,6 @@ export default async function AdminLayout({
 }) {
   const { user } = auth();
 
-  // console.log("user: ", user);
-
   // check if user has formi.health email
   const hasFormiEmail = user?.emailAddresses.some((email) =>
     email.emailAddress.endsWith("@formi.health")

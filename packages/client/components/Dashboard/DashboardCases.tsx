@@ -22,12 +22,13 @@ export default function DashboardCases() {
   }
 
   return (
-    <div className="w-full lg:w-3/5 flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
-      <p className="text-2xl font-medium">Cases</p>
-      <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
-        <div className="w-full h-fit flex flex-col border rounded-lg">
+    <div className="relative w-full lg:w-3/5 flex flex-col rounded-lg gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:items-center">
+        <div
+          className={`w-full h-full flex flex-col rounded-lg ${style.glass}`}
+        >
           {currentReviewCase.length > 0 ? (
-            <div className="flex flex-col items-center h-[40vh] justify-center">
+            <div className="flex flex-col items-center p-4 h-[40vh] justify-center">
               <Link
                 className="flex flex-col gap-y-8"
                 href={`/case/${currentReviewCase[0].case_id}/review`}
@@ -43,8 +44,8 @@ export default function DashboardCases() {
               </Link>
             </div>
           ) : (
-            <div className="flex flex-col items-center h-[40vh] rounded-lg justify-center">
-              <div className="relative flex aspect-square w-3/4 justify-center mb-4">
+            <div className="flex flex-col items-center p-4 h-full rounded-lg justify-center">
+              <div className="relative flex aspect-square w-3/4 justify-center">
                 <Image
                   src="/assets/rest.png"
                   fill={true}
@@ -53,11 +54,13 @@ export default function DashboardCases() {
                   priority
                 />
               </div>
-              <p className="text-2xl font-light">No Active Case</p>
+              <p className="text-2xl font-light text-white">No Active Case</p>
             </div>
           )}
         </div>
-        <div className="w-full self-stretch p-4 flex items-center justify-center flex-col gap-4 rounded-lg relative overflow-hidden shadow-lg">
+        <div
+          className={`w-full h-full p-4 flex items-center justify-center flex-col gap-4 rounded-lg relative shadow-lg ${style.glass}`}
+        >
           <RingProgress
             size={200}
             thickness={6}
@@ -88,7 +91,6 @@ export default function DashboardCases() {
               </Button>
             </Link>
           </div>
-          <div className={style.bg3} />
         </div>
       </div>
     </div>

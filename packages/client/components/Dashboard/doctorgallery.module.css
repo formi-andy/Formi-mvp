@@ -1,5 +1,5 @@
 .bg1 {
-    @apply absolute h-full w-full inset-0 m-auto;
+    @apply absolute h-full w-full inset-0 m-auto blur-3xl;
     z-index: -1;
     background-color:#99ffec;
     background-image:
@@ -13,7 +13,7 @@
 }
 
 .bg2 {
-    @apply absolute h-full w-full inset-0 m-auto;
+    @apply absolute h-full w-full inset-0 m-auto blur-3xl;
     z-index: -1;
     background-color:#99b9ff;
     background-image:
@@ -27,14 +27,24 @@
 }
 
 .bg3 {
-    @apply absolute h-full w-full inset-0 m-auto;
+    @apply absolute h-full w-full inset-0 m-auto opacity-80;
     z-index: -1;
     background-color:#99b9ff;
-background-image:
-radial-gradient(at 35% 0%, hsla(262,66%,73%,1) 0px, transparent 50%),
-radial-gradient(at 14% 33%, hsla(210,62%,63%,1) 0px, transparent 50%),
-radial-gradient(at 17% 32%, hsla(163,97%,62%,1) 0px, transparent 50%),
-radial-gradient(at 7% 38%, hsla(232,80%,65%,1) 0px, transparent 50%),
-radial-gradient(at 31% 43%, hsla(302,73%,75%,1) 0px, transparent 50%),
-radial-gradient(at 23% 77%, hsla(260,78%,73%,1) 0px, transparent 50%);
+    background-image:
+    radial-gradient(at 35% 0%, hsla(262,66%,73%,1) 0px, transparent 50%),
+    radial-gradient(at 14% 33%, hsla(210,62%,63%,1) 0px, transparent 50%),
+    radial-gradient(at 17% 32%, hsla(163,97%,62%,1) 0px, transparent 50%),
+    radial-gradient(at 7% 38%, hsla(232,80%,65%,1) 0px, transparent 50%),
+    radial-gradient(at 31% 43%, hsla(302,73%,75%,1) 0px, transparent 50%),
+    radial-gradient(at 23% 77%, hsla(260,78%,73%,1) 0px, transparent 50%);
+}
+
+.glass {
+    /* background: rgba(255, 255, 255, 0.2); */
+    background: rgba(198, 198, 198, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
