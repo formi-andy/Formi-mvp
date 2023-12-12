@@ -8,14 +8,15 @@ import {
 } from "./_generated/server";
 
 import { ConvexError, v } from "convex/values";
-import { Doc, Id } from "./_generated/dataModel";
-import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
+import { mustGetCurrentUser } from "./users";
+import { EmailAddressJSON } from "@clerk/clerk-sdk-node";
 
-export const createPracticeQuestion = internalMutation({
+export const createPracticeQuestion = mutation({
   args: {
     question: v.string(),
     choices: v.array(v.string()),
-    answer: v.number(),
+    answer: v.string(),
     explanation: v.array(v.string()),
     summary: v.string(),
     tags: v.array(v.string()),
@@ -24,6 +25,19 @@ export const createPracticeQuestion = internalMutation({
     ctx,
     { question, choices, answer, explanation, summary, tags }
   ) => {
+    const user = await mustGetCurrentUser(ctx);
+    const formiEmail = user.clerkUser.email_addresses.find(
+      (emailAddress: EmailAddressJSON) =>
+        emailAddress.email_address.endsWith("formi.health")
+    );
+
+    if (!formiEmail) {
+      throw new ConvexError({
+        message: "Unauthorized",
+        code: 401,
+      });
+    }
+
     // check if question already exists
     const existingQuestion = await ctx.db
       .query("practice_questions")
@@ -33,7 +47,7 @@ export const createPracticeQuestion = internalMutation({
     if (existingQuestion) {
       throw new ConvexError({
         message: "Question already exists",
-        code: 400,
+        code: 409,
       });
     }
 
@@ -98,7 +112,7 @@ export const updatePracticeQuestion = internalMutation({
     practiceQuestionId: v.id("practice_questions"),
     question: v.optional(v.string()),
     choices: v.optional(v.array(v.string())),
-    answer: v.optional(v.number()),
+    answer: v.optional(v.string()),
     explanation: v.optional(v.array(v.string())),
     summary: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),

@@ -266,9 +266,10 @@ export default defineSchema({
   practice_questions: defineTable({
     question: v.string(),
     choices: v.array(v.string()),
-    answer: v.number(),
+    answer: v.string(),
     explanation: v.array(v.string()),
     summary: v.string(),
+    images: v.optional(v.array(v.string())),
   })
     .index("by_question", ["question"])
     .index("by_answer", ["answer"]),

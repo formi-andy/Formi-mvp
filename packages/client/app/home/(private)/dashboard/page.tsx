@@ -28,7 +28,9 @@ export default async function Dashboard() {
           <DoctorDashboard />
         )}
       </div>
-      <div className={`${style.bg3}`} />
+      {user.publicMetadata.role !== UserRole.Patient && (
+        <div className={`${style.bg3}`} />
+      )}
     </>
   );
 }

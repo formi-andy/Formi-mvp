@@ -135,8 +135,8 @@ function getURLParts(req: NextRequest) {
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   let hostname = req.headers
     .get("host")!
-    .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
-
+    .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
+    .replace(process.env.NEXT_PREVIEW_URL || "", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
   // special case for Vercel preview deployment URLs
   if (
     hostname.includes("---") &&
