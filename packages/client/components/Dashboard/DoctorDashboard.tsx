@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import DashboardCases from "./DashboardCases";
 import style from "./doctorgallery.module.css";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 // 408df5
 
@@ -88,13 +89,11 @@ export default function DoctorDashboard() {
               />
             ))}
           </div>
-          <Button
-            variant="action"
-            onClick={() => {}}
-            disabled={selectedTags.size === 0}
-          >
-            Start
-          </Button>
+          <Link href="/practice">
+            <Button className="w-full" variant="action">
+              Start
+            </Button>
+          </Link>
         </div>
         <div
           className={`flex flex-col rounded-lg min-h-[200px] p-3 lg:p-6 gap-4 relative ${style.glass}`}
