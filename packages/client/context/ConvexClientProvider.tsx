@@ -11,7 +11,7 @@ export default async function ConvexClientProvider({
   return (
     <ConvexContext>
       <Header />
-      <div className="px-4 md:px-8 min-h-[calc(100vh_-_152px)] py-8 relative">
+      <div className="px-4 md:px-8 min-h-[calc(100vh_-_117px)] py-8 flex flex-col relative">
         {children}
       </div>
       <Footer />

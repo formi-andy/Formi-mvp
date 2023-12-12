@@ -5,7 +5,6 @@ import { UserRole } from "@/types/role-types";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { auth } from "@clerk/nextjs";
 
-// TODO: Move this to ssr after convex supports server side reactive queries
 export default async function PracticePage() {
   const { userId } = auth();
   const user = await clerkClient.users.getUser(userId || "");
@@ -19,7 +18,7 @@ export default async function PracticePage() {
 
   if (user.publicMetadata.role === UserRole.MedicalStudent) {
     return (
-      <div>
+      <div className="grid w-full h-full items-center">
         <Question hash={hash} />
       </div>
     );

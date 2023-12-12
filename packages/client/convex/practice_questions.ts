@@ -247,9 +247,10 @@ export const getRandomPracticeQuestion = query({
     seenQuestions: v.optional(v.array(v.id("practice_questions"))),
   },
   async handler(ctx, args) {
-    // TODO: make more efficient
     let uniqueIds: Set<Id<"practice_questions">>;
 
+    // TODO: make more efficient, right now it scans all questions
+    // when tags are provided, it fires off a query for each tag (OPTIMIZE LATER)
     if (args.tags) {
       const matchingPostTags = (
         await Promise.all(

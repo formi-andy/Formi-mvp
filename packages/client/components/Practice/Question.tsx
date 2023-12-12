@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { Radio } from "@mantine/core";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
+import style from "../Dashboard/doctorgallery.module.css";
 
 export default function Question({ hash }: { hash: string }) {
   const [seenQuestions, setSeenQuestions] = useState<string[]>([]);
@@ -40,7 +41,11 @@ export default function Question({ hash }: { hash: string }) {
   );
 
   if (question === null) {
-    return <p>All questions answered</p>;
+    return (
+      <div className="lg:max-w-2xl flex flex-col justify-self-center border rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 h-[40vh] w-full">
+        All questions have been answered 😎
+      </div>
+    );
   }
 
   if (question === undefined) {
@@ -48,7 +53,7 @@ export default function Question({ hash }: { hash: string }) {
   }
 
   return (
-    <div className="grid border rounded-lg p-3 sm:p-6 gap-3 lg:gap-6">
+    <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 lg:max-w-2xl justify-self-center shadow-accent-2">
       <div>
         <p className="font-medium">Question</p>
         {question.question ?? "Loading..."}
@@ -71,7 +76,7 @@ export default function Question({ hash }: { hash: string }) {
                 label={answer}
                 classNames={{
                   radio: "cursor-pointer",
-                  label: "cursor-pointer",
+                  label: "cursor-pointer data-[disabled]:text-neutral-500",
                 }}
               />
             );
@@ -124,7 +129,7 @@ export default function Question({ hash }: { hash: string }) {
               } else {
                 toast.error({
                   title: "Incorrect",
-                  message: "Click show explanation for the reason why",
+                  message: "Click Show Explanation for more details",
                 });
                 setCorrect(false);
               }
@@ -147,7 +152,7 @@ export default function Question({ hash }: { hash: string }) {
         <div className="flex gap-x-4">
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full border-primary/10"
             onClick={() => {
               setExplanation({
                 ...explanation,

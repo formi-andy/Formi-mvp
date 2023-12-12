@@ -23,7 +23,7 @@ const SignUp = () => {
   }
 
   return (
-    <div className="flex flex-1 h-[calc(100vh_-_152px)] justify-center items-center flex-col w-full">
+    <div className="grid w-full h-full items-center justify-center">
       {isSignedIn || verified || SIGNUP_URLS.includes(pathname) ? (
         <ClerkSignUp
           path="/signup"
