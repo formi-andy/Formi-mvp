@@ -204,6 +204,7 @@ export const checkPracticeQuestionAnswer = action({
   ): Promise<{
     correct: boolean;
     explanation: string[];
+    answer: string;
   }> {
     const practiceQuestion: {
       _id: Id<"practice_questions">;
@@ -227,11 +228,13 @@ export const checkPracticeQuestionAnswer = action({
       return {
         correct: true,
         explanation: practiceQuestion.explanation,
+        answer: practiceQuestion.answer,
       };
     } else {
       return {
         correct: false,
         explanation: practiceQuestion.explanation,
+        answer: practiceQuestion.answer,
       };
     }
   },
@@ -245,13 +248,8 @@ export const getRandomPracticeQuestion = query({
   },
   async handler(ctx, args) {
     // TODO: make more efficient
+    let uniqueIds: Set<Id<"practice_questions">>;
 
-    let strippedPracticeQuestion: {
-      _id: Id<"practice_questions">;
-      question: string;
-      choices: string[];
-      images?: string[];
-    } | null = null;
     if (args.tags) {
       const matchingPostTags = (
         await Promise.all(
@@ -264,81 +262,50 @@ export const getRandomPracticeQuestion = query({
         )
       ).flat();
 
-      let uniquePracticeQuestionIds = new Set(
+      uniqueIds = new Set(
         matchingPostTags.map((obj) => obj.practice_question_id)
       );
-      if (args.seenQuestions) {
-        const seenQuestionIds = new Set(args.seenQuestions);
-        uniquePracticeQuestionIds = new Set(
-          Array.from(uniquePracticeQuestionIds).filter(
-            (id) => !seenQuestionIds.has(id)
-          )
-        );
-      }
-
-      const uniquePracticeQuestionIdsArray = Array.from(
-        uniquePracticeQuestionIds
-      );
-
-      if (uniquePracticeQuestionIdsArray.length === 0) {
-        return null;
-      }
-
-      const randomPracticeQuestionId =
-        uniquePracticeQuestionIdsArray[
-          Math.floor(Math.random() * uniquePracticeQuestionIdsArray.length)
-        ];
-      const randomPracticeQuestion = await ctx.db.get(randomPracticeQuestionId);
-
-      if (!randomPracticeQuestion)
-        throw new ConvexError({
-          message: "Practice question not found",
-          code: 404,
-        });
-
-      strippedPracticeQuestion = {
-        _id: randomPracticeQuestion._id,
-        question: randomPracticeQuestion.question,
-        choices: randomPracticeQuestion.choices,
-        images: randomPracticeQuestion.images,
-      };
     } else {
       const practiceQuestions = await ctx.db
         .query("practice_questions")
         .collect();
 
-      if (args.seenQuestions) {
-        const seenQuestionIds = new Set(args.seenQuestions);
-        const filteredPracticeQuestions = practiceQuestions.filter(
-          (practiceQuestion) => !seenQuestionIds.has(practiceQuestion._id)
-        );
-
-        if (filteredPracticeQuestions.length === 0) {
-          return null;
-        }
-
-        const randomPracticeQuestion =
-          filteredPracticeQuestions[
-            Math.floor(Math.random() * filteredPracticeQuestions.length)
-          ];
-        strippedPracticeQuestion = {
-          _id: randomPracticeQuestion._id,
-          question: randomPracticeQuestion.question,
-          choices: randomPracticeQuestion.choices,
-          images: randomPracticeQuestion.images,
-        };
-      }
-
-      const randomPracticeQuestion =
-        practiceQuestions[Math.floor(Math.random() * practiceQuestions.length)];
-
-      strippedPracticeQuestion = {
-        _id: randomPracticeQuestion._id,
-        question: randomPracticeQuestion.question,
-        choices: randomPracticeQuestion.choices,
-        images: randomPracticeQuestion.images,
-      };
+      uniqueIds = new Set(practiceQuestions.map((obj) => obj._id));
     }
+
+    if (args.seenQuestions) {
+      const seenQuestionIds = new Set(args.seenQuestions);
+      uniqueIds = new Set(
+        Array.from(uniqueIds).filter((id) => !seenQuestionIds.has(id))
+      );
+    }
+
+    // all questions have been seen
+    if (uniqueIds.size === 0) {
+      return null;
+    }
+
+    const uniquePracticeQuestions = Array.from(uniqueIds);
+
+    const randomId =
+      uniquePracticeQuestions[
+        Math.floor(Math.random() * uniquePracticeQuestions.length)
+      ];
+
+    const randomPracticeQuestion = await ctx.db.get(randomId);
+
+    if (!randomPracticeQuestion)
+      throw new ConvexError({
+        message: "Practice question not found",
+        code: 404,
+      });
+
+    const strippedPracticeQuestion = {
+      _id: randomPracticeQuestion._id,
+      question: randomPracticeQuestion.question,
+      choices: randomPracticeQuestion.choices,
+      images: randomPracticeQuestion.images,
+    };
 
     const randomizedChoices = strippedPracticeQuestion.choices.sort(
       () => Math.random() - 0.5

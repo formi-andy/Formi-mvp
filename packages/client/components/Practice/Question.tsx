@@ -20,9 +20,11 @@ export default function Question({ hash }: { hash: string }) {
   const [explanation, setExplanation] = useState<{
     show: boolean;
     explanation: string[];
+    answer: string;
   }>({
     show: false,
     explanation: [],
+    answer: "",
   });
   const [correct, setCorrect] = useState<boolean | undefined>(undefined);
   const [loading, setLoading] = useState(false);
@@ -63,6 +65,7 @@ export default function Question({ hash }: { hash: string }) {
           {question.choices.map((answer, i) => {
             return (
               <Radio
+                disabled={correct !== undefined}
                 key={i}
                 value={answer}
                 label={answer}
@@ -75,6 +78,10 @@ export default function Question({ hash }: { hash: string }) {
           })}
         </div>
       </Radio.Group>
+      <div>
+        <p className="font-medium">Correct Answer</p>
+        {explanation.answer}
+      </div>
       {explanation.show && (
         <div>
           <p className="font-medium">Explanation</p>
@@ -107,6 +114,7 @@ export default function Question({ hash }: { hash: string }) {
               setExplanation({
                 ...explanation,
                 explanation: res.explanation,
+                answer: res.answer,
               });
               if (res.correct) {
                 toast.success({
@@ -116,7 +124,7 @@ export default function Question({ hash }: { hash: string }) {
               } else {
                 toast.error({
                   title: "Incorrect",
-                  message: "",
+                  message: "Click show explanation for the reason why",
                 });
                 setCorrect(false);
               }
@@ -158,6 +166,7 @@ export default function Question({ hash }: { hash: string }) {
               setExplanation({
                 show: false,
                 explanation: [],
+                answer: "",
               });
               setSeenQuestions([...seenQuestions, question._id]);
             }}
