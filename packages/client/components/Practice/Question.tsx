@@ -6,10 +6,10 @@ import { useAction, useQuery } from "convex/react";
 import { useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
-import { Radio } from "@mantine/core";
+import { Loader, Radio } from "@mantine/core";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
-import style from "../Dashboard/doctorgallery.module.css";
+import style from "./question.module.css";
 
 export default function Question({ hash }: { hash: string }) {
   const [seenQuestions, setSeenQuestions] = useState<string[]>([]);
@@ -42,21 +42,25 @@ export default function Question({ hash }: { hash: string }) {
 
   if (question === null) {
     return (
-      <div className="lg:max-w-2xl flex flex-col justify-self-center border rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 h-[40vh] w-full">
+      <div className="lg:max-w-2xl flex flex-col justify-self-center rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 h-[40vh] w-full shadow-accent-2">
         All questions have been answered 😎
       </div>
     );
   }
 
   if (question === undefined) {
-    return <p>Loading...</p>;
+    return (
+      <div className="lg:max-w-2xl flex flex-col justify-self-center justify-center items-center rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 h-[40vh] w-full shadow-accent-2">
+        <div className={style.loader}></div>
+      </div>
+    );
   }
 
   return (
     <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 lg:max-w-2xl justify-self-center shadow-accent-2">
       <div>
         <p className="font-medium">Question</p>
-        {question.question ?? "Loading..."}
+        {question.question}
       </div>
       <Radio.Group
         required
