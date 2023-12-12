@@ -11,6 +11,7 @@ import { ConvexError, v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 import { mustGetCurrentUser } from "./users";
 import { EmailAddressJSON } from "@clerk/clerk-sdk-node";
+import { api } from "./_generated/api";
 
 export const createPracticeQuestion = mutation({
   args: {
@@ -192,13 +193,65 @@ export const updatePracticeQuestion = internalMutation({
   },
 });
 
+export const checkPracticeQuestionAnswer = action({
+  args: {
+    practiceQuestionId: v.id("practice_questions"),
+    answer: v.string(),
+  },
+  async handler(
+    ctx,
+    { practiceQuestionId, answer }
+  ): Promise<{
+    correct: boolean;
+    explanation: string[];
+  }> {
+    const practiceQuestion: {
+      _id: Id<"practice_questions">;
+      _creationTime: number;
+      images?: string[] | undefined;
+      answer: string;
+      question: string;
+      choices: string[];
+      explanation: string[];
+      summary: string;
+    } | null = await ctx.runQuery(api.practice_questions.getPracticeQuestion, {
+      practiceQuestionId,
+    });
+    if (!practiceQuestion)
+      throw new ConvexError({
+        message: "Practice question not found",
+        code: 404,
+      });
+
+    if (practiceQuestion.answer === answer) {
+      return {
+        correct: true,
+        explanation: practiceQuestion.explanation,
+      };
+    } else {
+      return {
+        correct: false,
+        explanation: practiceQuestion.explanation,
+      };
+    }
+  },
+});
+
 export const getRandomPracticeQuestion = query({
   args: {
+    hash: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
     seenQuestions: v.optional(v.array(v.id("practice_questions"))),
   },
   async handler(ctx, args) {
     // TODO: make more efficient
+
+    let strippedPracticeQuestion: {
+      _id: Id<"practice_questions">;
+      question: string;
+      choices: string[];
+      images?: string[];
+    } | null = null;
     if (args.tags) {
       const matchingPostTags = (
         await Promise.all(
@@ -215,7 +268,7 @@ export const getRandomPracticeQuestion = query({
         matchingPostTags.map((obj) => obj.practice_question_id)
       );
       if (args.seenQuestions) {
-        const seenQuestionIds = new Set(...args.seenQuestions);
+        const seenQuestionIds = new Set(args.seenQuestions);
         uniquePracticeQuestionIds = new Set(
           Array.from(uniquePracticeQuestionIds).filter(
             (id) => !seenQuestionIds.has(id)
@@ -243,39 +296,57 @@ export const getRandomPracticeQuestion = query({
           code: 404,
         });
 
-      const strippedPracticeQuestion = {
+      strippedPracticeQuestion = {
         _id: randomPracticeQuestion._id,
         question: randomPracticeQuestion.question,
         choices: randomPracticeQuestion.choices,
         images: randomPracticeQuestion.images,
       };
-      return strippedPracticeQuestion;
-    }
+    } else {
+      const practiceQuestions = await ctx.db
+        .query("practice_questions")
+        .collect();
 
-    const practiceQuestions = await ctx.db
-      .query("practice_questions")
-      .collect();
+      if (args.seenQuestions) {
+        const seenQuestionIds = new Set(args.seenQuestions);
+        const filteredPracticeQuestions = practiceQuestions.filter(
+          (practiceQuestion) => !seenQuestionIds.has(practiceQuestion._id)
+        );
 
-    if (args.seenQuestions) {
-      const seenQuestionIds = new Set(...args.seenQuestions);
-      const filteredPracticeQuestions = practiceQuestions.filter(
-        (practiceQuestion) => !seenQuestionIds.has(practiceQuestion._id)
-      );
+        if (filteredPracticeQuestions.length === 0) {
+          return null;
+        }
 
-      if (filteredPracticeQuestions.length === 0) {
-        return null;
+        const randomPracticeQuestion =
+          filteredPracticeQuestions[
+            Math.floor(Math.random() * filteredPracticeQuestions.length)
+          ];
+        strippedPracticeQuestion = {
+          _id: randomPracticeQuestion._id,
+          question: randomPracticeQuestion.question,
+          choices: randomPracticeQuestion.choices,
+          images: randomPracticeQuestion.images,
+        };
       }
 
       const randomPracticeQuestion =
-        filteredPracticeQuestions[
-          Math.floor(Math.random() * filteredPracticeQuestions.length)
-        ];
-      return randomPracticeQuestion;
+        practiceQuestions[Math.floor(Math.random() * practiceQuestions.length)];
+
+      strippedPracticeQuestion = {
+        _id: randomPracticeQuestion._id,
+        question: randomPracticeQuestion.question,
+        choices: randomPracticeQuestion.choices,
+        images: randomPracticeQuestion.images,
+      };
     }
 
-    const randomPracticeQuestion =
-      practiceQuestions[Math.floor(Math.random() * practiceQuestions.length)];
+    const randomizedChoices = strippedPracticeQuestion.choices.sort(
+      () => Math.random() - 0.5
+    );
 
-    return randomPracticeQuestion;
+    return {
+      ...strippedPracticeQuestion,
+      choices: randomizedChoices,
+    };
   },
 });

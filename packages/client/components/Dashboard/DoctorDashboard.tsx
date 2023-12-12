@@ -89,7 +89,19 @@ export default function DoctorDashboard() {
               />
             ))}
           </div>
-          <Link href="/practice">
+          <Link
+            href="practice"
+            onClick={() => {
+              if (selectedTags.size === 0) {
+                localStorage.removeItem("practice-tags");
+              } else {
+                localStorage.setItem(
+                  "practice-tags",
+                  JSON.stringify(Array.from(selectedTags))
+                );
+              }
+            }}
+          >
             <Button className="w-full" variant="action">
               Start
             </Button>
