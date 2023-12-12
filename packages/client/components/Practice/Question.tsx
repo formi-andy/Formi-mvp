@@ -6,10 +6,12 @@ import { useAction, useQuery } from "convex/react";
 import { useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
-import { Loader, Radio } from "@mantine/core";
+import { Radio } from "@mantine/core";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
 import style from "./question.module.css";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Question({ hash }: { hash: string }) {
   const [seenQuestions, setSeenQuestions] = useState<string[]>([]);
@@ -42,8 +44,22 @@ export default function Question({ hash }: { hash: string }) {
 
   if (question === null) {
     return (
-      <div className="lg:max-w-2xl flex flex-col justify-self-center rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 h-[40vh] w-full shadow-accent-2">
-        All questions have been answered 😎
+      <div className="lg:max-w-2xl gap-x-4 flex flex-col justify-self-center justify-center items-center rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 h-[40vh] w-full shadow-accent-2">
+        <div className="relative flex aspect-square w-3/4 justify-center">
+          <Image
+            src="/assets/mountain.png"
+            fill={true}
+            className="w-full h-full object-contain"
+            alt="No Images Found"
+            priority
+          />
+        </div>
+        <p className="text-lg"> All questions have been answered 😎</p>
+        <Link href="/dashboard">
+          <Button variant="link" className="text-lg">
+            Back to Dashboard
+          </Button>
+        </Link>
       </div>
     );
   }
@@ -51,7 +67,7 @@ export default function Question({ hash }: { hash: string }) {
   if (question === undefined) {
     return (
       <div className="lg:max-w-2xl flex flex-col justify-self-center justify-center items-center rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 h-[40vh] w-full shadow-accent-2">
-        <div className={style.loader}></div>
+        <div className={style.loader} />
       </div>
     );
   }
