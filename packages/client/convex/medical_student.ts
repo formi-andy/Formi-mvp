@@ -129,3 +129,11 @@ export const setEmailMetadata = action({
     });
   },
 });
+
+export const getCurrentMedicalStudent = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await mustGetCurrentUser(ctx);
+    return mustGetMedicalStudentbyId(ctx, user._id);
+  },
+});

@@ -27,7 +27,7 @@
 }
 
 .bg3 {
-    @apply absolute h-full w-full inset-0 m-auto opacity-80;
+    @apply absolute h-full w-full inset-0 m-auto opacity-90;
     z-index: -1;
     background-color:#99b9ff;
     background-image:
