@@ -42,9 +42,10 @@ export default function EditQuestion() {
   return (
     <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
       <p className="text-lg font-medium">
-        Do not include quotations in the fields<br />
-        For choices, explanation and tags, do not include the square brackets,
-        and each entry should be separated by a comma and a space
+        Do not include quotations in the fields
+        <br />
+        For choices, explanation, and tags do not include the square brackets.
+        Each of these fields should be separated by a comma and a space
       </p>
       {searched ? (
         <>
