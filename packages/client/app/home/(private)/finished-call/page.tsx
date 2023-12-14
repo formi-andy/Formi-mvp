@@ -8,7 +8,7 @@ const FinishedCall = () => {
   const [notes, setNotes] = useState("");
 
   return (
-    <div className="w-full flex flex-col gap-y-4 items-center justify-center min-h-[calc(100vh_-_152px)]">
+    <div className="w-full flex flex-col gap-y-4 items-center justify-center min-h-[calc(100vh_-_117px)]">
       <p className="text-2xl text-center">Thanks for using Formi!</p>
       <div className="w-fit flex flex-col sm:flex-row gap-4">
         <Link

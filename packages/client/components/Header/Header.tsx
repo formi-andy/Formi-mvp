@@ -11,7 +11,7 @@ export default async function Header() {
   const { userId } = auth();
 
   return (
-    <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 mb-8">
+    <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 bg-white">
       <Link href="/" className={styles.headerLogo}>
         <Image
           priority

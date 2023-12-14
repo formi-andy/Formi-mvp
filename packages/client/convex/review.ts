@@ -177,6 +177,7 @@ export const submitReview = mutation({
         .withIndex("by_case_id", (q) => q.eq("case_id", case_id))
         .collect(),
     ]);
+    const medicalStudent = await mustGetMedicalStudentbyId(ctx, user._id);
 
     const existingReview = existingReviews.find(
       (review) => review.user_id === user._id
@@ -198,11 +199,16 @@ export const submitReview = mutation({
 
     const sanitizedNotes = sanitizeHtml(notes || "");
 
-    await ctx.db.patch(existingReview._id, {
-      notes: sanitizedNotes,
-      status: ReviewStatus.Completed,
-      updated_at: Date.now(),
-    });
+    await Promise.all([
+      ctx.db.patch(medicalStudent._id, {
+        total_reviews: medicalStudent.total_reviews + 1,
+      }),
+      ctx.db.patch(existingReview._id, {
+        notes: sanitizedNotes,
+        status: ReviewStatus.Completed,
+        updated_at: Date.now(),
+      }),
+    ]);
 
     for (let i = 0; i < existingReviews.length; i++) {
       const review = existingReviews[i];

@@ -78,6 +78,9 @@ export default defineSchema({
   }).index("by_clerk_id", ["clerkUser.id"]),
   medical_student: defineTable({
     user_id: v.id("users"),
+    total_reviews: v.number(),
+    correct_reviews: v.number(),
+    incorrect_reviews: v.number(),
     school: v.string(),
     email: v.string(),
     bio: v.optional(v.string()),
@@ -260,4 +263,20 @@ export default defineSchema({
     .index("by_created_by", ["created_by"])
     .index("by_user_id_and_created_by", ["user_id", "created_by"])
     .index("by_profile_id", ["profile_id"]),
+  practice_question: defineTable({
+    question: v.string(),
+    choices: v.array(v.string()),
+    answer: v.string(),
+    explanation: v.array(v.string()),
+    summary: v.string(),
+    images: v.optional(v.array(v.string())),
+  })
+    .index("by_question", ["question"])
+    .index("by_answer", ["answer"]),
+  practice_question_tag: defineTable({
+    practice_question_id: v.id("practice_question"),
+    tag: v.string(),
+  })
+    .index("by_practice_question_id", ["practice_question_id"])
+    .index("by_tag", ["tag"]),
 });

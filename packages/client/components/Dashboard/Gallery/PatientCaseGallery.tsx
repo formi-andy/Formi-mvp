@@ -12,13 +12,13 @@ const PatientCaseGallery: React.FC = () => {
   });
 
   return (
-    <>
+    <div className="w-full flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
       {renderCases({
         cases: medicalCasesByDate,
         title: "Cases",
         emptyComponent: <NoCases />,
       })}
-    </>
+    </div>
   );
 };
 

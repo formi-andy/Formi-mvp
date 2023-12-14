@@ -1,4 +1,4 @@
-import { CaseForm } from "@/app/(private)/case/create/page";
+import { CaseForm } from "@/app/home/(private)/case/create/page";
 import Cough from "./Questions/Cough";
 import AbdominalPain from "./Questions/AbdominalPain";
 import Earache from "./Questions/Earache";

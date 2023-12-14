@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function PrivateLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-col h-fit min-h-screen">
+    <div className="grid h-fit min-h-screen">
       <ConvexClientProvider>{children}</ConvexClientProvider>
     </div>
   );

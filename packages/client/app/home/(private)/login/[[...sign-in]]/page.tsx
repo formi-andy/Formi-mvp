@@ -6,7 +6,7 @@ import { useState } from "react";
 import AppLoader from "@/components/Loaders/AppLoader";
 import { usePathname } from "next/navigation";
 
-const SIGNIN_URLS = ["/login/factor-one"];
+const SIGNIN_URLS = ["/login/factor-one", "/login/sso-callback"];
 
 const Login = () => {
   const pathname = usePathname();
@@ -18,7 +18,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex flex-1 h-[calc(100vh_-_152px)] justify-center items-center flex-col w-full">
+    <div className="grid w-full h-full items-center justify-center">
       {isSignedIn || verified || SIGNIN_URLS.includes(pathname) ? (
         <SignIn path="/login" redirectUrl={"/dashboard"} />
       ) : (

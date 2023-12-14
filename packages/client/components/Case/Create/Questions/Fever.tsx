@@ -1,4 +1,4 @@
-import { CaseForm } from "@/app/(private)/case/create/page";
+import { CaseForm } from "@/app/home/(private)/case/create/page";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea, TextInput } from "@mantine/core";
 
