@@ -72,11 +72,12 @@ export default function DoctorDashboard() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
   return (
-    <>
+    <div className="grid gap-3 sm:gap-6 max-w-4xl self-center justify-self-center">
       <DashboardCases />
-      <div className="flex w-full lg:w-2/5 flex-col gap-4 md:gap-6 lg:gap-8">
+      {/* <div className="flex w-full lg:w-2/5 flex-col gap-4 md:gap-6 lg:gap-8"> */}
+      <div className="grid gap-3 lg:gap-6">
         <div
-          className={`flex flex-col rounded-lg min-h-[200px] p-3 lg:p-6 gap-4 relative ${style.glass}`}
+          className={`grid rounded-lg min-h-[200px] p-3 sm:p-6 gap-3 relative ${style.glass}`}
         >
           <p className="text-2xl font-medium text-white">Practice</p>
           <div className="flex flex-wrap gap-3">
@@ -107,12 +108,12 @@ export default function DoctorDashboard() {
             </Button>
           </Link>
         </div>
-        <div
+        {/* <div
           className={`flex flex-col rounded-lg min-h-[200px] p-3 lg:p-6 gap-4 relative ${style.glass}`}
         >
           <p className="text-2xl font-medium text-white">Feedback</p>
-        </div>
+        </div> */}
       </div>
-    </>
+    </div>
   );
 }

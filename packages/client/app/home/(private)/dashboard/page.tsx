@@ -14,7 +14,7 @@ export default async function Dashboard() {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen lg:flex-row gap-4 md:gap-6 lg:gap-8 relative">
+      <div className="grid min-h-screen relative">
         {/* <div className="w-full lg:w-3/5 flex flex-col border rounded-lg p-4 lg:p-8 gap-4">
         <Gallery />
       </div>
