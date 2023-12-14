@@ -33,13 +33,13 @@ export default function Question({ hash }: { hash: string }) {
   const [loading, setLoading] = useState(false);
   const toast = useNetworkToasts();
 
-  const question = useQuery(api.practice_questions.getRandomPracticeQuestion, {
+  const question = useQuery(api.practice_question.getRandomPracticeQuestion, {
     hash,
     tags,
-    seenQuestions: seenQuestions as Id<"practice_questions">[],
+    seenQuestions: seenQuestions as Id<"practice_question">[],
   });
   const checkAnswer = useAction(
-    api.practice_questions.checkPracticeQuestionAnswer
+    api.practice_question.checkPracticeQuestionAnswer
   );
 
   if (question === null) {

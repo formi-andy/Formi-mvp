@@ -10,15 +10,15 @@ import { ConvexError } from "convex/values";
 
 export default function AddQuestion() {
   const createQuestion = useMutation(
-    api.practice_questions.createPracticeQuestion
+    api.practice_question.createPracticeQuestion
   );
   const [question, setQuestion] = useState("");
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="border rounded-lg flex flex-col gap-y-4 p-4 max-w-2xl w-full">
-      Add Practice Question
+    <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
+      <p className="text-lg font-medium">Enter the question in JSON format</p>
       <Textarea
         value={question}
         onChange={(e) => setQuestion(e.currentTarget.value)}

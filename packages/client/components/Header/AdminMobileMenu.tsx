@@ -47,11 +47,8 @@ export default function AdminMobileMenu() {
         }}
       >
         <SignedIn>
-          <MobileNavLink to={`/create`} onClick={() => setOpened(false)}>
-            Create Question
-          </MobileNavLink>
-          <MobileNavLink to={`/edit`} onClick={() => setOpened(false)}>
-            Edit Question
+          <MobileNavLink to={`/dashboard`} onClick={() => setOpened(false)}>
+            Dashboard
           </MobileNavLink>
           <div className="relative left-4 md:left-8">
             <UserButton afterSignOutUrl="/login" />

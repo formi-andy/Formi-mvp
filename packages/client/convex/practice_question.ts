@@ -41,7 +41,7 @@ export const createPracticeQuestion = mutation({
 
     // check if question already exists
     const existingQuestion = await ctx.db
-      .query("practice_questions")
+      .query("practice_question")
       .withIndex("by_question", (q) => q.eq("question", question))
       .first();
 
@@ -52,7 +52,7 @@ export const createPracticeQuestion = mutation({
       });
     }
 
-    const practiceQuestion = await ctx.db.insert("practice_questions", {
+    const practiceQuestion = await ctx.db.insert("practice_question", {
       question,
       choices,
       answer,
@@ -63,7 +63,7 @@ export const createPracticeQuestion = mutation({
     // add tags
     await Promise.all(
       tags.map(async (tag) => {
-        await ctx.db.insert("practice_question_tags", {
+        await ctx.db.insert("practice_question_tag", {
           practice_question_id: practiceQuestion,
           tag,
         });
@@ -74,85 +74,8 @@ export const createPracticeQuestion = mutation({
   },
 });
 
-export const editPracticeQuestion = mutation({
-  args: {
-    question: v.string(),
-    choices: v.array(v.string()),
-    answer: v.string(),
-    explanation: v.array(v.string()),
-    summary: v.string(),
-    tags: v.array(v.string()),
-    images: v.optional(v.array(v.string())),
-  },
-  handler: async (
-    ctx,
-    { question, choices, answer, explanation, summary, tags, images }
-  ) => {
-    const user = await mustGetCurrentUser(ctx);
-    const formiEmail = user.clerkUser.email_addresses.find(
-      (emailAddress: EmailAddressJSON) =>
-        emailAddress.email_address.endsWith("formi.health")
-    );
-
-    if (!formiEmail) {
-      throw new ConvexError({
-        message: "Unauthorized",
-        code: 401,
-      });
-    }
-
-    // check if question already exists
-    const existingQuestion = await ctx.db
-      .query("practice_questions")
-      .withIndex("by_question", (q) => q.eq("question", question))
-      .first();
-
-    if (!existingQuestion) {
-      throw new ConvexError({
-        message: "Question doesn't exist",
-        code: 404,
-      });
-    }
-
-    const updatedQuestion = await ctx.db.patch(existingQuestion._id, {
-      question,
-      choices,
-      answer,
-      explanation,
-      summary,
-      images,
-    });
-
-    // delete existing tags
-    const existingTags = await ctx.db
-      .query("practice_question_tags")
-      .withIndex("by_practice_question_id", (q) =>
-        q.eq("practice_question_id", existingQuestion._id)
-      )
-      .collect();
-
-    await Promise.all(
-      existingTags.map(async (tag) => {
-        await ctx.db.delete(tag._id);
-      })
-    );
-
-    // add tags
-    await Promise.all(
-      tags.map(async (tag) => {
-        await ctx.db.insert("practice_question_tags", {
-          practice_question_id: existingQuestion._id,
-          tag,
-        });
-      })
-    );
-
-    return updatedQuestion;
-  },
-});
-
 export const getPracticeQuestion = query({
-  args: { practiceQuestionId: v.id("practice_questions") },
+  args: { practiceQuestionId: v.id("practice_question") },
   async handler(ctx, args) {
     return ctx.db.get(args.practiceQuestionId);
   },
@@ -161,16 +84,36 @@ export const getPracticeQuestion = query({
 export const getPracticeQuestionByQuestion = query({
   args: { question: v.string() },
   async handler(ctx, args) {
-    return ctx.db
-      .query("practice_questions")
+    const question = await ctx.db
+      .query("practice_question")
       .withIndex("by_question", (q) => q.eq("question", args.question))
       .first();
+
+    if (!question) {
+      throw new ConvexError({
+        message: "Question not found",
+        code: 404,
+      });
+    }
+
+    // get tags for question
+    const tags = await ctx.db
+      .query("practice_question_tag")
+      .withIndex("by_practice_question_id", (q) =>
+        q.eq("practice_question_id", question._id)
+      )
+      .collect();
+
+    return {
+      ...question,
+      tags: tags.map((obj) => obj.tag),
+    };
   },
 });
 
 export async function mustGetPracticeQuestion(
   ctx: QueryCtx,
-  practiceQuestionId: Id<"practice_questions">
+  practiceQuestionId: Id<"practice_question">
 ) {
   const practiceQuestion = await getPracticeQuestion(ctx, {
     practiceQuestionId,
@@ -185,7 +128,7 @@ export async function mustGetPracticeQuestion(
 }
 
 export const deletePracticeQuestionById = internalMutation({
-  args: { practiceQuestionId: v.id("practice_questions") },
+  args: { practiceQuestionId: v.id("practice_question") },
   handler: async (ctx, { practiceQuestionId }) => {
     const practiceQuestion = await mustGetPracticeQuestion(
       ctx,
@@ -195,9 +138,9 @@ export const deletePracticeQuestionById = internalMutation({
   },
 });
 
-export const updatePracticeQuestion = internalMutation({
+export const updatePracticeQuestion = mutation({
   args: {
-    practiceQuestionId: v.id("practice_questions"),
+    id: v.id("practice_question"),
     question: v.optional(v.string()),
     choices: v.optional(v.array(v.string())),
     answer: v.optional(v.string()),
@@ -207,20 +150,22 @@ export const updatePracticeQuestion = internalMutation({
   },
   handler: async (
     ctx,
-    {
-      practiceQuestionId,
-      question,
-      choices,
-      answer,
-      explanation,
-      summary,
-      tags,
-    }
+    { id, question, choices, answer, explanation, summary, tags }
   ) => {
-    const practiceQuestion = await mustGetPracticeQuestion(
-      ctx,
-      practiceQuestionId
+    const user = await mustGetCurrentUser(ctx);
+    const formiEmail = user.clerkUser.email_addresses.find(
+      (emailAddress: EmailAddressJSON) =>
+        emailAddress.email_address.endsWith("formi.health")
     );
+
+    if (!formiEmail) {
+      throw new ConvexError({
+        message: "Unauthorized",
+        code: 401,
+      });
+    }
+
+    const practiceQuestion = await mustGetPracticeQuestion(ctx, id);
 
     await ctx.db.patch(practiceQuestion._id, {
       question,
@@ -233,9 +178,9 @@ export const updatePracticeQuestion = internalMutation({
     // get existing tags
     const existingTags = new Set(
       await ctx.db
-        .query("practice_question_tags")
+        .query("practice_question_tag")
         .withIndex("by_practice_question_id", (q) =>
-          q.eq("practice_question_id", practiceQuestionId)
+          q.eq("practice_question_id", id)
         )
         .collect()
     );
@@ -271,8 +216,8 @@ export const updatePracticeQuestion = internalMutation({
     // Add new tags
     await Promise.all(
       Array.from(new Set(tagsToAdd)).map(async (tag) => {
-        await ctx.db.insert("practice_question_tags", {
-          practice_question_id: practiceQuestionId,
+        await ctx.db.insert("practice_question_tag", {
+          practice_question_id: id,
           tag,
         });
       })
@@ -282,7 +227,7 @@ export const updatePracticeQuestion = internalMutation({
 
 export const checkPracticeQuestionAnswer = action({
   args: {
-    practiceQuestionId: v.id("practice_questions"),
+    practiceQuestionId: v.id("practice_question"),
     answer: v.string(),
   },
   async handler(
@@ -294,7 +239,7 @@ export const checkPracticeQuestionAnswer = action({
     answer: string;
   }> {
     const practiceQuestion: {
-      _id: Id<"practice_questions">;
+      _id: Id<"practice_question">;
       _creationTime: number;
       images?: string[] | undefined;
       answer: string;
@@ -302,7 +247,7 @@ export const checkPracticeQuestionAnswer = action({
       choices: string[];
       explanation: string[];
       summary: string;
-    } | null = await ctx.runQuery(api.practice_questions.getPracticeQuestion, {
+    } | null = await ctx.runQuery(api.practice_question.getPracticeQuestion, {
       practiceQuestionId,
     });
     if (!practiceQuestion)
@@ -331,10 +276,10 @@ export const getRandomPracticeQuestion = query({
   args: {
     hash: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
-    seenQuestions: v.optional(v.array(v.id("practice_questions"))),
+    seenQuestions: v.optional(v.array(v.id("practice_question"))),
   },
   async handler(ctx, args) {
-    let uniqueIds: Set<Id<"practice_questions">>;
+    let uniqueIds: Set<Id<"practice_question">>;
 
     // TODO: make more efficient, right now it scans all questions
     // when tags are provided, it fires off a query for each tag (OPTIMIZE LATER)
@@ -343,7 +288,7 @@ export const getRandomPracticeQuestion = query({
         await Promise.all(
           args.tags.map(async (tag) => {
             return ctx.db
-              .query("practice_question_tags")
+              .query("practice_question_tag")
               .withIndex("by_tag", (q) => q.eq("tag", tag))
               .collect();
           })
@@ -355,7 +300,7 @@ export const getRandomPracticeQuestion = query({
       );
     } else {
       const practiceQuestions = await ctx.db
-        .query("practice_questions")
+        .query("practice_question")
         .collect();
 
       uniqueIds = new Set(practiceQuestions.map((obj) => obj._id));

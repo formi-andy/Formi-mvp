@@ -28,18 +28,11 @@ export default async function AdminHeader() {
             {userId ? (
               <div className="flex gap-x-4 h-full">
                 <Link
-                  href="/create"
+                  href="/dashboard"
                   className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
                 >
-                  Add Question
+                  Dashboard
                 </Link>
-                <Link
-                  href="/edit"
-                  className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
-                >
-                  Edit Question
-                </Link>
-
                 <div className="h-full flex items-center relative">
                   <UserButton afterSignOutUrl="/login" />
                 </div>

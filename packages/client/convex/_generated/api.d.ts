@@ -24,7 +24,7 @@ import type * as medical_case from "../medical_case.js";
 import type * as medical_student from "../medical_student.js";
 import type * as migrations from "../migrations.js";
 import type * as patient_doctor from "../patient_doctor.js";
-import type * as practice_questions from "../practice_questions.js";
+import type * as practice_question from "../practice_question.js";
 import type * as profile from "../profile.js";
 import type * as review from "../review.js";
 import type * as users from "../users.js";
@@ -49,7 +49,7 @@ declare const fullApi: ApiFromModules<{
   medical_student: typeof medical_student;
   migrations: typeof migrations;
   patient_doctor: typeof patient_doctor;
-  practice_questions: typeof practice_questions;
+  practice_question: typeof practice_question;
   profile: typeof profile;
   review: typeof review;
   users: typeof users;

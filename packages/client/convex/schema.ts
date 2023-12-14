@@ -263,7 +263,7 @@ export default defineSchema({
     .index("by_created_by", ["created_by"])
     .index("by_user_id_and_created_by", ["user_id", "created_by"])
     .index("by_profile_id", ["profile_id"]),
-  practice_questions: defineTable({
+  practice_question: defineTable({
     question: v.string(),
     choices: v.array(v.string()),
     answer: v.string(),
@@ -273,8 +273,8 @@ export default defineSchema({
   })
     .index("by_question", ["question"])
     .index("by_answer", ["answer"]),
-  practice_question_tags: defineTable({
-    practice_question_id: v.id("practice_questions"),
+  practice_question_tag: defineTable({
+    practice_question_id: v.id("practice_question"),
     tag: v.string(),
   })
     .index("by_practice_question_id", ["practice_question_id"])
