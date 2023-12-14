@@ -6,34 +6,12 @@ import style from "./doctorgallery.module.css";
 import { Button } from "../ui/button";
 import Link from "next/link";
 
-// 408df5
-
+// TODO: get tags from convex eventually?
 const tags = [
-  "tag 1",
-  "tag 2",
-  "tag 3",
-  "tag 4",
-  "tag 5",
-  "tag 6",
-  "tag 7",
-  "tag 8",
-  "tag 9",
-  "tag 10",
-  "tag 11",
-  "tag 12",
-  "tag 13",
-  "tag 14",
-  "tag 15",
-  "tag 16",
-  "tag 17",
-  "tag 18",
-  "tag 19",
-  "tag 20",
-  "tag 21",
-  "tag 22",
-  "tag 23",
-  "tag 24",
-  "tag 25",
+  "Pediatrics",
+  "Ear, Nose & Throat (ENT)",
+  "Oncology",
+  "Pathology",
 ];
 
 function Tag({
