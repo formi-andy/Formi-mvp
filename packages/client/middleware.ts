@@ -39,6 +39,8 @@ export default authMiddleware({
       .get("host")!
       .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
 
+    console.log("hostname: ", hostname);
+
     // special case for Vercel preview deployment URLs
     if (
       hostname.includes("---") &&
@@ -49,11 +51,15 @@ export default authMiddleware({
       }`;
     }
 
+    console.log("preview hostname: ", hostname);
+
     const searchParams = req.nextUrl.searchParams.toString();
     // Get the pathname of the request (e.g. /, /about, /blog/first-post)
     const path = `${url.pathname}${
       searchParams.length > 0 ? `?${searchParams}` : ""
     }`;
+
+    console.log("path: ", path);
 
     // rewrites for app pages
     // if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
@@ -78,6 +84,7 @@ export default authMiddleware({
     //     "https://vercel.com/blog/platforms-starter-kit"
     //   );
     // }
+    console.log("hostname: ", hostname, process.env.NEXT_PUBLIC_ROOT_DOMAIN);
 
     // rewrite root application to `/home` folder
     if (
@@ -136,7 +143,10 @@ function getURLParts(req: NextRequest) {
   let hostname = req.headers
     .get("host")!
     .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    .replace(process.env.NEXT_PREVIEW_URL || "", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+    .replace(
+      process.env.NEXT_PREVIEW_URL || "",
+      `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+    );
   // special case for Vercel preview deployment URLs
   if (
     hostname.includes("---") &&
