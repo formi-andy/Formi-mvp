@@ -17,14 +17,14 @@ export default async function AdminLayout({
     email.emailAddress.endsWith("@formi.health")
   );
 
-  // if (!hasFormiEmail) {
-  //   // redirect to home page
-  //   const url =
-  //     process.env.NODE_ENV === "production"
-  //       ? "https://formi.health/login"
-  //       : "http://localhost:3000/login";
-  //   redirect(url);
-  // }
+  if (!hasFormiEmail) {
+    // redirect to home page
+    const url =
+      process.env.NODE_ENV === "production"
+        ? "https://www.formi.health/login"
+        : "http://localhost:3000/login";
+    redirect(url);
+  }
 
   return (
     <ConvexContext>
