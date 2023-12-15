@@ -7,6 +7,8 @@ import { Button } from "../ui/button";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ConvexError } from "convex/values";
+import Dropzone from "@/components/ui/DropZone/DropZone";
+import axios from "axios";
 
 export default function AddQuestion() {
   const createQuestion = useMutation(
@@ -15,6 +17,41 @@ export default function AddQuestion() {
   const [question, setQuestion] = useState("");
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [url, setUrl] = useState("");
+  const [uploadData, setUploadData] = useState<
+    {
+      file: File;
+      title: string;
+    }[]
+  >([]);
+
+  const uploadFile = async () => {
+    const file = uploadData[0].file;
+    const filename = encodeURIComponent(file.name);
+    const res = await fetch(`/api/upload?file=${filename}`);
+
+    const { url, fields } = await res.json();
+    const formData = new FormData();
+
+    Object.entries({ ...fields, file }).forEach(([key, value]) => {
+      formData.append(key, value as string | Blob);
+    });
+
+    console.log("url", url);
+
+    const upload = await fetch(url, {
+      method: "POST",
+      body: formData,
+      mode: "no-cors",
+    });
+
+    if (upload.ok) {
+      console.log("Uploaded successfully!");
+    } else {
+      console.error("Upload failed.");
+    }
+  };
 
   return (
     <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
@@ -27,6 +64,11 @@ export default function AddQuestion() {
         minRows={10}
         maxRows={20}
       />
+      <p>Question Images</p>
+      <div className="flex flex-col gap-6 p-8 rounded-lg items-center bg-formiblue w-full">
+        <Dropzone data={uploadData} setData={setUploadData} />
+      </div>
+
       <Button
         onClick={async () => {
           setLoading(true);
@@ -79,6 +121,7 @@ export default function AddQuestion() {
               explanation: serializedQuestion.explanation,
               summary: serializedQuestion.summary,
               tags: serializedQuestion.tags,
+              questionImages: serializedQuestion.questionImages,
             });
 
             toast.success({
@@ -106,6 +149,7 @@ export default function AddQuestion() {
       >
         Submit
       </Button>
+      <Button onClick={uploadFile}>Upload</Button>
     </div>
   );
 }

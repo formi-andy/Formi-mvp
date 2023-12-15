@@ -26,6 +26,7 @@ export default function EditQuestion() {
     explanation: string;
     summary: string;
     tags: string;
+    questionImages: string;
   }>({
     id: "",
     question: "",
@@ -34,6 +35,7 @@ export default function EditQuestion() {
     explanation: "",
     summary: "",
     tags: "",
+    questionImages: "",
   });
   const [searched, setSearched] = useState(false);
   const toast = useNetworkToasts();
@@ -109,6 +111,19 @@ export default function EditQuestion() {
             minRows={4}
             maxRows={6}
           />
+          <Textarea
+            value={question.questionImages}
+            onChange={(e) =>
+              setQuestion({
+                ...question,
+                questionImages: e.currentTarget.value,
+              })
+            }
+            label="Tags"
+            autosize
+            minRows={4}
+            maxRows={6}
+          />
         </>
       ) : (
         <Textarea
@@ -134,6 +149,7 @@ export default function EditQuestion() {
               explanation: "",
               summary: "",
               tags: "",
+              questionImages: "",
             });
             setSearched(false);
           }}
@@ -166,6 +182,7 @@ export default function EditQuestion() {
                   explanation: "",
                   summary: "",
                   tags: "",
+                  questionImages: "",
                 });
                 setSearched(false);
 
@@ -215,6 +232,7 @@ export default function EditQuestion() {
                   explanation: question.explanation.join(", "),
                   summary: question.summary,
                   tags: question.tags.join(", "),
+                  questionImages: question.questionImages.join(", "),
                 });
                 setSearched(true);
 

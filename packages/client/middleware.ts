@@ -30,7 +30,6 @@ export default authMiddleware({
     "/api/auth/signout",
     "/api/check-password",
   ],
-  debug: true,
   beforeAuth: (req) => {
     const url = req.nextUrl;
 
@@ -136,7 +135,10 @@ function getURLParts(req: NextRequest) {
   let hostname = req.headers
     .get("host")!
     .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    .replace(process.env.NEXT_PREVIEW_URL || "", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+    .replace(
+      process.env.NEXT_PREVIEW_URL || "",
+      `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+    );
   // special case for Vercel preview deployment URLs
   if (
     hostname.includes("---") &&
