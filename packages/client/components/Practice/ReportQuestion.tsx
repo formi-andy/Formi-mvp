@@ -54,7 +54,7 @@ export default function ReportQuestion({
               practiceQuestionId: questionId as Id<"practice_question">,
               feedback,
             });
-
+            setFeedback("");
             toast.success({
               title: "Feedback submitted",
               message: "Thank you for your feedback!",
