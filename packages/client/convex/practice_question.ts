@@ -12,6 +12,7 @@ import { Id } from "./_generated/dataModel";
 import { mustGetCurrentUser } from "./users";
 import { EmailAddressJSON } from "@clerk/clerk-sdk-node";
 import { api } from "./_generated/api";
+import { UserRole } from "../types/role-types";
 
 export const createPracticeQuestion = mutation({
   args: {
@@ -348,5 +349,31 @@ export const getRandomPracticeQuestion = query({
       ...strippedPracticeQuestion,
       choices: randomizedChoices,
     };
+  },
+});
+
+export const reportPracticeQuestion = mutation({
+  args: {
+    practiceQuestionId: v.id("practice_question"),
+    feedback: v.string(),
+  },
+  async handler(ctx, { practiceQuestionId, feedback }) {
+    const user = await mustGetCurrentUser(ctx);
+    if (user.role !== UserRole.MedicalStudent) {
+      throw new ConvexError({
+        message: "Unauthorized",
+        code: 401,
+      });
+    }
+
+    await mustGetPracticeQuestion(ctx, practiceQuestionId);
+
+    await ctx.db.insert("practice_question_feedback", {
+      practice_question_id: practiceQuestionId,
+      feedback,
+      user_id: user._id,
+    });
+
+    return practiceQuestionId;
   },
 });
