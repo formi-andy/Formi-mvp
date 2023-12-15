@@ -41,6 +41,11 @@ export default authMiddleware({
 
     console.log("hostname: ", hostname);
 
+    // slice of www. from hostname
+    if (hostname.startsWith("www.")) {
+      hostname = hostname.slice(4);
+    }
+
     // special case for Vercel preview deployment URLs
     if (
       hostname.includes("---") &&
