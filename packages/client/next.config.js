@@ -18,6 +18,7 @@ const nextConfig = {
       "images.clerk.dev",
       "notable-puffin-749.convex.cloud",
       "acoustic-dinosaur-150.convex.cloud",
+      "worker-solitary-lake-0d03.james-0da.workers.dev",
     ],
   },
   eslint: {

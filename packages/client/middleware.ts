@@ -4,20 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 export const config = {
   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };
-// export const config = { matcher: ["/((?!...|_next).)", "/", "/(api|trpc)(.)"] };
-
-// export const config = {
-//   matcher: [
-//     /*
-//      * Match all paths except for:
-//      * 1. /api routes
-//      * 2. /_next (Next.js internals)
-//      * 3. /_static (inside /public)
-//      * 4. all root files inside /public (e.g. /favicon.ico)
-//      */
-//     "/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)",
-//   ],
-// };
 
 export default authMiddleware({
   publicRoutes: [
@@ -65,7 +51,7 @@ export default authMiddleware({
     //     new URL(`/app${path === "/" ? "" : path}`, req.url)
     //   );
     // }
-    if (hostname == `admin.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+    if (hostname === `admin.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
       return NextResponse.rewrite(
         new URL(`/admin${path === "/" ? "" : path}`, req.url)
       );

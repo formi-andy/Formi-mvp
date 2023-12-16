@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const S3 = new S3Client({
@@ -14,19 +18,19 @@ export async function POST(request: Request) {
   const body = await request.json();
 
   const urls = await Promise.all(
-    body.files.map(async (fileName: string) => {
+    body.paths.map(async (path: string) => {
       const url = await getSignedUrl(
         S3,
-        new PutObjectCommand({
+        new DeleteObjectCommand({
           Bucket: "practice-question-images",
-          Key: `${body.questionHash}-${fileName}`,
+          Key: `${path}`,
         }),
         {
           expiresIn: 60 * 60, // 1h
         }
       );
 
-      return { fileName, url };
+      return { path, url };
     })
   );
 

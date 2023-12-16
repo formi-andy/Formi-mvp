@@ -8,7 +8,8 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ConvexError } from "convex/values";
 import Dropzone from "@/components/ui/DropZone/DropZone";
-import axios from "axios";
+import AcceptedFiles from "@/components/ui/DropZone/AcceptedFiles";
+import { uploadFiles } from "@/utils/uploadFiles";
 
 export default function AddQuestion() {
   const createQuestion = useMutation(
@@ -18,7 +19,6 @@ export default function AddQuestion() {
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [url, setUrl] = useState("");
   const [uploadData, setUploadData] = useState<
     {
       file: File;
@@ -26,32 +26,71 @@ export default function AddQuestion() {
     }[]
   >([]);
 
-  const uploadFile = async () => {
-    const file = uploadData[0].file;
-    const filename = encodeURIComponent(file.name);
-    const res = await fetch(`/api/upload?file=${filename}`);
+  // const uploadFiles = async () => {
+  //   const questionHash = (Math.random() + 1).toString(36).substring(7);
 
-    const { url, fields } = await res.json();
-    const formData = new FormData();
+  //   try {
+  //     const response = await fetch("/api/upload", {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         questionHash,
+  //         files: uploadData.map((file) => file.title),
+  //       }),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-    Object.entries({ ...fields, file }).forEach(([key, value]) => {
-      formData.append(key, value as string | Blob);
-    });
+  //     if (!response.ok) {
+  //       throw new Error("Failed to retrieve URLs");
+  //     }
 
-    console.log("url", url);
+  //     const urls = await response.json();
+  //     const paths = [] as string[];
 
-    const upload = await fetch(url, {
-      method: "POST",
-      body: formData,
-      mode: "no-cors",
-    });
+  //     await Promise.all(
+  //       uploadData.map(async ({ file, title }, index) => {
+  //         const { url } = urls.find((u) => u.fileName === title);
 
-    if (upload.ok) {
-      console.log("Uploaded successfully!");
-    } else {
-      console.error("Upload failed.");
-    }
-  };
+  //         if (!url) {
+  //           throw new Error(`URL not found for file: ${title}`);
+  //         }
+
+  //         const uploadResponse = await fetch(url, {
+  //           method: "PUT",
+  //           body: file,
+  //           headers: {
+  //             "Content-Type": file.type,
+  //           },
+  //         });
+
+  //         if (!uploadResponse.ok) {
+  //           throw new Error(`Upload failed for file ${file.name}`);
+  //         }
+
+  //         toast.loading({
+  //           title: `Uploaded ${index + 1}/${uploadData.length} files`,
+  //           message: `File ${file.name} uploaded successfully`,
+  //         });
+  //         paths.push(`${questionHash}-${title}`);
+  //       })
+  //     );
+
+  //     return paths;
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       toast.error({
+  //         title: "Error",
+  //         message: `Upload failed: ${error.message}`,
+  //       });
+  //     } else {
+  //       toast.error({
+  //         title: "Error",
+  //         message: `Upload failed: ${error}`,
+  //       });
+  //     }
+  //   }
+  // };
 
   return (
     <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
@@ -67,12 +106,25 @@ export default function AddQuestion() {
       <p>Question Images</p>
       <div className="flex flex-col gap-6 p-8 rounded-lg items-center bg-formiblue w-full">
         <Dropzone data={uploadData} setData={setUploadData} />
+        <div className="w-full">
+          <AcceptedFiles
+            data={uploadData}
+            setData={(data) => {
+              setUploadData(data);
+            }}
+          />
+        </div>
       </div>
 
       <Button
         onClick={async () => {
           setLoading(true);
           // serialize the question
+          toast.loading({
+            title: "Loading",
+            message: "Adding Question",
+          });
+
           try {
             let trimmedQuestion = question.trim();
             // remove all new lines
@@ -114,6 +166,8 @@ export default function AddQuestion() {
               throw new Error("Invalid Format");
             }
 
+            const paths = await uploadFiles(uploadData, toast);
+
             await createQuestion({
               question: serializedQuestion.question,
               choices: serializedQuestion.choices,
@@ -121,7 +175,12 @@ export default function AddQuestion() {
               explanation: serializedQuestion.explanation,
               summary: serializedQuestion.summary,
               tags: serializedQuestion.tags,
-              questionImages: serializedQuestion.questionImages,
+              questionImages: paths as string[],
+            });
+
+            toast.loading({
+              title: "Creating question",
+              message: "Please wait",
             });
 
             toast.success({
@@ -149,7 +208,6 @@ export default function AddQuestion() {
       >
         Submit
       </Button>
-      <Button onClick={uploadFile}>Upload</Button>
     </div>
   );
 }
