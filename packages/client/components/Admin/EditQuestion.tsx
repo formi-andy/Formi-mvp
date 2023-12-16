@@ -108,7 +108,7 @@ export default function EditQuestion() {
                       }}
                       overLay={
                         <div className="absolute inset-0 bg-black opacity-50 z-10 flex items-center justify-center rounded-lg">
-                          <p className="text-white">Remove</p>
+                          <p className="text-white">Will be removed</p>
                         </div>
                       }
                     />
@@ -154,7 +154,7 @@ export default function EditQuestion() {
               ))}
             </div>
           }
-          <div className="flex flex-col gap-6 p-8 rounded-lg items-center w-full bg-slate-50">
+          <div className="flex flex-col gap-6 p-8 rounded-lg items-center w-full">
             <Dropzone
               data={newQuestionImages}
               setData={setNewQuestionImages}
@@ -206,10 +206,10 @@ export default function EditQuestion() {
               });
               try {
                 // remove images
-                await deleteFiles(Array.from(toRemove ?? []), toast);
+                await deleteFiles(Array.from(toRemove ?? []));
 
                 // upload new images
-                const newPaths = await uploadFiles(newQuestionImages, toast);
+                const newPaths = await uploadFiles(newQuestionImages);
 
                 const newQuestionImagePaths = question.questionImages
                   .filter((image) => !toRemove?.has(image))
@@ -237,6 +237,7 @@ export default function EditQuestion() {
                   tags: "",
                   questionImages: [],
                 });
+                setNewQuestionImages([]);
                 setSearched(false);
 
                 toast.success({
@@ -285,7 +286,7 @@ export default function EditQuestion() {
                   explanation: question.explanation.join(", "),
                   summary: question.summary,
                   tags: question.tags.join(", "),
-                  questionImages: question.questionImages,
+                  questionImages: question.question_images,
                 });
                 setSearched(true);
 

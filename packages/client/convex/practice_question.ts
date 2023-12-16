@@ -21,7 +21,7 @@ export const createPracticeQuestion = mutation({
     answer: v.string(),
     explanation: v.array(v.string()),
     summary: v.string(),
-    questionImages: v.array(v.string()),
+    questionImages: v.optional(v.array(v.string())),
     answerImages: v.optional(v.array(v.string())),
     tags: v.array(v.string()),
   },
@@ -70,7 +70,7 @@ export const createPracticeQuestion = mutation({
       answer,
       explanation,
       summary,
-      questionImages,
+      question_images: questionImages ?? [],
       answerImages,
     });
 
@@ -199,7 +199,7 @@ export const updatePracticeQuestion = mutation({
       answer,
       explanation,
       summary,
-      questionImages,
+      question_images: questionImages,
       answerImages,
     });
 
@@ -359,9 +359,8 @@ export const getRandomPracticeQuestion = query({
       _id: randomPracticeQuestion._id,
       question: randomPracticeQuestion.question,
       choices: randomPracticeQuestion.choices,
-      questionImages: randomPracticeQuestion.questionImages,
+      questionImages: randomPracticeQuestion.question_images,
       answerImages: randomPracticeQuestion.answerImages,
-      images: randomPracticeQuestion.images,
     };
 
     const randomizedChoices = strippedPracticeQuestion.choices.sort(

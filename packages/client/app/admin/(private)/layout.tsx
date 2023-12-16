@@ -5,24 +5,24 @@ import { redirect } from "next/navigation";
 import ConvexContext from "@/context/ConvexContext";
 import Footer from "@/components/Footer/Footer";
 
+const FORMI_IDS = new Set([
+  "user_2Y8E6xTTJMOXrw7LlXPxTX2tK8T",
+  "user_2ZdvNSfHXfWDTjEiiJQdCyQ8myJ",
+  "user_2ZdvbZ3Ok1rhFLMGWzdzRW0aToh",
+]);
+
 export default async function AdminLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { user } = auth();
+  const { userId } = auth();
 
-  // check if user has formi.health email
-  const hasFormiEmail = user?.emailAddresses.some((email) =>
-    email.emailAddress.endsWith("@formi.health")
-  );
+  const isFormiId = FORMI_IDS?.has(userId ?? "");
 
-  if (!hasFormiEmail) {
+  if (!isFormiId && process.env.NODE_ENV === "production") {
     // redirect to home page
-    const url =
-      process.env.NODE_ENV === "production"
-        ? "https://www.formi.health/login"
-        : "http://localhost:3000/login";
+    const url = "https://www.formi.health/login";
     redirect(url);
   }
 

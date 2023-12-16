@@ -269,9 +269,8 @@ export default defineSchema({
     answer: v.string(),
     explanation: v.array(v.string()),
     summary: v.string(),
-    questionImages: v.array(v.string()),
+    question_images: v.array(v.string()),
     answerImages: v.optional(v.array(v.string())),
-    images: v.optional(v.array(v.string())),
   })
     .index("by_question", ["question"])
     .index("by_answer", ["answer"]),

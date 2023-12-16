@@ -38,18 +38,24 @@ export default function AddQuestion() {
         maxRows={20}
       />
       <p>Question Images</p>
-      <div className="flex flex-col gap-6 p-8 rounded-lg items-center bg-formiblue w-full">
-        <Dropzone data={uploadData} setData={setUploadData} />
+      <div className="flex flex-col gap-6 p-8 rounded-lg items-center w-full">
+        <Dropzone
+          data={uploadData}
+          setData={setUploadData}
+          textColor="text-black"
+          borderColor="border-black"
+        />
         <div className="w-full">
           <AcceptedFiles
             data={uploadData}
             setData={(data) => {
               setUploadData(data);
             }}
+            bgColor="bg-white"
+            textColor="text-black"
           />
         </div>
       </div>
-
       <Button
         onClick={async () => {
           setLoading(true);
@@ -63,13 +69,7 @@ export default function AddQuestion() {
             let trimmedQuestion = question.trim();
             // remove all new lines
             trimmedQuestion = trimmedQuestion.replace(/\n/g, "");
-            // remove all white space between quotes
-            trimmedQuestion = trimmedQuestion.replace(
-              /"([^"]+)"/g,
-              function (match, p1) {
-                return `"${p1.replace(/\s/g, "")}"`;
-              }
-            );
+
             // replace “ and ” with "
             trimmedQuestion = trimmedQuestion.replace(/“/g, '"');
             trimmedQuestion = trimmedQuestion.replace(/”/g, '"');
@@ -100,7 +100,7 @@ export default function AddQuestion() {
               throw new Error("Invalid Format");
             }
 
-            const paths = await uploadFiles(uploadData, toast);
+            const paths = await uploadFiles(uploadData);
 
             await createQuestion({
               question: serializedQuestion.question,

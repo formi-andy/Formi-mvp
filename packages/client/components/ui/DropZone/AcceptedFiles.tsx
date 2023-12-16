@@ -5,6 +5,8 @@ import { LuTrash } from "react-icons/lu";
 export default function AcceptedFiles({
   data,
   setData,
+  bgColor = "bg-lightblue",
+  textColor = "text-white",
 }: {
   data: {
     file: File;
@@ -16,6 +18,8 @@ export default function AcceptedFiles({
       title: string;
     }[]
   ) => void;
+  bgColor?: string;
+  textColor?: string;
 }) {
   const listedFiles = data.map((d, index) => (
     <div key={d.file.name} className="flex flex-col gap-y-2">
@@ -25,7 +29,7 @@ export default function AcceptedFiles({
           {d.file.name} - {formatBytes(d.file.size)} bytes
         </p>
         <Button
-          className="bg-lightblue text-black"
+          className={`text-black ${bgColor}`}
           variant="outline-danger"
           size="icon"
           onClick={() => {
@@ -43,9 +47,9 @@ export default function AcceptedFiles({
     <div className="flex flex-col gap-y-2">
       <p className="text-lg font-medium text-white">Accepted Files</p>
       {listedFiles.length === 0 ? (
-        <p className="text-white">No accepted file(s)</p>
+        <p className={`${textColor}`}>No accepted file(s)</p>
       ) : (
-        <ul className="w-full flex flex-col gap-y-2 text-white">
+        <ul className={`w-full flex flex-col gap-y-2 ${textColor}`}>
           {listedFiles}
         </ul>
       )}

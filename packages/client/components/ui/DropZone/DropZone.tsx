@@ -128,7 +128,7 @@ export default function Dropzone({
             }
             return (
               <div key={file.name}>
-                <p>
+                <p className={`${textColor}`}>
                   {/* {file.name} - {errors[0].message} */}
                   {file.name}
                 </p>
