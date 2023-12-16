@@ -6,13 +6,16 @@ import { useAction, useQuery } from "convex/react";
 import { useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
-import { Radio } from "@mantine/core";
+import { Radio, Tooltip, Modal } from "@mantine/core";
+import { LuFlag } from "react-icons/lu";
+
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
 import style from "./question.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import { ContainImage } from "@/components/ui/Image/Image";
+import ReportQuestion from "./ReportQuestion";
 
 export default function Question({ hash }: { hash: string }) {
   const [seenQuestions, setSeenQuestions] = useState<string[]>([]);
@@ -32,6 +35,7 @@ export default function Question({ hash }: { hash: string }) {
   });
   const [correct, setCorrect] = useState<boolean | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const toast = useNetworkToasts();
 
   const question = useQuery(api.practice_question.getRandomPracticeQuestion, {
@@ -94,6 +98,18 @@ export default function Question({ hash }: { hash: string }) {
             })}
           </div>
         )}
+        <div className="flex justify-between items-center mb-4">
+          <p className="font-medium text-xl">Question</p>
+          <Tooltip label="Report Question">
+            <Button
+              size="icon"
+              variant="outline-danger"
+              onClick={() => setOpen(true)}
+            >
+              <LuFlag />
+            </Button>
+          </Tooltip>
+        </div>
         {question.question}
       </div>
       <Radio.Group
@@ -121,10 +137,12 @@ export default function Question({ hash }: { hash: string }) {
           })}
         </div>
       </Radio.Group>
-      <div>
-        <p className="font-medium">Correct Answer</p>
-        {explanation.answer}
-      </div>
+      {explanation.answer !== "" && (
+        <div>
+          <p className="font-medium">Correct Answer</p>
+          {explanation.answer}
+        </div>
+      )}
       {explanation.show && (
         <div>
           <p className="font-medium">Explanation</p>
@@ -218,6 +236,11 @@ export default function Question({ hash }: { hash: string }) {
           </Button>
         </div>
       )}
+      <ReportQuestion
+        opened={open}
+        setOpened={setOpen}
+        questionId={question._id}
+      />
     </div>
   );
 }

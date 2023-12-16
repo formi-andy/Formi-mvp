@@ -281,4 +281,11 @@ export default defineSchema({
   })
     .index("by_practice_question_id", ["practice_question_id"])
     .index("by_tag", ["tag"]),
+  practice_question_feedback: defineTable({
+    practice_question_id: v.id("practice_question"),
+    user_id: v.id("users"),
+    feedback: v.string(),
+  })
+    .index("by_practice_question_id", ["practice_question_id"])
+    .index("by_user_id", ["user_id"]),
 });
