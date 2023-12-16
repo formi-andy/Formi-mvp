@@ -42,6 +42,16 @@ export default function EditQuestion() {
     tags: "",
     questionImages: [],
   });
+
+  const fields = [
+    "question",
+    "choices",
+    "answer",
+    "explanation",
+    "summary",
+    "tags",
+  ];
+
   const [searched, setSearched] = useState(false);
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
@@ -63,66 +73,22 @@ export default function EditQuestion() {
       </p>
       {searched ? (
         <>
-          <Textarea
-            value={question.question}
-            onChange={(e) =>
-              setQuestion({ ...question, question: e.currentTarget.value })
-            }
-            label="Question"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.choices}
-            onChange={(e) =>
-              setQuestion({ ...question, choices: e.currentTarget.value })
-            }
-            label="Choices"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.answer}
-            onChange={(e) =>
-              setQuestion({ ...question, answer: e.currentTarget.value })
-            }
-            label="Answer"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.explanation}
-            onChange={(e) =>
-              setQuestion({ ...question, explanation: e.currentTarget.value })
-            }
-            label="Explanation"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.summary}
-            onChange={(e) =>
-              setQuestion({ ...question, summary: e.currentTarget.value })
-            }
-            label="Summary"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.tags}
-            onChange={(e) =>
-              setQuestion({ ...question, tags: e.currentTarget.value })
-            }
-            label="Tags"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
+          {fields.map((field) => (
+            <Textarea
+              key={field}
+              value={question[field]}
+              onChange={(e) =>
+                setQuestion({
+                  ...question,
+                  [field]: e.currentTarget.value,
+                })
+              }
+              label={field}
+              autosize
+              minRows={4}
+              maxRows={6}
+            />
+          ))}
           <p>Question Images</p>
           <div className="flex gap-x-4">
             {question.questionImages.map((image, index) => (
@@ -234,6 +200,10 @@ export default function EditQuestion() {
             className="w-full"
             onClick={async () => {
               setLoading(true);
+              toast.loading({
+                title: "Loading",
+                message: "Updating Question",
+              });
               try {
                 // remove images
                 await deleteFiles(Array.from(toRemove ?? []), toast);
