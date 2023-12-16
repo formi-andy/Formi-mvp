@@ -32,16 +32,21 @@ export default authMiddleware({
     }
 
     // special case for Vercel preview deployment URLs
+    // if (
+    //   hostname.includes("---") &&
+    //   hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
+    // ) {
+    //   hostname = `${hostname.split("---")[0]}.${
+    //     process.env.NEXT_PUBLIC_ROOT_DOMAIN
+    //   }`;
+    // }
     if (
-      hostname.includes("---") &&
       hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
     ) {
-      hostname = `${hostname.split("---")[0]}.${
-        process.env.NEXT_PUBLIC_ROOT_DOMAIN
-      }`;
+      hostname = `${hostname.split(
+        process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX ?? ""
+      )}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
     }
-
-    console.log("preview hostname: ", hostname);
 
     const searchParams = req.nextUrl.searchParams.toString();
     // Get the pathname of the request (e.g. /, /about, /blog/first-post)
@@ -49,32 +54,11 @@ export default authMiddleware({
       searchParams.length > 0 ? `?${searchParams}` : ""
     }`;
 
-    console.log("path: ", path);
-
-    // rewrites for app pages
-    // if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
-    //   if (!session && path !== "/login") {
-    //     return NextResponse.redirect(new URL("/login", req.url));
-    //   } else if (session && path == "/login") {
-    //     return NextResponse.redirect(new URL("/", req.url));
-    //   }
-    //   return NextResponse.rewrite(
-    //     new URL(`/app${path === "/" ? "" : path}`, req.url)
-    //   );
-    // }
     if (hostname === `admin.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
       return NextResponse.rewrite(
         new URL(`/admin${path === "/" ? "" : path}`, req.url)
       );
     }
-
-    // special case for `vercel.pub` domain
-    // if (hostname === "vercel.pub") {
-    //   return NextResponse.redirect(
-    //     "https://vercel.com/blog/platforms-starter-kit"
-    //   );
-    // }
-    console.log("hostname: ", hostname, process.env.NEXT_PUBLIC_ROOT_DOMAIN);
 
     // rewrite root application to `/home` folder
     if (
