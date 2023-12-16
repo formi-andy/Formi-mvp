@@ -21,9 +21,16 @@ type Props = {
       title: string;
     }[]
   ) => void;
+  textColor?: string;
+  borderColor?: string;
 };
 
-export default function Dropzone({ data, setData }: Props) {
+export default function Dropzone({
+  data,
+  setData,
+  textColor = "text-white",
+  borderColor = "border-slate-200",
+}: Props) {
   const {
     getRootProps,
     getInputProps,
@@ -93,21 +100,21 @@ export default function Dropzone({ data, setData }: Props) {
       <div
         {...getRootProps()}
         className={`
-          border-white border-dashed border w-full h-full min-h-[20rem] rounded-lg cursor-pointer flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out p-4 
+          ${borderColor} border-dashed border w-full h-full min-h-[20rem] rounded-lg cursor-pointer flex flex-col justify-center items-center bg-opacity-20 transition-all duration-200 ease-in-out p-4 
           ${isDragAccept ? "border-green-500 bg-green-100" : ""} 
           ${isDragReject ? "border-red-500 bg-red-100" : ""} 
           ${
             !isDragAccept && !isDragReject
-              ? "border-slate-200 border-opacity-50"
+              ? `${borderColor} border-opacity-50`
               : ""
           }
         `}
       >
         <input {...getInputProps()} />
-        <p className="text-2xl font-medium text-center text-white">
+        <p className={`text-2xl font-medium text-center ${textColor}`}>
           Drag and drop some files here, or click to select files
         </p>
-        <em className="text-center text-sm max-w-[380px] text-white">
+        <em className={`text-center text-sm max-w-[380px] ${textColor}`}>
           Only *.jpeg, *.png, and *.webp images will be accepted. Max file size
           is 5MB.
         </em>
@@ -121,7 +128,7 @@ export default function Dropzone({ data, setData }: Props) {
             }
             return (
               <div key={file.name}>
-                <p>
+                <p className={`${textColor}`}>
                   {/* {file.name} - {errors[0].message} */}
                   {file.name}
                 </p>

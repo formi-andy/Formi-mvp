@@ -7,6 +7,9 @@ import { Button } from "../ui/button";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ConvexError } from "convex/values";
+import Dropzone from "@/components/ui/DropZone/DropZone";
+import AcceptedFiles from "@/components/ui/DropZone/AcceptedFiles";
+import { uploadFiles } from "@/utils/uploadFiles";
 
 export default function AddQuestion() {
   const createQuestion = useMutation(
@@ -15,6 +18,13 @@ export default function AddQuestion() {
   const [question, setQuestion] = useState("");
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadData, setUploadData] = useState<
+    {
+      file: File;
+      title: string;
+    }[]
+  >([]);
 
   return (
     <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
@@ -27,21 +37,39 @@ export default function AddQuestion() {
         minRows={10}
         maxRows={20}
       />
+      <p>Question Images</p>
+      <div className="flex flex-col gap-6 p-8 rounded-lg items-center w-full">
+        <Dropzone
+          data={uploadData}
+          setData={setUploadData}
+          textColor="text-black"
+          borderColor="border-black"
+        />
+        <div className="w-full">
+          <AcceptedFiles
+            data={uploadData}
+            setData={(data) => {
+              setUploadData(data);
+            }}
+            bgColor="bg-white"
+            textColor="text-black"
+          />
+        </div>
+      </div>
       <Button
         onClick={async () => {
           setLoading(true);
           // serialize the question
+          toast.loading({
+            title: "Loading",
+            message: "Adding Question",
+          });
+
           try {
             let trimmedQuestion = question.trim();
             // remove all new lines
             trimmedQuestion = trimmedQuestion.replace(/\n/g, "");
-            // remove all white space between quotes
-            trimmedQuestion = trimmedQuestion.replace(
-              /"([^"]+)"/g,
-              function (match, p1) {
-                return `"${p1.replace(/\s/g, "")}"`;
-              }
-            );
+
             // replace “ and ” with "
             trimmedQuestion = trimmedQuestion.replace(/“/g, '"');
             trimmedQuestion = trimmedQuestion.replace(/”/g, '"');
@@ -72,6 +100,8 @@ export default function AddQuestion() {
               throw new Error("Invalid Format");
             }
 
+            const paths = await uploadFiles(uploadData);
+
             await createQuestion({
               question: serializedQuestion.question,
               choices: serializedQuestion.choices,
@@ -79,6 +109,12 @@ export default function AddQuestion() {
               explanation: serializedQuestion.explanation,
               summary: serializedQuestion.summary,
               tags: serializedQuestion.tags,
+              questionImages: paths as string[],
+            });
+
+            toast.loading({
+              title: "Creating question",
+              message: "Please wait",
             });
 
             toast.success({

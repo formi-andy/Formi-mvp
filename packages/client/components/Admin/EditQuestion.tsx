@@ -10,6 +10,11 @@ import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ConvexError } from "convex/values";
 import { Id } from "@/convex/_generated/dataModel";
+import Dropzone from "../ui/DropZone/DropZone";
+import PendingImage from "../ui/Image/PendingImage";
+import { LuCheck } from "react-icons/lu";
+import { uploadFiles } from "@/utils/uploadFiles";
+import { deleteFiles } from "@/utils/deleteFiles";
 
 export default function EditQuestion() {
   const updateQuestion = useMutation(
@@ -26,6 +31,7 @@ export default function EditQuestion() {
     explanation: string;
     summary: string;
     tags: string;
+    questionImages: string[];
   }>({
     id: "",
     question: "",
@@ -34,10 +40,28 @@ export default function EditQuestion() {
     explanation: "",
     summary: "",
     tags: "",
+    questionImages: [],
   });
+
+  const fields = [
+    "question",
+    "choices",
+    "answer",
+    "explanation",
+    "summary",
+    "tags",
+  ];
+
   const [searched, setSearched] = useState(false);
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
+  const [newQuestionImages, setNewQuestionImages] = useState<
+    {
+      file: File;
+      title: string;
+    }[]
+  >([]);
+  const [toRemove, setToRemove] = useState<Set<string>>();
 
   return (
     <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
@@ -49,66 +73,95 @@ export default function EditQuestion() {
       </p>
       {searched ? (
         <>
-          <Textarea
-            value={question.question}
-            onChange={(e) =>
-              setQuestion({ ...question, question: e.currentTarget.value })
-            }
-            label="Question"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.choices}
-            onChange={(e) =>
-              setQuestion({ ...question, choices: e.currentTarget.value })
-            }
-            label="Choices"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.answer}
-            onChange={(e) =>
-              setQuestion({ ...question, answer: e.currentTarget.value })
-            }
-            label="Answer"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.explanation}
-            onChange={(e) =>
-              setQuestion({ ...question, explanation: e.currentTarget.value })
-            }
-            label="Explanation"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.summary}
-            onChange={(e) =>
-              setQuestion({ ...question, summary: e.currentTarget.value })
-            }
-            label="Summary"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
-          <Textarea
-            value={question.tags}
-            onChange={(e) =>
-              setQuestion({ ...question, tags: e.currentTarget.value })
-            }
-            label="Tags"
-            autosize
-            minRows={4}
-            maxRows={6}
-          />
+          {fields.map((field) => (
+            <Textarea
+              key={field}
+              value={question[field]}
+              onChange={(e) =>
+                setQuestion({
+                  ...question,
+                  [field]: e.currentTarget.value,
+                })
+              }
+              label={field}
+              autosize
+              minRows={4}
+              maxRows={6}
+            />
+          ))}
+          <p>Question Images</p>
+          <div className="flex gap-x-4">
+            {question.questionImages.map((image, index) => (
+              <div className="flex flex-col gap-y-2 items-center" key={image}>
+                <div className="relative flex h-[200px] w-[200px] justify-center mb-4">
+                  {toRemove?.has(image) ? (
+                    <PendingImage
+                      url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                      alt={`Question Image ${index}`}
+                      icon={<LuCheck size={20} />}
+                      onIconClick={() => {
+                        setToRemove((toRemove) => {
+                          const newToRemove = new Set(toRemove);
+                          newToRemove.delete(image);
+                          return newToRemove;
+                        });
+                      }}
+                      overLay={
+                        <div className="absolute inset-0 bg-black opacity-50 z-10 flex items-center justify-center rounded-lg">
+                          <p className="text-white">Will be removed</p>
+                        </div>
+                      }
+                    />
+                  ) : (
+                    <PendingImage
+                      url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                      alt={`Question Image ${index}`}
+                      onIconClick={() => {
+                        setToRemove((toRemove) => {
+                          const newToRemove = new Set(toRemove);
+                          newToRemove.add(image);
+                          return newToRemove;
+                        });
+                      }}
+                    />
+                  )}
+                </div>
+                <p className="truncate max-w-[200px]">{image}</p>
+              </div>
+            ))}
+          </div>
+          <p>Added Images</p>
+          {
+            <div className="flex gap-x-4">
+              {newQuestionImages.map((image, index) => (
+                <div
+                  className="flex flex-col gap-y-2 items-center"
+                  key={image.file.name}
+                >
+                  <div className="relative flex h-[200px] w-[200px] justify-center mb-4">
+                    <PendingImage
+                      url={URL.createObjectURL(image.file)}
+                      alt={`Question Image ${index}`}
+                      onIconClick={() => {
+                        const newImages = [...newQuestionImages];
+                        newImages.splice(index, 1);
+                        setNewQuestionImages(newImages);
+                      }}
+                    />
+                  </div>
+                  <p className="truncate max-w-[200px]">{image.file.name}</p>
+                </div>
+              ))}
+            </div>
+          }
+          <div className="flex flex-col gap-6 p-8 rounded-lg items-center w-full">
+            <Dropzone
+              data={newQuestionImages}
+              setData={setNewQuestionImages}
+              borderColor="border-black"
+              textColor="text-black"
+            />
+          </div>
         </>
       ) : (
         <Textarea
@@ -134,6 +187,7 @@ export default function EditQuestion() {
               explanation: "",
               summary: "",
               tags: "",
+              questionImages: [],
             });
             setSearched(false);
           }}
@@ -146,7 +200,21 @@ export default function EditQuestion() {
             className="w-full"
             onClick={async () => {
               setLoading(true);
+              toast.loading({
+                title: "Loading",
+                message: "Updating Question",
+              });
               try {
+                // remove images
+                await deleteFiles(Array.from(toRemove ?? []));
+
+                // upload new images
+                const newPaths = await uploadFiles(newQuestionImages);
+
+                const newQuestionImagePaths = question.questionImages
+                  .filter((image) => !toRemove?.has(image))
+                  .concat(newPaths ?? []);
+
                 // serialize the question
                 await updateQuestion({
                   id: question.id as Id<"practice_question">,
@@ -156,6 +224,7 @@ export default function EditQuestion() {
                   explanation: question.explanation.split(", "),
                   summary: question.summary,
                   tags: question.tags.split(", "),
+                  questionImages: newQuestionImagePaths,
                 });
                 setQuestionQuery("");
                 setQuestion({
@@ -166,7 +235,9 @@ export default function EditQuestion() {
                   explanation: "",
                   summary: "",
                   tags: "",
+                  questionImages: [],
                 });
+                setNewQuestionImages([]);
                 setSearched(false);
 
                 toast.success({
@@ -215,6 +286,7 @@ export default function EditQuestion() {
                   explanation: question.explanation.join(", "),
                   summary: question.summary,
                   tags: question.tags.join(", "),
+                  questionImages: question.question_images,
                 });
                 setSearched(true);
 

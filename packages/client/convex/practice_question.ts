@@ -21,11 +21,22 @@ export const createPracticeQuestion = mutation({
     answer: v.string(),
     explanation: v.array(v.string()),
     summary: v.string(),
+    questionImages: v.optional(v.array(v.string())),
+    answerImages: v.optional(v.array(v.string())),
     tags: v.array(v.string()),
   },
   handler: async (
     ctx,
-    { question, choices, answer, explanation, summary, tags }
+    {
+      question,
+      choices,
+      answer,
+      explanation,
+      summary,
+      questionImages,
+      answerImages,
+      tags,
+    }
   ) => {
     const user = await mustGetCurrentUser(ctx);
     const formiEmail = user.clerkUser.email_addresses.find(
@@ -59,6 +70,8 @@ export const createPracticeQuestion = mutation({
       answer,
       explanation,
       summary,
+      question_images: questionImages ?? [],
+      answerImages,
     });
 
     // add tags
@@ -147,11 +160,23 @@ export const updatePracticeQuestion = mutation({
     answer: v.optional(v.string()),
     explanation: v.optional(v.array(v.string())),
     summary: v.optional(v.string()),
+    questionImages: v.optional(v.array(v.string())),
+    answerImages: v.optional(v.array(v.string())),
     tags: v.optional(v.array(v.string())),
   },
   handler: async (
     ctx,
-    { id, question, choices, answer, explanation, summary, tags }
+    {
+      id,
+      question,
+      choices,
+      answer,
+      explanation,
+      summary,
+      questionImages,
+      answerImages,
+      tags,
+    }
   ) => {
     const user = await mustGetCurrentUser(ctx);
     const formiEmail = user.clerkUser.email_addresses.find(
@@ -174,6 +199,8 @@ export const updatePracticeQuestion = mutation({
       answer,
       explanation,
       summary,
+      question_images: questionImages,
+      answerImages,
     });
 
     // get existing tags
@@ -239,18 +266,12 @@ export const checkPracticeQuestionAnswer = action({
     explanation: string[];
     answer: string;
   }> {
-    const practiceQuestion: {
-      _id: Id<"practice_question">;
-      _creationTime: number;
-      images?: string[] | undefined;
-      answer: string;
-      question: string;
-      choices: string[];
-      explanation: string[];
-      summary: string;
-    } | null = await ctx.runQuery(api.practice_question.getPracticeQuestion, {
-      practiceQuestionId,
-    });
+    const practiceQuestion = await ctx.runQuery(
+      api.practice_question.getPracticeQuestion,
+      {
+        practiceQuestionId,
+      }
+    );
     if (!practiceQuestion)
       throw new ConvexError({
         message: "Practice question not found",
@@ -338,7 +359,8 @@ export const getRandomPracticeQuestion = query({
       _id: randomPracticeQuestion._id,
       question: randomPracticeQuestion.question,
       choices: randomPracticeQuestion.choices,
-      images: randomPracticeQuestion.images,
+      questionImages: randomPracticeQuestion.question_images,
+      answerImages: randomPracticeQuestion.answerImages,
     };
 
     const randomizedChoices = strippedPracticeQuestion.choices.sort(

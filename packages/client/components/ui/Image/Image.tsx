@@ -11,7 +11,7 @@ export default function Image({ url, alt }: { url: string; alt: string }) {
     <>
       {loading && <Skeleton.Button active className="!w-full !h-full z-100" />}
       <NextImage
-        onLoadingComplete={() => {
+        onLoad={() => {
           setLoading(false);
         }}
         src={url}
@@ -35,7 +35,7 @@ export function CircleImage({ url, alt }: { url: string; alt: string }) {
         <Skeleton.Avatar active className="max-w-full max-h-full z-100" />
       )}
       <NextImage
-        onLoadingComplete={() => {
+        onLoad={() => {
           setLoading(false);
         }}
         src={url}
@@ -57,7 +57,7 @@ export function ContainImage({ url, alt }: { url: string; alt: string }) {
     <>
       {loading && <Skeleton.Button active className="!w-full !h-full z-100" />}
       <NextImage
-        onLoadingComplete={() => {
+        onLoad={() => {
           setLoading(false);
         }}
         src={url}
