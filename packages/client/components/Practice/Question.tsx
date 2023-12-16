@@ -12,6 +12,7 @@ import { ConvexError } from "convex/values";
 import style from "./question.module.css";
 import Link from "next/link";
 import Image from "next/image";
+import { ContainImage } from "@/components/ui/Image/Image";
 
 export default function Question({ hash }: { hash: string }) {
   const [seenQuestions, setSeenQuestions] = useState<string[]>([]);
@@ -76,6 +77,23 @@ export default function Question({ hash }: { hash: string }) {
     <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 lg:max-w-2xl justify-self-center shadow-accent-2">
       <div>
         <p className="font-medium">Question</p>
+        {question.questionImages && (
+          <div className="grid gap-3 mb-6">
+            {question.questionImages.map((image, i) => {
+              return (
+                <div
+                  key={image}
+                  className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px]"
+                >
+                  <ContainImage
+                    url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                    alt={`Question Image ${i}`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
         {question.question}
       </div>
       <Radio.Group
