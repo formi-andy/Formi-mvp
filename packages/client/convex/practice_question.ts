@@ -71,7 +71,7 @@ export const createPracticeQuestion = mutation({
       explanation,
       summary,
       question_images: questionImages ?? [],
-      answerImages,
+      answer_images: answerImages ?? [],
     });
 
     // add tags
@@ -200,7 +200,7 @@ export const updatePracticeQuestion = mutation({
       explanation,
       summary,
       question_images: questionImages,
-      answerImages,
+      answer_images: answerImages,
     });
 
     // get existing tags
@@ -360,7 +360,7 @@ export const getRandomPracticeQuestion = query({
       question: randomPracticeQuestion.question,
       choices: randomPracticeQuestion.choices,
       questionImages: randomPracticeQuestion.question_images,
-      answerImages: randomPracticeQuestion.answerImages,
+      answerImages: randomPracticeQuestion.answer_images,
     };
 
     const randomizedChoices = strippedPracticeQuestion.choices.sort(

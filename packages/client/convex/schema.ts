@@ -270,7 +270,7 @@ export default defineSchema({
     explanation: v.array(v.string()),
     summary: v.string(),
     question_images: v.array(v.string()),
-    answerImages: v.optional(v.array(v.string())),
+    answer_images: v.array(v.string()),
   })
     .index("by_question", ["question"])
     .index("by_answer", ["answer"]),

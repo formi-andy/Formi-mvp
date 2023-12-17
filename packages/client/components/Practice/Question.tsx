@@ -36,6 +36,9 @@ export default function Question({ hash }: { hash: string }) {
   const [correct, setCorrect] = useState<boolean | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showAnswerImages, setShowAnswerImages] = useState<Set<number>>(
+    new Set<number>()
+  );
   const toast = useNetworkToasts();
 
   const question = useQuery(api.practice_question.getRandomPracticeQuestion, {
@@ -144,13 +147,50 @@ export default function Question({ hash }: { hash: string }) {
         </div>
       )}
       {explanation.show && (
-        <div>
+        <div className="flex flex-col gap-y-4">
           <p className="font-medium">Explanation</p>
           <div className="grid gap-y-2 mb-6">
             {explanation.explanation.map((paragraph, i) => {
               return <p key={i}>{paragraph}</p>;
             })}
           </div>
+          {question.answerImages && (
+            <>
+              <p className="font-medium">Reference Images</p>
+              <ul className="flex flex-col gap-3 mb-6 w-full">
+                {question.answerImages.map((image, i) => {
+                  return (
+                    <li key={image} className="w-full">
+                      <button
+                        className="hover:underline text-sky-500 cursor-pointer"
+                        onClick={() =>
+                          setShowAnswerImages(() => {
+                            const newSet = new Set(showAnswerImages);
+                            if (newSet.has(i)) {
+                              newSet.delete(i);
+                            } else {
+                              newSet.add(i);
+                            }
+                            return newSet;
+                          })
+                        }
+                      >
+                        <p>{image}</p>
+                      </button>
+                      {showAnswerImages.has(i) && (
+                        <div className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px] mt-4 bg-black">
+                          <ContainImage
+                            url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                            alt={`Question Image ${i}`}
+                          />
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
         </div>
       )}
       {correct === undefined ? (

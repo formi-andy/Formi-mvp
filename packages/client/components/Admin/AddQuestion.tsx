@@ -10,6 +10,7 @@ import { ConvexError } from "convex/values";
 import Dropzone from "@/components/ui/DropZone/DropZone";
 import AcceptedFiles from "@/components/ui/DropZone/AcceptedFiles";
 import { uploadFiles } from "@/utils/uploadFiles";
+import { DropzoneData } from "@/types/dropzone-types";
 
 export default function AddQuestion() {
   const createQuestion = useMutation(
@@ -19,12 +20,8 @@ export default function AddQuestion() {
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadData, setUploadData] = useState<
-    {
-      file: File;
-      title: string;
-    }[]
-  >([]);
+  const [questionImages, setQuestionImages] = useState<DropzoneData>([]);
+  const [answerImages, setAnswerImages] = useState<DropzoneData>([]);
 
   return (
     <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
@@ -40,16 +37,35 @@ export default function AddQuestion() {
       <p>Question Images</p>
       <div className="flex flex-col gap-6 p-8 rounded-lg items-center w-full">
         <Dropzone
-          data={uploadData}
-          setData={setUploadData}
+          data={questionImages}
+          setData={setQuestionImages}
           textColor="text-black"
           borderColor="border-black"
         />
         <div className="w-full">
           <AcceptedFiles
-            data={uploadData}
+            data={questionImages}
             setData={(data) => {
-              setUploadData(data);
+              setQuestionImages(data);
+            }}
+            bgColor="bg-white"
+            textColor="text-black"
+          />
+        </div>
+      </div>
+      <p>Answer Images</p>
+      <div className="flex flex-col gap-6 p-8 rounded-lg items-center w-full">
+        <Dropzone
+          data={answerImages}
+          setData={setAnswerImages}
+          textColor="text-black"
+          borderColor="border-black"
+        />
+        <div className="w-full">
+          <AcceptedFiles
+            data={answerImages}
+            setData={(data) => {
+              setAnswerImages(data);
             }}
             bgColor="bg-white"
             textColor="text-black"
@@ -100,7 +116,8 @@ export default function AddQuestion() {
               throw new Error("Invalid Format");
             }
 
-            const paths = await uploadFiles(uploadData);
+            const questionImagePaths = await uploadFiles(questionImages);
+            const answerImagePaths = await uploadFiles(answerImages);
 
             await createQuestion({
               question: serializedQuestion.question,
@@ -109,7 +126,8 @@ export default function AddQuestion() {
               explanation: serializedQuestion.explanation,
               summary: serializedQuestion.summary,
               tags: serializedQuestion.tags,
-              questionImages: paths as string[],
+              questionImages: questionImagePaths as string[],
+              answerImages: answerImagePaths as string[],
             });
 
             toast.loading({
