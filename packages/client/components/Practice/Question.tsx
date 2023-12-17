@@ -16,6 +16,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ContainImage } from "@/components/ui/Image/Image";
 import ReportQuestion from "./ReportQuestion";
+import { r2WorkerEndpoints } from "@/utils/getEnvVars";
 
 export default function Question({ hash }: { hash: string }) {
   const [seenQuestions, setSeenQuestions] = useState<string[]>([]);
@@ -36,6 +37,9 @@ export default function Question({ hash }: { hash: string }) {
   const [correct, setCorrect] = useState<boolean | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showExplanationImages, setShowExplanationImages] = useState<
+    Set<number>
+  >(new Set<number>());
   const toast = useNetworkToasts();
 
   const question = useQuery(api.practice_question.getRandomPracticeQuestion, {
@@ -90,7 +94,7 @@ export default function Question({ hash }: { hash: string }) {
                   className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px]"
                 >
                   <ContainImage
-                    url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                    url={`${r2WorkerEndpoints}/${image}`}
                     alt={`Question Image ${i}`}
                   />
                 </div>
@@ -144,13 +148,57 @@ export default function Question({ hash }: { hash: string }) {
         </div>
       )}
       {explanation.show && (
-        <div>
+        <div className="flex flex-col gap-y-4">
           <p className="font-medium">Explanation</p>
           <div className="grid gap-y-2 mb-6">
             {explanation.explanation.map((paragraph, i) => {
               return <p key={i}>{paragraph}</p>;
             })}
           </div>
+          {question.explanationImages && (
+            <>
+              <p className="font-medium">Reference Images</p>
+              <ul className="flex flex-col gap-3 mb-6 w-full">
+                {question.explanationImages.map((image, i) => {
+                  return (
+                    <li key={image} className="w-full list-none">
+                      <Button
+                        variant="link"
+                        className="text-lg px-0"
+                        onClick={() =>
+                          setShowExplanationImages(() => {
+                            const newSet = new Set(showExplanationImages);
+                            if (newSet.has(i)) {
+                              newSet.delete(i);
+                            } else {
+                              newSet.add(i);
+                            }
+                            return newSet;
+                          })
+                        }
+                      >
+                        <p>
+                          {image
+                            .split("___")
+                            .slice(1)
+                            .join("___")
+                            .replace(/_/g, " ")}
+                        </p>
+                      </Button>
+                      {showExplanationImages.has(i) && (
+                        <div className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px] mt-4 bg-transparent border">
+                          <ContainImage
+                            url={`${r2WorkerEndpoints}/${image}`}
+                            alt={`Question Image ${i}`}
+                          />
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
         </div>
       )}
       {correct === undefined ? (

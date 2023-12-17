@@ -1,6 +1,7 @@
 "use client";
 import { useDropzone } from "react-dropzone";
 import { notifications } from "@mantine/notifications";
+import { DropzoneData } from "@/types/dropzone-types";
 
 const maxSize = 1024 * 1024 * 5; // 5MB
 const maxFiles = 20;
@@ -11,16 +12,8 @@ const acceptedFileTypes = {
 };
 
 type Props = {
-  data: {
-    file: File;
-    title: string;
-  }[];
-  setData: (
-    data: {
-      file: File;
-      title: string;
-    }[]
-  ) => void;
+  data: DropzoneData;
+  setData: (data: DropzoneData) => void;
   textColor?: string;
   borderColor?: string;
 };
