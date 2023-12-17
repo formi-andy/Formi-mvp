@@ -20,7 +20,6 @@ export default function AddQuestion() {
   const [question, setQuestion] = useState("");
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [questionImages, setQuestionImages] = useState<DropzoneData>([]);
   const [explanationImages, setExplanationImages] = useState<DropzoneData>([]);
 
@@ -138,10 +137,9 @@ export default function AddQuestion() {
               explanationImages: explanationImagePaths as string[],
             });
 
-            toast.loading({
-              title: "Creating question",
-              message: "Please wait",
-            });
+            setQuestion("");
+            setQuestionImages([]);
+            setExplanationImages([]);
 
             toast.success({
               title: "Success",
