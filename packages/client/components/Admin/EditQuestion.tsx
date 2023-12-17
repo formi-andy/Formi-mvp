@@ -16,6 +16,7 @@ import { LuCheck } from "react-icons/lu";
 import { uploadFiles } from "@/utils/uploadFiles";
 import { deleteFiles } from "@/utils/deleteFiles";
 import { DropzoneData } from "@/types/dropzone-types";
+import { removeFileExtensions } from "@/utils/removeFileExtensions";
 
 export default function EditQuestion() {
   const updateQuestion = useMutation(
@@ -158,12 +159,18 @@ export default function EditQuestion() {
                 await deleteFiles(Array.from(removedQuestionImages ?? []));
                 await deleteFiles(Array.from(removedExplanationImages ?? []));
 
+                // remove file extension from image titles
+                const cleanedQuestionImages =
+                  removeFileExtensions(newQuestionImages);
+                const cleanedExplanationImages =
+                  removeFileExtensions(newExplanationImages);
+
                 // upload new images
                 const newUploadedQuestionImagePaths = await uploadFiles(
-                  newQuestionImages
+                  cleanedQuestionImages
                 );
                 const newUploadedExplanationImagePaths = await uploadFiles(
-                  newExplanationImages
+                  cleanedExplanationImages
                 );
 
                 const newQuestionImagePaths = question.questionImages

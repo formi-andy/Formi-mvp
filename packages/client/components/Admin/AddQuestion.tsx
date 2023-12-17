@@ -11,6 +11,7 @@ import Dropzone from "@/components/ui/DropZone/DropZone";
 import AcceptedFiles from "@/components/ui/DropZone/AcceptedFiles";
 import { uploadFiles } from "@/utils/uploadFiles";
 import { DropzoneData } from "@/types/dropzone-types";
+import { removeFileExtensions } from "@/utils/removeFileExtensions";
 
 export default function AddQuestion() {
   const createQuestion = useMutation(
@@ -116,8 +117,15 @@ export default function AddQuestion() {
               throw new Error("Invalid Format");
             }
 
-            const questionImagePaths = await uploadFiles(questionImages);
-            const explanationImagePaths = await uploadFiles(explanationImages);
+            // remove file extension from image titles
+            const cleanedQuestionImages = removeFileExtensions(questionImages);
+            const cleanedExplanationImages =
+              removeFileExtensions(explanationImages);
+
+            const questionImagePaths = await uploadFiles(cleanedQuestionImages);
+            const explanationImagePaths = await uploadFiles(
+              cleanedExplanationImages
+            );
 
             await createQuestion({
               question: serializedQuestion.question,

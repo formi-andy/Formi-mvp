@@ -1,14 +1,10 @@
-export const uploadFiles = async (
-  uploadData: {
-    file: File;
-    title: string;
-  }[]
-) => {
+import { DropzoneData } from "@/types/dropzone-types";
+
+export const uploadFiles = async (uploadData: DropzoneData) => {
   if (uploadData.length === 0) {
     return [];
   }
 
-  const questionHash = (Math.random() + 1).toString(36).substring(7);
   const parsedData = uploadData.map(({ file, title }) => ({
     file,
     // replace spaces with underscores and remove special characters
@@ -18,7 +14,6 @@ export const uploadFiles = async (
   const response = await fetch("/api/upload", {
     method: "POST",
     body: JSON.stringify({
-      questionHash,
       files: parsedData.map((file) => file.title),
     }),
     headers: {
@@ -54,7 +49,7 @@ export const uploadFiles = async (
         throw new Error(`Upload failed for file ${file.name}`);
       }
 
-      paths.push(`${questionHash}-${title}`);
+      paths.push(`${title}`);
     })
   );
 

@@ -19,7 +19,7 @@ export async function POST(request: Request) {
         S3,
         new PutObjectCommand({
           Bucket: "practice-question-images",
-          Key: `${body.questionHash}-${fileName}`,
+          Key: `${fileName}`,
         }),
         {
           expiresIn: 60 * 60, // 1h
