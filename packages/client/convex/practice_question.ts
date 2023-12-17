@@ -22,7 +22,7 @@ export const createPracticeQuestion = mutation({
     explanation: v.array(v.string()),
     summary: v.string(),
     questionImages: v.optional(v.array(v.string())),
-    answerImages: v.optional(v.array(v.string())),
+    explanationImages: v.optional(v.array(v.string())),
     tags: v.array(v.string()),
   },
   handler: async (
@@ -34,7 +34,7 @@ export const createPracticeQuestion = mutation({
       explanation,
       summary,
       questionImages,
-      answerImages,
+      explanationImages,
       tags,
     }
   ) => {
@@ -71,7 +71,7 @@ export const createPracticeQuestion = mutation({
       explanation,
       summary,
       question_images: questionImages ?? [],
-      answer_images: answerImages ?? [],
+      explanation_images: explanationImages ?? [],
     });
 
     // add tags
@@ -161,7 +161,7 @@ export const updatePracticeQuestion = mutation({
     explanation: v.optional(v.array(v.string())),
     summary: v.optional(v.string()),
     questionImages: v.optional(v.array(v.string())),
-    answerImages: v.optional(v.array(v.string())),
+    explanationImages: v.optional(v.array(v.string())),
     tags: v.optional(v.array(v.string())),
   },
   handler: async (
@@ -174,7 +174,7 @@ export const updatePracticeQuestion = mutation({
       explanation,
       summary,
       questionImages,
-      answerImages,
+      explanationImages,
       tags,
     }
   ) => {
@@ -200,7 +200,7 @@ export const updatePracticeQuestion = mutation({
       explanation,
       summary,
       question_images: questionImages,
-      answer_images: answerImages,
+      explanation_images: explanationImages,
     });
 
     // get existing tags
@@ -360,7 +360,7 @@ export const getRandomPracticeQuestion = query({
       question: randomPracticeQuestion.question,
       choices: randomPracticeQuestion.choices,
       questionImages: randomPracticeQuestion.question_images,
-      answerImages: randomPracticeQuestion.answer_images,
+      explanationImages: randomPracticeQuestion.explanation_images,
     };
 
     const randomizedChoices = strippedPracticeQuestion.choices.sort(

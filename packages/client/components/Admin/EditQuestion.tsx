@@ -33,7 +33,7 @@ export default function EditQuestion() {
     summary: string;
     tags: string;
     questionImages: string[];
-    answerImages: string[];
+    explanationImages: string[];
   }>({
     id: "",
     question: "",
@@ -43,7 +43,7 @@ export default function EditQuestion() {
     summary: "",
     tags: "",
     questionImages: [],
-    answerImages: [],
+    explanationImages: [],
   });
 
   const fields = [
@@ -59,13 +59,14 @@ export default function EditQuestion() {
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
   const [newQuestionImages, setNewQuestionImages] = useState<DropzoneData>([]);
-  const [newAnswerImages, setNewAnswerImages] = useState<DropzoneData>([]);
+  const [newExplanationImages, setNewExplanationImages] =
+    useState<DropzoneData>([]);
   const [removedQuestionImages, setRemovedQuestionImages] = useState<
     Set<string>
   >(new Set());
-  const [removedAnswerImages, setRemovedAnswerImages] = useState<Set<string>>(
-    new Set()
-  );
+  const [removedExplanationImages, setRemovedExplanationImages] = useState<
+    Set<string>
+  >(new Set());
 
   return (
     <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
@@ -102,12 +103,12 @@ export default function EditQuestion() {
             setToRemove={setRemovedQuestionImages}
           />
           <EditImages
-            label="Answer Images"
-            images={question.answerImages}
-            newImages={newAnswerImages}
-            setNewImages={setNewAnswerImages}
-            toRemove={removedAnswerImages}
-            setToRemove={setRemovedAnswerImages}
+            label="Explanation Images"
+            images={question.explanationImages}
+            newImages={newExplanationImages}
+            setNewImages={setNewExplanationImages}
+            toRemove={removedExplanationImages}
+            setToRemove={setRemovedExplanationImages}
           />
         </>
       ) : (
@@ -135,7 +136,7 @@ export default function EditQuestion() {
               summary: "",
               tags: "",
               questionImages: [],
-              answerImages: [],
+              explanationImages: [],
             });
             setSearched(false);
           }}
@@ -155,23 +156,23 @@ export default function EditQuestion() {
               try {
                 // remove images
                 await deleteFiles(Array.from(removedQuestionImages ?? []));
-                await deleteFiles(Array.from(removedAnswerImages ?? []));
+                await deleteFiles(Array.from(removedExplanationImages ?? []));
 
                 // upload new images
                 const newUploadedQuestionImagePaths = await uploadFiles(
                   newQuestionImages
                 );
-                const newUploadedAnswerImagePaths = await uploadFiles(
-                  newAnswerImages
+                const newUploadedExplanationImagePaths = await uploadFiles(
+                  newExplanationImages
                 );
 
                 const newQuestionImagePaths = question.questionImages
                   .filter((image) => !removedQuestionImages?.has(image))
                   .concat(newUploadedQuestionImagePaths ?? []);
 
-                const newAnswerImagePaths = question.answerImages
-                  .filter((image) => !removedAnswerImages?.has(image))
-                  .concat(newUploadedAnswerImagePaths ?? []);
+                const newExplanationImagePaths = question.explanationImages
+                  .filter((image) => !removedExplanationImages?.has(image))
+                  .concat(newUploadedExplanationImagePaths ?? []);
 
                 // serialize the question
                 await updateQuestion({
@@ -183,7 +184,7 @@ export default function EditQuestion() {
                   summary: question.summary,
                   tags: question.tags.split(", "),
                   questionImages: newQuestionImagePaths,
-                  answerImages: newAnswerImagePaths,
+                  explanationImages: newExplanationImagePaths,
                 });
                 setQuestionQuery("");
                 setQuestion({
@@ -195,13 +196,13 @@ export default function EditQuestion() {
                   summary: "",
                   tags: "",
                   questionImages: [],
-                  answerImages: [],
+                  explanationImages: [],
                 });
                 setNewQuestionImages([]);
                 setSearched(false);
-                setNewAnswerImages([]);
+                setNewExplanationImages([]);
                 setRemovedQuestionImages(new Set());
-                setRemovedAnswerImages(new Set());
+                setRemovedExplanationImages(new Set());
 
                 toast.success({
                   title: "Success",
@@ -250,7 +251,7 @@ export default function EditQuestion() {
                   summary: question.summary,
                   tags: question.tags.join(", "),
                   questionImages: question.question_images,
-                  answerImages: question.answer_images,
+                  explanationImages: question.explanation_images,
                 });
                 setSearched(true);
 

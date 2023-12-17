@@ -21,7 +21,7 @@ export default function AddQuestion() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [questionImages, setQuestionImages] = useState<DropzoneData>([]);
-  const [answerImages, setAnswerImages] = useState<DropzoneData>([]);
+  const [explanationImages, setExplanationImages] = useState<DropzoneData>([]);
 
   return (
     <div className="border rounded-lg flex flex-col gap-y-4 p-4 w-full">
@@ -53,19 +53,19 @@ export default function AddQuestion() {
           />
         </div>
       </div>
-      <p>Answer Images</p>
+      <p>Explanation Images</p>
       <div className="flex flex-col gap-6 p-8 rounded-lg items-center w-full">
         <Dropzone
-          data={answerImages}
-          setData={setAnswerImages}
+          data={explanationImages}
+          setData={setExplanationImages}
           textColor="text-black"
           borderColor="border-black"
         />
         <div className="w-full">
           <AcceptedFiles
-            data={answerImages}
+            data={explanationImages}
             setData={(data) => {
-              setAnswerImages(data);
+              setExplanationImages(data);
             }}
             bgColor="bg-white"
             textColor="text-black"
@@ -117,7 +117,7 @@ export default function AddQuestion() {
             }
 
             const questionImagePaths = await uploadFiles(questionImages);
-            const answerImagePaths = await uploadFiles(answerImages);
+            const explanationImagePaths = await uploadFiles(explanationImages);
 
             await createQuestion({
               question: serializedQuestion.question,
@@ -127,7 +127,7 @@ export default function AddQuestion() {
               summary: serializedQuestion.summary,
               tags: serializedQuestion.tags,
               questionImages: questionImagePaths as string[],
-              answerImages: answerImagePaths as string[],
+              explanationImages: explanationImagePaths as string[],
             });
 
             toast.loading({

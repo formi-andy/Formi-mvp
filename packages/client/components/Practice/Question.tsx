@@ -36,9 +36,9 @@ export default function Question({ hash }: { hash: string }) {
   const [correct, setCorrect] = useState<boolean | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [showAnswerImages, setShowAnswerImages] = useState<Set<number>>(
-    new Set<number>()
-  );
+  const [showExplanationImages, setShowExplanationImages] = useState<
+    Set<number>
+  >(new Set<number>());
   const toast = useNetworkToasts();
 
   const question = useQuery(api.practice_question.getRandomPracticeQuestion, {
@@ -154,18 +154,18 @@ export default function Question({ hash }: { hash: string }) {
               return <p key={i}>{paragraph}</p>;
             })}
           </div>
-          {question.answerImages && (
+          {question.explanationImages && (
             <>
               <p className="font-medium">Reference Images</p>
               <ul className="flex flex-col gap-3 mb-6 w-full">
-                {question.answerImages.map((image, i) => {
+                {question.explanationImages.map((image, i) => {
                   return (
                     <li key={image} className="w-full">
                       <button
                         className="hover:underline text-sky-500 cursor-pointer"
                         onClick={() =>
-                          setShowAnswerImages(() => {
-                            const newSet = new Set(showAnswerImages);
+                          setShowExplanationImages(() => {
+                            const newSet = new Set(showExplanationImages);
                             if (newSet.has(i)) {
                               newSet.delete(i);
                             } else {
@@ -177,7 +177,7 @@ export default function Question({ hash }: { hash: string }) {
                       >
                         <p>{image}</p>
                       </button>
-                      {showAnswerImages.has(i) && (
+                      {showExplanationImages.has(i) && (
                         <div className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px] mt-4 bg-black">
                           <ContainImage
                             url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
