@@ -5,11 +5,16 @@ export const uploadFiles = async (uploadData: DropzoneData) => {
     return [];
   }
 
-  const parsedData = uploadData.map(({ file, title }) => ({
-    file,
-    // replace spaces with underscores and remove special characters
-    title: title.replace(/[^a-zA-Z0-9 ]/g, "").replace(/ /g, "_"),
-  }));
+  const parsedData = uploadData.map(({ file, title }) => {
+    const hash = Math.random().toString(36).substring(2, 7);
+    return {
+      file,
+      // replace spaces with underscores and remove special characters
+      title: `${hash}___${title
+        .replace(/[^a-zA-Z0-9 ]/g, "")
+        .replace(/ /g, "_")}`,
+    };
+  });
 
   const response = await fetch("/api/upload", {
     method: "POST",

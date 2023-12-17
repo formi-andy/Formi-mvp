@@ -4,8 +4,14 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const S3 = new S3Client({
   endpoint: process.env.CLOUD_FLARE_R2_ENDPOINT,
   credentials: {
-    accessKeyId: process.env.CLOUD_FLARE_R2_ACCESS_KEY_ID ?? "",
-    secretAccessKey: process.env.CLOUD_FLARE_R2_SECRET_ACCESS_KEY ?? "",
+    accessKeyId:
+      (process.env.NODE_ENV === "production"
+        ? process.env.CLOUD_FLARE_R2_ACCESS_KEY_ID_PROD
+        : process.env.CLOUD_FLARE_R2_ACCESS_KEY_ID_DEV) ?? "",
+    secretAccessKey:
+      (process.env.NODE_ENV === "production"
+        ? process.env.CLOUD_FLARE_R2_SECRET_ACCESS_KEY_PROD
+        : process.env.CLOUD_FLARE_R2_SECRET_ACCESS_KEY_DEV) ?? "",
   },
   region: "auto",
 });
@@ -18,7 +24,10 @@ export async function POST(request: Request) {
       const url = await getSignedUrl(
         S3,
         new PutObjectCommand({
-          Bucket: "practice-question-images",
+          Bucket:
+            (process.env.NODE_ENV === "production"
+              ? process.env.CLOUD_FLARE_R2_BUCKET_PROD
+              : process.env.CLOUD_FLARE_R2_BUCKET_DEV) ?? "",
           Key: `${fileName}`,
         }),
         {

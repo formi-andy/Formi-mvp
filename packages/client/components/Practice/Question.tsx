@@ -16,6 +16,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ContainImage } from "@/components/ui/Image/Image";
 import ReportQuestion from "./ReportQuestion";
+import { r2WorkerEndpoints } from "@/utils/getEnvVars";
 
 export default function Question({ hash }: { hash: string }) {
   const [seenQuestions, setSeenQuestions] = useState<string[]>([]);
@@ -93,7 +94,7 @@ export default function Question({ hash }: { hash: string }) {
                   className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px]"
                 >
                   <ContainImage
-                    url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                    url={`${r2WorkerEndpoints}/${image}`}
                     alt={`Question Image ${i}`}
                   />
                 </div>
@@ -160,9 +161,10 @@ export default function Question({ hash }: { hash: string }) {
               <ul className="flex flex-col gap-3 mb-6 w-full">
                 {question.explanationImages.map((image, i) => {
                   return (
-                    <li key={image} className="w-full">
-                      <button
-                        className="hover:underline text-sky-500 cursor-pointer"
+                    <li key={image} className="w-full list-none">
+                      <Button
+                        variant="link"
+                        className="text-lg px-0"
                         onClick={() =>
                           setShowExplanationImages(() => {
                             const newSet = new Set(showExplanationImages);
@@ -175,12 +177,18 @@ export default function Question({ hash }: { hash: string }) {
                           })
                         }
                       >
-                        <p>{image}</p>
-                      </button>
+                        <p>
+                          {image
+                            .split("___")
+                            .slice(1)
+                            .join("___")
+                            .replace(/_/g, " ")}
+                        </p>
+                      </Button>
                       {showExplanationImages.has(i) && (
-                        <div className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px] mt-4 bg-black">
+                        <div className="flex w-full rounded-lg relative aspect-square max-h-[50vh] min-w-[200px] mt-4 bg-transparent border">
                           <ContainImage
-                            url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                            url={`${r2WorkerEndpoints}/${image}`}
                             alt={`Question Image ${i}`}
                           />
                         </div>

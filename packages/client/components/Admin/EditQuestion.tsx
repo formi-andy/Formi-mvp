@@ -17,6 +17,7 @@ import { uploadFiles } from "@/utils/uploadFiles";
 import { deleteFiles } from "@/utils/deleteFiles";
 import { DropzoneData } from "@/types/dropzone-types";
 import { removeFileExtensions } from "@/utils/removeFileExtensions";
+import { r2WorkerEndpoints } from "@/utils/getEnvVars";
 
 export default function EditQuestion() {
   const updateQuestion = useMutation(
@@ -297,7 +298,6 @@ type EditImagesProps = {
   label: string;
   images: string[];
   newImages: DropzoneData;
-  // setNewImages: (images: DropzoneData) => void;
   setNewImages: Dispatch<SetStateAction<DropzoneData>>;
   toRemove: Set<string>;
   setToRemove: Dispatch<SetStateAction<Set<string>>>;
@@ -320,7 +320,7 @@ const EditImages = ({
             <div className="relative flex h-[200px] w-[200px] justify-center mb-4">
               {toRemove?.has(image) ? (
                 <PendingImage
-                  url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                  url={`${r2WorkerEndpoints}/${image}`}
                   alt={`Question Image ${index}`}
                   icon={<LuCheck size={20} />}
                   onIconClick={() => {
@@ -338,7 +338,7 @@ const EditImages = ({
                 />
               ) : (
                 <PendingImage
-                  url={`https://worker-solitary-lake-0d03.james-0da.workers.dev/${image}`}
+                  url={`${r2WorkerEndpoints}/${image}`}
                   alt={`Question Image ${index}`}
                   onIconClick={() => {
                     setToRemove((toRemove) => {
