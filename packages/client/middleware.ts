@@ -24,8 +24,6 @@ export default authMiddleware({
       .get("host")!
       .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
 
-    console.log("hostname: ", hostname);
-
     // slice of www. from hostname
     if (hostname.startsWith("www.")) {
       hostname = hostname.slice(4);
