@@ -19,7 +19,7 @@ export default async function Temp() {
           </p>
           <p className="text-2xl text-darktext">
             Score higher on your STEP 2 exam and match with your dream
-            residency. Oh, and get paid while you do it.
+            residency. Completely free.
           </p>
           <p className="text-2xl text-darktext">Coming soon.</p>
           <WaitList />
@@ -44,11 +44,11 @@ export default async function Temp() {
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
             <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
               <p className="text-xl sm:text-2xl font-medium">
-                Earn while you learn
+                Make a difference
               </p>
               <p>
-                Get paid for each correct assessment, and get feedback for the
-                ones you get wrong. clock.
+                See real patient data and help people better understand their
+                conditions, democratizing access to medical information.
               </p>
             </div>
             <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
@@ -62,11 +62,12 @@ export default async function Temp() {
             </div>
             <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
               <p className="text-xl sm:text-2xl font-medium">
-                On your own time
+                Study for free, forever
               </p>
               <p>
                 Being a student is tough. Review cases whenever you have free
-                time and stop when you have to.
+                time and stop when you have to &#8212; without ever paying a
+                dime.
               </p>
             </div>
             <div className="flex flex-col justify-between gap-y-12 bg-[#F3F0F2] text-darktext rounded-2xl p-6 shadow-accent-2">
@@ -104,8 +105,8 @@ export default async function Temp() {
             </div>
             <p className="text-2xl sm:text-3xl font-medium">Review cases</p>
             <p className="text-lg sm:text-xl font-light">
-              See and assess real cases from actual patients. Practice writing
-              assessments and delivering patient-facing info.
+              See and assess practice and real cases from actual patients.
+              Practice writing assessments and delivering patient-facing info.
             </p>
           </div>
           <div className="p-6 bg-lightblue flex flex-col gap-y-3 rounded-2xl shadow-accent-2">
@@ -127,7 +128,7 @@ export default async function Temp() {
               <p
                 className={`${mont.className} text-3xl sm:text-4xl mb-4 text-center text-white`}
               >
-                Ready to start earning?
+                Ready to get started?
               </p>
             }
             buttonColor="bg-[#F6DDB3] hover:bg-[#f5e4cdff]"
