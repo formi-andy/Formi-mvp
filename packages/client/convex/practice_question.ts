@@ -264,6 +264,7 @@ export const checkPracticeQuestionAnswer = action({
   ): Promise<{
     correct: boolean;
     explanation: string[];
+    explanationImages: string[];
     answer: string;
   }> {
     const practiceQuestion = await ctx.runQuery(
@@ -278,19 +279,12 @@ export const checkPracticeQuestionAnswer = action({
         code: 404,
       });
 
-    if (practiceQuestion.answer === answer) {
-      return {
-        correct: true,
-        explanation: practiceQuestion.explanation,
-        answer: practiceQuestion.answer,
-      };
-    } else {
-      return {
-        correct: false,
-        explanation: practiceQuestion.explanation,
-        answer: practiceQuestion.answer,
-      };
-    }
+    return {
+      correct: practiceQuestion.answer === answer,
+      explanation: practiceQuestion.explanation,
+      explanationImages: practiceQuestion.explanation_images,
+      answer: practiceQuestion.answer,
+    };
   },
 });
 
@@ -360,7 +354,6 @@ export const getRandomPracticeQuestion = query({
       question: randomPracticeQuestion.question,
       choices: randomPracticeQuestion.choices,
       questionImages: randomPracticeQuestion.question_images,
-      explanationImages: randomPracticeQuestion.explanation_images,
     };
 
     const randomizedChoices = strippedPracticeQuestion.choices.sort(
