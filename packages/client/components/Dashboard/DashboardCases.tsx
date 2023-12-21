@@ -69,12 +69,12 @@ export default function DashboardCases() {
           total={medicalStudent.total_reviews}
         />
         <div className="w-full self-end justify-self-end flex gap-x-4">
-          <Link className="w-full" href={`/dashboard/gallery?tab=completed`}>
+          <Link className="w-full" href={`/case?tab=completed`}>
             <Button className="w-full" variant="secondary">
               Past Cases
             </Button>
           </Link>
-          <Link className="w-full" href={`/dashboard/gallery?tab=open`}>
+          <Link className="w-full" href={`/case?tab=open`}>
             <Button className="w-full" variant="action">
               Open Cases
             </Button>
