@@ -53,8 +53,6 @@ export default function Question({ hash }: { hash: string }) {
     api.practice_question.checkPracticeQuestionAnswer
   );
 
-  console.log("EXPLANATION", explanation);
-
   if (question === null) {
     return (
       <div className="lg:max-w-2xl gap-x-4 flex flex-col justify-self-center justify-center items-center rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 h-[40vh] w-full shadow-accent-2">
