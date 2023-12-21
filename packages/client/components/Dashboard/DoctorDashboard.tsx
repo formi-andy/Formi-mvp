@@ -8,10 +8,16 @@ import Link from "next/link";
 
 // TODO: get tags from convex eventually?
 const tags = [
+  "Immunology",
+  "Allergy",
+  "Male Reproductive System",
   "Pediatrics",
+  "Obstetrics, Gynecology & Breast",
+  "Neurology",
+  "Obstetrics & Gynecology",
   "Ear, Nose & Throat (ENT)",
-  "Oncology",
   "Pathology",
+  "Opthalmology",
 ];
 
 function Tag({
@@ -50,7 +56,7 @@ export default function DoctorDashboard() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
   return (
-    <div className="grid gap-3 sm:gap-6 max-w-4xl self-center justify-self-center">
+    <div className="grid gap-3 sm:gap-6 max-w-5xl self-center justify-self-center">
       <DashboardCases />
       {/* <div className="flex w-full lg:w-2/5 flex-col gap-4 md:gap-6 lg:gap-8"> */}
       <div className="grid gap-3 lg:gap-6">

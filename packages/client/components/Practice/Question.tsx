@@ -6,7 +6,7 @@ import { useAction, useQuery } from "convex/react";
 import { useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
-import { Radio, Tooltip, Modal } from "@mantine/core";
+import { Radio, Tooltip } from "@mantine/core";
 import { LuFlag } from "react-icons/lu";
 
 import useNetworkToasts from "@/hooks/useNetworkToasts";
@@ -28,10 +28,12 @@ export default function Question({ hash }: { hash: string }) {
   const [explanation, setExplanation] = useState<{
     show: boolean;
     explanation: string[];
+    explanationImages: string[];
     answer: string;
   }>({
     show: false,
     explanation: [],
+    explanationImages: [],
     answer: "",
   });
   const [correct, setCorrect] = useState<boolean | undefined>(undefined);
@@ -155,11 +157,11 @@ export default function Question({ hash }: { hash: string }) {
               return <p key={i}>{paragraph}</p>;
             })}
           </div>
-          {question.explanationImages && (
+          {explanation.explanationImages.length > 0 && (
             <>
               <p className="font-medium">Reference Images</p>
               <ul className="flex flex-col gap-3 mb-6 w-full">
-                {question.explanationImages.map((image, i) => {
+                {explanation.explanationImages.map((image, i) => {
                   return (
                     <li key={image} className="w-full list-none">
                       <Button
@@ -223,6 +225,7 @@ export default function Question({ hash }: { hash: string }) {
               setExplanation({
                 ...explanation,
                 explanation: res.explanation,
+                explanationImages: res.explanationImages,
                 answer: res.answer,
               });
               if (res.correct) {
@@ -275,6 +278,7 @@ export default function Question({ hash }: { hash: string }) {
               setExplanation({
                 show: false,
                 explanation: [],
+                explanationImages: [],
                 answer: "",
               });
               setSeenQuestions([...seenQuestions, question._id]);
