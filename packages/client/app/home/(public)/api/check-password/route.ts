@@ -8,6 +8,7 @@ export async function POST(request: Request) {
   return new Response(
     JSON.stringify({
       verified: requestData.password === "Homescope",
+      password: requestData.password,
     }),
     {
       headers: { "Content-Type": "application/json" },

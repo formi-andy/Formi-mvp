@@ -44,6 +44,7 @@ export default function LockedAuth({
             toast.success({
               title: "Password Verified",
             });
+            localStorage.setItem("formi-password", data.password);
             setVerified(true);
           } else {
             toast.error({
