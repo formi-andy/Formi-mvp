@@ -86,7 +86,6 @@ export default function Question({ hash }: { hash: string }) {
   return (
     <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 lg:max-w-2xl justify-self-center shadow-accent-2">
       <div>
-        <p className="font-medium">Question</p>
         <div className="flex justify-between items-center mb-4">
           <p className="font-medium text-xl">Question</p>
           <Tooltip label="Report Question">
@@ -101,7 +100,7 @@ export default function Question({ hash }: { hash: string }) {
         </div>
         {question.question}
         {question.questionImages.length > 0 && (
-          <div className="grid gap-3 mb-6">
+          <div className="grid gap-3 my-6">
             {question.questionImages.map((image, i) => {
               return (
                 <div

@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { ConvexError } from "convex/values";
 
 export default function EnterPassword({
   setEnterPassword,
@@ -42,13 +43,24 @@ export default function EnterPassword({
         onClick={async () => {
           try {
             setLoading(true);
+            toast.loading({
+              title: "Verifying password",
+              message: "Please wait",
+            });
             await verifyPassword({
               password: formPassword,
+            });
+            toast.success({
+              title: "Password verified",
+              message: "Redirecting you to the dashboard",
             });
           } catch (error) {
             toast.error({
               title: "Error verifying password",
-              message: "Please try again later",
+              message:
+                error instanceof ConvexError
+                  ? (error.data as { message: string }).message
+                  : "Please try again later",
             });
           } finally {
             setLoading(false);

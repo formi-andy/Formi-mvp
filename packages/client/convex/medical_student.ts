@@ -122,7 +122,7 @@ export const verifyFormPassword = action({
     // if (password !== process.env.FORM_PASSWORD) {
     if (password !== "Formi2024") {
       throw new ConvexError({
-        message: "Password incorrect",
+        message: "Incorrect password",
         code: 401,
       });
     }
