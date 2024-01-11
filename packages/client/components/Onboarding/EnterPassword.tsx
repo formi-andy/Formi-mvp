@@ -5,6 +5,7 @@ import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ConvexError } from "convex/values";
+import { useRouter } from "next/navigation";
 
 export default function EnterPassword({
   setEnterPassword,
@@ -14,6 +15,7 @@ export default function EnterPassword({
   const [formPassword, setFormPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const toast = useNetworkToasts();
+  const router = useRouter();
   const verifyPassword = useAction(api.medical_student.verifyFormPassword);
 
   return (
@@ -52,8 +54,9 @@ export default function EnterPassword({
             });
             toast.success({
               title: "Password verified",
-              message: "Redirecting you to the dashboard",
+              message: "Navigating to dashboard",
             });
+            router.push("/dashboard");
           } catch (error) {
             toast.error({
               title: "Error verifying password",

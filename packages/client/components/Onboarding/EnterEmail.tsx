@@ -50,7 +50,7 @@ export default function EnterEmail({
             setEnterPassword(true);
           }}
         >
-          Enter Code Instead
+          Use Password Instead
         </Button>
       </div>
       <Button
