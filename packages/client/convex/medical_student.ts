@@ -116,6 +116,45 @@ export const verifyEmail = action({
   },
 });
 
+export const verifyFormPassword = action({
+  args: { password: v.string() },
+  handler: async (ctx, { password }) => {
+    // if (password !== process.env.FORM_PASSWORD) {
+    if (password !== "Formi2024") {
+      throw new ConvexError({
+        message: "Incorrect password",
+        code: 401,
+      });
+    }
+
+    const clerkUserId = await ctx.runMutation(
+      internal.users.getClerkUserForAction
+    );
+    const clerkUser = await clerkClient.users.getUser(clerkUserId);
+    const schoolEmail = clerkUser.emailAddresses[0];
+
+    if (!schoolEmail || schoolEmail.verification?.status !== "verified") {
+      throw new ConvexError({
+        message: "Email not verified",
+        code: 401,
+      });
+    }
+
+    await Promise.all([
+      clerkClient.users.updateUserMetadata(clerkUser.id, {
+        publicMetadata: {
+          student_email: schoolEmail.emailAddress,
+          role: UserRole.MedicalStudent,
+        },
+      }),
+      ctx.runMutation(internal.medical_student.createMedicalStudent, {
+        school: "N/A",
+        email: schoolEmail.emailAddress,
+      }),
+    ]);
+  },
+});
+
 export const setEmailMetadata = action({
   args: { email: v.string() },
   handler: async (ctx, { email }) => {
