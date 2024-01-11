@@ -106,7 +106,7 @@ export const updateOrCreateUser = internalMutation({
         return { clearMetadata: true };
       }
     } catch (e) {
-      console.log("error updating user", e);
+      console.log("Error updating user", e);
     }
   },
 });
