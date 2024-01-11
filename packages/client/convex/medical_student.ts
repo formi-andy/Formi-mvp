@@ -23,6 +23,18 @@ export const createMedicalStudent = internalMutation({
   },
   handler: async (ctx, { school, email, bio, blurb }) => {
     const user = await mustGetCurrentUser(ctx);
+    const existingStudent = await ctx.db
+      .query("medical_student")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .first();
+
+    if (existingStudent) {
+      throw new ConvexError({
+        message: "Medical student already exists for user",
+        code: 409,
+      });
+    }
+
     const medicalStudent = await ctx.db.insert("medical_student", {
       user_id: user._id,
       total_reviews: 0,
