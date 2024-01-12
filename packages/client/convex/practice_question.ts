@@ -96,6 +96,28 @@ export const getPracticeQuestion = query({
   },
 });
 
+export const getPracticeQuestionWithTags = query({
+  args: { practiceQuestionId: v.id("practice_question") },
+  async handler(ctx, args) {
+    const question = await mustGetPracticeQuestion(
+      ctx,
+      args.practiceQuestionId
+    );
+
+    const tags = await ctx.db
+      .query("practice_question_tag")
+      .withIndex("by_practice_question_id", (q) =>
+        q.eq("practice_question_id", question._id)
+      )
+      .collect();
+
+    return {
+      ...question,
+      tags: tags.map((obj) => obj.tag),
+    };
+  },
+});
+
 export const getPracticeQuestionByQuestion = query({
   args: { question: v.string() },
   async handler(ctx, args) {

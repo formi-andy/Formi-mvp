@@ -24,7 +24,6 @@ const tags = [
   "Pathology",
   "Oncology",
   "Ophthatlmology",
-  
 ];
 
 function Tag({
