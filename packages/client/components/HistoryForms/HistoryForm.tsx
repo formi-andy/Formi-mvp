@@ -7,14 +7,24 @@ type Props = {
   section: string;
 };
 
-function renderTitle(section: string) {
+function renderTitle(
+  section: string,
+  patient: {
+    firstName: string;
+    lastName: string;
+  } | null
+) {
+  let patientName = "";
+  if (patient) {
+    patientName = `${patient.firstName} ${patient.lastName}'s`;
+  }
   switch (section) {
     case "medicalHistoryQuestions":
-      return "Medical History Questions";
+      return `${patientName} Medical History Questions`;
     case "familyHistoryQuestions":
-      return "Family History Questions";
+      return `${patientName} Family History Questions`;
     case "socialHistoryQuestions":
-      return "Social History Questions";
+      return `${patientName} Social History Questions`;
   }
 }
 
@@ -26,7 +36,7 @@ const HistoryForm = ({ form, section }: Props) => {
     <div className="flex flex-col gap-y-6 bg-formiblue rounded-lg text-white self-center p-8 max-w-5xl w-full">
       <div className="flex flex-col gap-y-2" key={section}>
         <p className="text-xl font-semibold self-center text-center sm:text-2xl">
-          {renderTitle(section)}
+          {renderTitle(section, form.values.patient)}
         </p>
         <div className="flex flex-col gap-y-4">
           {Object.keys(values[section]).map((key) => {
