@@ -11,15 +11,47 @@ const nextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    domains: [
-      "lh3.googleusercontent.com",
-      "posh-crab-317.convex.cloud",
-      "img.clerk.com",
-      "images.clerk.dev",
-      "notable-puffin-749.convex.cloud",
-      "acoustic-dinosaur-150.convex.cloud",
-      "prod-practice-question-worker.james-0da.workers.dev",
-      "dev-practice-question-worker.james-0da.workers.dev",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**/*",
+      },
+      {
+        protocol: "https",
+        hostname: "posh-crab-317.convex.cloud",
+        pathname: "/**/*",
+      },
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
+        pathname: "/**/*",
+      },
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+        pathname: "/**/*",
+      },
+      {
+        protocol: "https",
+        hostname: "notable-puffin-749.convex.cloud",
+        pathname: "/**/*",
+      },
+      {
+        protocol: "https",
+        hostname: "acoustic-dinosaur-150.convex.cloud",
+        pathname: "/**/*",
+      },
+      {
+        protocol: "https",
+        hostname: "prod-practice-question-worker.james-0da.workers.dev",
+        pathname: "/**/*",
+      },
+      {
+        protocol: "https",
+        hostname: "dev-practice-question-worker.james-0da.workers.dev",
+        pathname: "/**/*",
+      },
     ],
   },
   eslint: {
