@@ -41,7 +41,10 @@ export function ClerkConvexAdapter({
 
 export default function ConvexContext({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
-  initAmplitude();
+
+  if (typeof window !== "undefined") {
+    initAmplitude();
+  }
 
   return (
     <ConvexProvider client={convex}>
