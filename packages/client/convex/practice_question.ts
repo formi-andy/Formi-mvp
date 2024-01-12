@@ -1,5 +1,6 @@
 import {
   action,
+  internalAction,
   internalMutation,
   internalQuery,
   mutation,
@@ -11,7 +12,7 @@ import { ConvexError, v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 import { mustGetCurrentUser } from "./users";
 import { EmailAddressJSON } from "@clerk/clerk-sdk-node";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { UserRole } from "../types/role-types";
 
 export const createPracticeQuestion = mutation({
@@ -92,6 +93,28 @@ export const getPracticeQuestion = query({
   args: { practiceQuestionId: v.id("practice_question") },
   async handler(ctx, args) {
     return ctx.db.get(args.practiceQuestionId);
+  },
+});
+
+export const getPracticeQuestionWithTags = query({
+  args: { practiceQuestionId: v.id("practice_question") },
+  async handler(ctx, args) {
+    const question = await mustGetPracticeQuestion(
+      ctx,
+      args.practiceQuestionId
+    );
+
+    const tags = await ctx.db
+      .query("practice_question_tag")
+      .withIndex("by_practice_question_id", (q) =>
+        q.eq("practice_question_id", question._id)
+      )
+      .collect();
+
+    return {
+      ...question,
+      tags: tags.map((obj) => obj.tag),
+    };
   },
 });
 
@@ -367,7 +390,7 @@ export const getRandomPracticeQuestion = query({
   },
 });
 
-export const reportPracticeQuestion = mutation({
+export const createFeedback = internalMutation({
   args: {
     practiceQuestionId: v.id("practice_question"),
     feedback: v.string(),
@@ -389,6 +412,69 @@ export const reportPracticeQuestion = mutation({
       user_id: user._id,
     });
 
-    return practiceQuestionId;
+    return {
+      questionId: practiceQuestionId,
+      userId: user._id,
+    };
+  },
+});
+
+export const reportPracticeQuestion = action({
+  args: {
+    practiceQuestionId: v.id("practice_question"),
+    feedback: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { userId, questionId } = await ctx.runMutation(
+      internal.practice_question.createFeedback,
+      args
+    );
+    await slackFeedback(ctx, {
+      user_id: userId,
+      question_id: questionId,
+      feedback: args.feedback,
+    });
+  },
+});
+
+export const slackFeedback = internalAction({
+  args: {
+    user_id: v.id("users"),
+    question_id: v.id("practice_question"),
+    feedback: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // const isProd = !!process.env.PROD;
+
+    // if (!isProd) {
+    //   return;
+    // }
+
+    const { user_id, question_id, feedback } = args;
+    return fetch(process.env.SLACK_QUESTION_FEEDBACK_WEBHOOK_URL || "", {
+      method: "post",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+      },
+      body: JSON.stringify({
+        blocks: [
+          {
+            type: "header",
+            text: {
+              type: "plain_text",
+              text: "Question Feedback",
+              emoji: true,
+            },
+          },
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `Question ID: ${question_id}\n User ID: ${user_id}\nFeedback: ${feedback}`,
+            },
+          },
+        ],
+      }),
+    });
   },
 });

@@ -8,16 +8,22 @@ import Link from "next/link";
 
 // TODO: get tags from convex eventually?
 const tags = [
+  "Psychiatry, Behavioral & Substance Abuse",
+  "Surgery",
+  "General Principles",
+  "Pediatrics",
+  "Obstetrics, Gynecology & Breast",
+  "Poisoning & Environmental Exposure",
+  "Pregnancy, Childbirth & Puerperium",
+  "Rheumatology, Orthopedics & Sports",
   "Immunology",
   "Allergy",
   "Male Reproductive System",
-  "Pediatrics",
-  "Obstetrics, Gynecology & Breast",
   "Neurology",
-  "Obstetrics & Gynecology",
   "Ear, Nose & Throat (ENT)",
   "Pathology",
-  "Opthalmology",
+  "Oncology",
+  "Ophthatlmology",
 ];
 
 function Tag({

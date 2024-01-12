@@ -1,10 +1,10 @@
 "use client";
 
 import useNetworkToasts from "@/hooks/useNetworkToasts";
-import { Textarea } from "@mantine/core";
+import { Switch, Textarea } from "@mantine/core";
 import { useState, Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
-import { useMutation } from "convex/react";
+import { ConvexReactClient, useMutation } from "convex/react";
 import { useConvex } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
@@ -18,6 +18,7 @@ import { deleteFiles } from "@/utils/deleteFiles";
 import { DropzoneData } from "@/types/dropzone-types";
 import { removeFileExtensions } from "@/utils/removeFileExtensions";
 import { r2WorkerEndpoints } from "@/utils/getEnvVars";
+import { capitalize } from "lodash";
 
 export default function EditQuestion() {
   const updateQuestion = useMutation(
@@ -58,6 +59,7 @@ export default function EditQuestion() {
   ];
 
   const [searched, setSearched] = useState(false);
+  const [withId, setWithId] = useState(false);
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
   const [newQuestionImages, setNewQuestionImages] = useState<DropzoneData>([]);
@@ -90,7 +92,7 @@ export default function EditQuestion() {
                   [field]: e.currentTarget.value,
                 })
               }
-              label={field}
+              label={capitalize(field)}
               autosize
               minRows={4}
               maxRows={6}
@@ -114,14 +116,21 @@ export default function EditQuestion() {
           />
         </>
       ) : (
-        <Textarea
-          value={questionQuery}
-          onChange={(e) => setQuestionQuery(e.currentTarget.value)}
-          label="Question"
-          autosize
-          minRows={4}
-          maxRows={6}
-        />
+        <div className="grid gap-y-3">
+          <Textarea
+            value={questionQuery}
+            onChange={(e) => setQuestionQuery(e.currentTarget.value)}
+            label={withId ? "Question ID" : "Question"}
+            autosize
+            minRows={4}
+            maxRows={6}
+          />
+          <Switch
+            checked={withId}
+            onChange={() => setWithId((withId) => !withId)}
+            label="Search by Question ID"
+          />
+        </div>
       )}
       <div className="flex gap-x-4">
         <Button
@@ -243,12 +252,15 @@ export default function EditQuestion() {
               setLoading(true);
               try {
                 const trimmedQuestion = questionQuery.trim();
-                const question = await convex.query(
-                  api.practice_question.getPracticeQuestionByQuestion,
-                  {
-                    question: trimmedQuestion,
-                  }
+                const question = await getQuestion(
+                  trimmedQuestion,
+                  convex,
+                  withId
                 );
+
+                if (!question) {
+                  throw new Error("Question not found");
+                }
 
                 setQuestion({
                   id: question._id,
@@ -388,4 +400,30 @@ const EditImages = ({
       </div>
     </>
   );
+};
+
+const getQuestion = async (
+  question: string,
+  convex: ConvexReactClient,
+  withId: boolean
+) => {
+  const trimmedQuestion = question.trim();
+  if (withId) {
+    const questionData = await convex.query(
+      api.practice_question.getPracticeQuestionWithTags,
+      {
+        practiceQuestionId: trimmedQuestion as Id<"practice_question">,
+      }
+    );
+
+    return questionData;
+  }
+  const questionData = await convex.query(
+    api.practice_question.getPracticeQuestionByQuestion,
+    {
+      question: trimmedQuestion,
+    }
+  );
+
+  return questionData;
 };

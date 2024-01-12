@@ -2,7 +2,7 @@ import { Modal, Textarea } from "@mantine/core";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "../ui/button";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
-import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { ConvexError } from "convex/values";
@@ -16,7 +16,7 @@ export default function ReportQuestion({
   setOpened: Dispatch<SetStateAction<boolean>>;
   questionId: string;
 }) {
-  const submitFeedback = useMutation(
+  const submitFeedback = useAction(
     api.practice_question.reportPracticeQuestion
   );
   const [feedback, setFeedback] = useState<string>("");
