@@ -400,7 +400,7 @@ export const createFeedback = internalMutation({
     if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Unauthorized",
-        code: 401,
+        code: 403,
       });
     }
 

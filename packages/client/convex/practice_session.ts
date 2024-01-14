@@ -1,0 +1,271 @@
+import { ConvexError, v } from "convex/values";
+import { UserRole } from "../types/role-types";
+import { SessionStatus } from "../types/practice-session-types";
+import { QueryCtx, mutation, query } from "./_generated/server";
+
+import { mustGetCurrentUser } from "./users";
+import { Doc, Id } from "./_generated/dataModel";
+
+export const getSessions = query({
+  args: {},
+  async handler(ctx) {
+    const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== UserRole.MedicalStudent) {
+      throw new ConvexError({
+        message: "Only medical students can access practice sessions",
+        code: 403,
+      });
+    }
+
+    const sessions = await ctx.db
+      .query("practice_session")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .collect();
+
+    return sessions;
+  },
+});
+
+export const getSessionQuestions = query({
+  args: {
+    session_id: v.id("practice_session"),
+  },
+  async handler(ctx, args) {
+    const { session_id } = args;
+    const session = await checkSession(ctx, session_id);
+
+    const questions = session.questions.map((question) => question.id);
+
+    const fullQuestions = await Promise.all(
+      questions.map((id) => ctx.db.get(id))
+    );
+
+    for (const question of fullQuestions) {
+      if (!question) {
+        throw new ConvexError({
+          message: "Question not found",
+          code: 404,
+        });
+      }
+    }
+
+    return fullQuestions;
+  },
+});
+
+export const createSession = mutation({
+  args: {
+    name: v.optional(v.string()),
+    total_questions: v.number(),
+    tags: v.optional(v.array(v.string())),
+    zen: v.boolean(),
+  },
+  async handler(ctx, args) {
+    const { total_questions, name, tags, zen } = args;
+    const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== UserRole.MedicalStudent) {
+      throw new ConvexError({
+        message: "Only medical students can create practice sessions",
+        code: 403,
+      });
+    }
+
+    let uniqueIds: Set<Id<"practice_question">>;
+
+    if (tags) {
+      const matchingQuestions = (
+        await Promise.all(
+          tags.map(async (tag) => {
+            return ctx.db
+              .query("practice_question_tag")
+              .withIndex("by_tag", (q) => q.eq("tag", tag))
+              .collect();
+          })
+        )
+      ).flat();
+
+      uniqueIds = new Set(
+        matchingQuestions.map((obj) => obj.practice_question_id)
+      );
+    } else {
+      const practiceQuestions = await ctx.db
+        .query("practice_question")
+        .collect();
+
+      uniqueIds = new Set(practiceQuestions.map((obj) => obj._id));
+    }
+
+    const uniquePracticeQuestions = Array.from(uniqueIds);
+
+    if (uniquePracticeQuestions.length > total_questions) {
+      uniquePracticeQuestions.sort(() => Math.random() - 0.5);
+      uniquePracticeQuestions.splice(total_questions);
+    }
+
+    const fullQuestions = await Promise.all(
+      uniquePracticeQuestions.map(async (id) => {
+        const question = await ctx.db.get(id);
+
+        if (!question) {
+          throw new ConvexError({
+            message: "Question not found",
+            code: 404,
+          });
+        }
+
+        const randomizedChoices = question.choices.sort(
+          () => Math.random() - 0.5
+        );
+
+        return {
+          id: question._id,
+          question: question.question,
+          choices: randomizedChoices,
+        };
+      })
+    );
+
+    return ctx.db.insert("practice_session", {
+      name,
+      user_id: user._id,
+      total_time: 0,
+      total_correct: 0,
+      questions: fullQuestions.map(({ id, question, choices }) => ({
+        id,
+        question,
+        choices,
+        time: 0,
+      })),
+      tags: tags || [],
+      status: SessionStatus.Created,
+      updated_at: Date.now(),
+      zen,
+    });
+  },
+});
+
+export const pauseSession = mutation({
+  args: {
+    session_id: v.id("practice_session"),
+    pause: v.boolean(),
+  },
+  async handler(ctx, args) {
+    const { session_id, pause } = args;
+    const currentTime = Date.now();
+
+    const session = await checkSession(ctx, session_id);
+
+    if (
+      (session.status === SessionStatus.Paused && pause) ||
+      (session.status === SessionStatus.Created && !pause)
+    ) {
+      return;
+    }
+
+    if (session.status === SessionStatus.Completed) {
+      throw new ConvexError({
+        message: "Session finished",
+        code: 401,
+      });
+    }
+
+    if (pause) {
+      const timeElapsed = currentTime - session.updated_at;
+
+      return ctx.db.patch(session_id, {
+        status: SessionStatus.Paused,
+        updated_at: Date.now(),
+        total_time: session.total_time + timeElapsed,
+      });
+    }
+
+    return ctx.db.patch(session_id, {
+      status: SessionStatus.Created,
+      updated_at: Date.now(),
+    });
+  },
+});
+
+export const saveSession = mutation({
+  args: {
+    session_id: v.id("practice_session"),
+    questions: v.array(
+      v.object({
+        id: v.id("practice_question"),
+        response: v.optional(v.string()),
+        time: v.number(),
+      })
+    ),
+  },
+  async handler(ctx, args) {
+    const { session_id, questions } = args;
+    const currentTime = Date.now();
+    const session = await checkSession(ctx, session_id);
+    const timeElapsed = currentTime - session.updated_at;
+
+    let updatedQuestions = [...session.questions];
+
+    if (session.status === SessionStatus.Completed) {
+      throw new ConvexError({
+        message: "Session already completed",
+        code: 401,
+      });
+    }
+
+    if (session.questions.length !== questions.length) {
+      throw new ConvexError({
+        message: "Questions don't align",
+        code: 401,
+      });
+    }
+
+    for (let i = 0; i < session.questions.length; i++) {
+      if (questions[i].id !== session.questions[i].id) {
+        throw new ConvexError({
+          message: "Questions don't align",
+          code: 401,
+        });
+      }
+
+      updatedQuestions[i] = {
+        ...updatedQuestions[i],
+        response: questions[i].response,
+        time: questions[i].time,
+      };
+    }
+
+    return ctx.db.patch(session_id, {
+      questions: updatedQuestions,
+      updated_at: currentTime,
+      total_time: session.total_time + timeElapsed,
+    });
+  },
+});
+
+export async function checkSession(
+  ctx: QueryCtx,
+  session_id: Id<"practice_session">
+): Promise<Doc<"practice_session">> {
+  const [user, session] = await Promise.all([
+    mustGetCurrentUser(ctx),
+    ctx.db.get(session_id),
+  ]);
+
+  if (!session) {
+    throw new ConvexError({
+      message: "Session not found",
+      code: 404,
+    });
+  }
+
+  if (session.user_id !== user._id) {
+    throw new ConvexError({
+      message: "You are not authorized to access this session",
+      code: 403,
+    });
+  }
+
+  return session;
+}

@@ -287,4 +287,30 @@ export default defineSchema({
   })
     .index("by_practice_question_id", ["practice_question_id"])
     .index("by_user_id", ["user_id"]),
+  practice_session: defineTable({
+    name: v.optional(v.string()),
+    user_id: v.id("users"),
+    total_time: v.number(),
+    total_correct: v.number(),
+    questions: v.array(
+      v.object({
+        id: v.id("practice_question"),
+        question: v.string(),
+        choices: v.array(v.string()),
+        response: v.optional(v.string()),
+        correct: v.optional(v.boolean()),
+        time: v.number(),
+      })
+    ),
+    tags: v.array(v.string()),
+    status: v.union(
+      v.literal("CREATED"),
+      v.literal("PAUSED"),
+      v.literal("COMPLETED")
+    ),
+    updated_at: v.number(),
+    zen: v.boolean(),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_name", ["name"]),
 });
