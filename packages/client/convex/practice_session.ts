@@ -205,7 +205,61 @@ export const saveSession = mutation({
     const session = await checkSession(ctx, session_id);
     const timeElapsed = currentTime - session.updated_at;
 
+    if (session.status === SessionStatus.Completed) {
+      throw new ConvexError({
+        message: "Session already completed",
+        code: 401,
+      });
+    }
+
+    if (session.questions.length !== questions.length) {
+      throw new ConvexError({
+        message: "Questions don't align",
+        code: 401,
+      });
+    }
+
     let updatedQuestions = [...session.questions];
+
+    for (let i = 0; i < session.questions.length; i++) {
+      if (questions[i].id !== session.questions[i].id) {
+        throw new ConvexError({
+          message: "Questions don't align",
+          code: 401,
+        });
+      }
+
+      updatedQuestions[i] = {
+        ...updatedQuestions[i],
+        response: questions[i].response,
+        time: questions[i].time,
+      };
+    }
+
+    return ctx.db.patch(session_id, {
+      questions: updatedQuestions,
+      updated_at: currentTime,
+      total_time: session.total_time + timeElapsed,
+    });
+  },
+});
+
+export const gradeSession = mutation({
+  args: {
+    session_id: v.id("practice_session"),
+    questions: v.array(
+      v.object({
+        id: v.id("practice_question"),
+        response: v.optional(v.string()),
+        time: v.number(),
+      })
+    ),
+  },
+  async handler(ctx, args) {
+    const { session_id, questions } = args;
+    const currentTime = Date.now();
+    const session = await checkSession(ctx, session_id);
+    const timeElapsed = currentTime - session.updated_at;
 
     if (session.status === SessionStatus.Completed) {
       throw new ConvexError({
@@ -221,6 +275,10 @@ export const saveSession = mutation({
       });
     }
 
+    let updatedQuestions = [...session.questions];
+
+    const fullQuestions = await getSessionQuestions(ctx, { session_id });
+
     for (let i = 0; i < session.questions.length; i++) {
       if (questions[i].id !== session.questions[i].id) {
         throw new ConvexError({
@@ -229,8 +287,16 @@ export const saveSession = mutation({
         });
       }
 
+      if (!fullQuestions[i]) {
+        throw new ConvexError({
+          message: "Server Error",
+          code: 500,
+        });
+      }
+
       updatedQuestions[i] = {
         ...updatedQuestions[i],
+        correct: questions[i].response === fullQuestions[i]?.answer,
         response: questions[i].response,
         time: questions[i].time,
       };
