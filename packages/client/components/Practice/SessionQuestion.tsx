@@ -12,6 +12,7 @@ import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ContainImage } from "@/components/ui/Image/Image";
 import ReportQuestion from "./ReportQuestion";
 import { r2WorkerEndpoints } from "@/utils/getEnvVars";
+import { ConvexError } from "convex/values";
 
 export default function SessionQuestion({
   session_id,
@@ -34,10 +35,7 @@ export default function SessionQuestion({
   const [open, setOpen] = useState(false);
   const toast = useNetworkToasts();
 
-  const gradeSession = useAction(
-    api.practice_question.checkPracticeQuestionAnswer
-  );
-
+  const gradeSession = useMutation(api.practice_session.gradeSession);
   const saveAnswer = useMutation(api.practice_session.saveAnswer);
 
   return (
@@ -103,9 +101,36 @@ export default function SessionQuestion({
         <Button
           variant="action"
           className="w-full"
-          onClick={() => {
+          onClick={async () => {
             if (isLast) {
-              // grade
+              try {
+                setLoading(true);
+                toast.loading({
+                  title: "Checking responses",
+                  message: "Please wait",
+                });
+                await gradeSession({
+                  session_id,
+                  last_question: {
+                    id: question._id,
+                    response: answer,
+                    time: 0,
+                  },
+                });
+
+                toast.success({
+                  title: "Session completed",
+                  message: "Navigating to results",
+                });
+              } catch (error) {
+                toast.error({
+                  title: "Error checking responses",
+                  message:
+                    error instanceof ConvexError
+                      ? (error.data as { message: string }).message
+                      : undefined,
+                });
+              }
             } else {
               saveAnswer({
                 session_id,

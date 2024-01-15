@@ -293,16 +293,14 @@ export const saveAnswer = mutation({
 export const gradeSession = mutation({
   args: {
     session_id: v.id("practice_session"),
-    questions: v.array(
-      v.object({
-        id: v.id("practice_question"),
-        response: v.optional(v.string()),
-        time: v.number(),
-      })
-    ),
+    last_question: v.object({
+      id: v.id("practice_question"),
+      response: v.optional(v.string()),
+      time: v.number(),
+    }),
   },
   async handler(ctx, args) {
-    const { session_id, questions } = args;
+    const { session_id, last_question } = args;
     const currentTime = Date.now();
     const session = await checkSession(ctx, session_id);
     const timeElapsed = currentTime - session.updated_at;
@@ -314,19 +312,29 @@ export const gradeSession = mutation({
       });
     }
 
-    if (session.questions.length !== questions.length) {
+    let updatedQuestions = [...session.questions];
+
+    const lastQuestionIndex = updatedQuestions.findIndex(
+      (q) => q.id === last_question.id
+    );
+
+    if (lastQuestionIndex === -1) {
       throw new ConvexError({
-        message: "Questions don't align",
-        code: 401,
+        message: "Question not found",
+        code: 404,
       });
     }
 
-    let updatedQuestions = [...session.questions];
+    updatedQuestions[lastQuestionIndex] = {
+      ...updatedQuestions[lastQuestionIndex],
+      response: last_question.response,
+      time: last_question.time,
+    };
 
     const fullQuestions = await getSessionQuestions(ctx, { session_id });
 
     for (let i = 0; i < session.questions.length; i++) {
-      if (questions[i].id !== session.questions[i].id) {
+      if (updatedQuestions[i].id !== session.questions[i].id) {
         throw new ConvexError({
           message: "Questions don't align",
           code: 401,
@@ -342,9 +350,7 @@ export const gradeSession = mutation({
 
       updatedQuestions[i] = {
         ...updatedQuestions[i],
-        correct: questions[i].response === fullQuestions[i]?.answer,
-        response: questions[i].response,
-        time: questions[i].time,
+        correct: updatedQuestions[i].response === fullQuestions[i]?.answer,
       };
     }
 
@@ -352,6 +358,7 @@ export const gradeSession = mutation({
       questions: updatedQuestions,
       updated_at: currentTime,
       total_time: session.total_time + timeElapsed,
+      status: SessionStatus.Completed,
     });
   },
 });
