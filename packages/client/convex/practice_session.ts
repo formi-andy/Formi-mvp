@@ -241,19 +241,17 @@ export const pauseSession = mutation({
   },
 });
 
-export const saveSession = mutation({
+export const saveAnswer = mutation({
   args: {
     session_id: v.id("practice_session"),
-    questions: v.array(
-      v.object({
-        id: v.id("practice_question"),
-        response: v.optional(v.string()),
-        time: v.number(),
-      })
-    ),
+    question: v.object({
+      id: v.id("practice_question"),
+      response: v.optional(v.string()),
+      time: v.number(),
+    }),
   },
   async handler(ctx, args) {
-    const { session_id, questions } = args;
+    const { session_id, question } = args;
     const currentTime = Date.now();
     const session = await checkSession(ctx, session_id);
     const timeElapsed = currentTime - session.updated_at;
@@ -265,29 +263,24 @@ export const saveSession = mutation({
       });
     }
 
-    if (session.questions.length !== questions.length) {
+    let updatedQuestions = [...session.questions];
+
+    const questionIndex = updatedQuestions.findIndex(
+      (q) => q.id === question.id
+    );
+
+    if (questionIndex === -1) {
       throw new ConvexError({
-        message: "Questions don't align",
-        code: 401,
+        message: "Question not found",
+        code: 404,
       });
     }
 
-    let updatedQuestions = [...session.questions];
-
-    for (let i = 0; i < session.questions.length; i++) {
-      if (questions[i].id !== session.questions[i].id) {
-        throw new ConvexError({
-          message: "Questions don't align",
-          code: 401,
-        });
-      }
-
-      updatedQuestions[i] = {
-        ...updatedQuestions[i],
-        response: questions[i].response,
-        time: questions[i].time,
-      };
-    }
+    updatedQuestions[questionIndex] = {
+      ...updatedQuestions[questionIndex],
+      response: question.response,
+      time: question.time,
+    };
 
     return ctx.db.patch(session_id, {
       questions: updatedQuestions,
