@@ -17,6 +17,7 @@ import Image from "next/image";
 import { ContainImage } from "@/components/ui/Image/Image";
 import ReportQuestion from "./ReportQuestion";
 import { r2WorkerEndpoints } from "@/utils/getEnvVars";
+import * as amplitude from "@amplitude/analytics-browser";
 
 export default function Question({ hash }: { hash: string }) {
   const [seenQuestions, setSeenQuestions] = useState<string[]>([]);
@@ -232,12 +233,18 @@ export default function Question({ hash }: { hash: string }) {
                   title: "Correct!",
                 });
                 setCorrect(true);
+                amplitude.track("practice-question-correct", {
+                  questionId: question._id,
+                });
               } else {
                 toast.error({
                   title: "Incorrect",
                   message: "Click Show Explanation for more details",
                 });
                 setCorrect(false);
+                amplitude.track("practice-question-incorrect", {
+                  questionId: question._id,
+                });
               }
             } catch (e) {
               toast.error({
@@ -264,6 +271,10 @@ export default function Question({ hash }: { hash: string }) {
                 ...explanation,
                 show: !explanation.show,
               });
+              amplitude.track("practice-question-explanation-toggle", {
+                questionId: question._id,
+                show: !explanation.show,
+              });
             }}
           >
             {explanation.show ? "Hide" : "Show"} Explanation
@@ -281,6 +292,9 @@ export default function Question({ hash }: { hash: string }) {
                 answer: "",
               });
               setSeenQuestions([...seenQuestions, question._id]);
+              amplitude.track("practice-question-session", {
+                total_questions: seenQuestions.length + 1,
+              });
             }}
           >
             Next

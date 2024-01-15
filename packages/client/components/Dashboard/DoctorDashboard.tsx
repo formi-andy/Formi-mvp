@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
+import * as amplitude from "@amplitude/analytics-browser";
 
 // TODO: get tags from convex eventually?
 const tags = [
@@ -129,6 +130,9 @@ export default function DoctorDashboard() {
           {/* <Link
             href="practice"
             onClick={() => {
+              amplitude.track("practice-started", {
+                tags: Array.from(selectedTags),
+              });
               if (selectedTags.size === 0) {
                 localStorage.removeItem("practice-tags");
               } else {
