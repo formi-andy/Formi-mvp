@@ -10,6 +10,7 @@ import {
 import { useAuth } from "@clerk/nextjs";
 import { ConvexReactClient, ConvexProvider } from "convex/react";
 import AppLoader from "@/components/Loaders/AppLoader";
+import { initAmplitude } from "@/utils/initAmplitude";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -40,6 +41,10 @@ export function ClerkConvexAdapter({
 
 export default function ConvexContext({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
+
+  if (typeof window !== "undefined") {
+    initAmplitude();
+  }
 
   return (
     <ConvexProvider client={convex}>
