@@ -2,7 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { useAction, useMutation, useQuery } from "convex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
 import { Radio, Tooltip } from "@mantine/core";
@@ -22,18 +22,25 @@ export default function SessionQuestion({
 }: {
   session_id: Id<"practice_session">;
   question: {
-    _id: Id<"practice_question">;
-    question: string;
     questionImages: string[];
+    response?: string | undefined;
+    correct?: boolean | undefined;
+    question: string;
+    id: Id<"practice_question">;
     choices: string[];
+    time: number;
   };
   isLast: boolean;
   nextQuestion: () => void;
 }) {
-  const [answer, setAnswer] = useState<string | undefined>(undefined);
+  const [answer, setAnswer] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const toast = useNetworkToasts();
+
+  useEffect(() => {
+    setAnswer(question.response);
+  }, [question.response]);
 
   const gradeSession = useMutation(api.practice_session.gradeSession);
   const saveAnswer = useMutation(api.practice_session.saveAnswer);
@@ -84,7 +91,7 @@ export default function SessionQuestion({
           {question.choices.map((answer, i) => {
             return (
               <Radio
-                disabled={loading}
+                disabled={loading || question.correct !== undefined}
                 key={i}
                 value={answer}
                 label={answer}
@@ -112,7 +119,7 @@ export default function SessionQuestion({
                 await gradeSession({
                   session_id,
                   last_question: {
-                    id: question._id,
+                    id: question.id,
                     response: answer,
                     time: 0,
                   },
@@ -120,7 +127,7 @@ export default function SessionQuestion({
 
                 toast.success({
                   title: "Session completed",
-                  message: "Navigating to results",
+                  message: "You can now view your results",
                 });
               } catch (error) {
                 toast.error({
@@ -135,7 +142,7 @@ export default function SessionQuestion({
               saveAnswer({
                 session_id,
                 question: {
-                  id: question._id,
+                  id: question.id,
                   response: answer,
                   time: 0,
                 },
@@ -150,7 +157,7 @@ export default function SessionQuestion({
       <ReportQuestion
         opened={open}
         setOpened={setOpen}
-        questionId={question._id}
+        questionId={question.id}
       />
     </div>
   );

@@ -76,33 +76,25 @@ export const getStrippedSessionQuestions = query({
     const { session_id } = args;
     const session = await checkSession(ctx, session_id);
 
-    const questions = session.questions.map((question) => question.id);
+    const strippedQuestions = await Promise.all(
+      session.questions.map(async (sessionQuestion) => {
+        const question = await ctx.db.get(sessionQuestion.id);
 
-    const fullQuestions = await Promise.all(
-      questions.map((id) => ctx.db.get(id))
+        if (!question) {
+          throw new ConvexError({
+            message: "Question not found",
+            code: 404,
+          });
+        }
+
+        return {
+          ...sessionQuestion,
+          questionImages: question.question_images,
+        };
+      })
     );
 
-    const parsedQuestions = fullQuestions.map((question) => {
-      if (!question) {
-        throw new ConvexError({
-          message: "Question not found",
-          code: 404,
-        });
-      }
-
-      return question;
-    });
-
-    const strippedPracticeQuestions = parsedQuestions.map((question) => {
-      return {
-        _id: question._id,
-        question: question.question,
-        choices: question.choices,
-        questionImages: question.question_images,
-      };
-    });
-
-    return strippedPracticeQuestions;
+    return strippedQuestions;
   },
 });
 

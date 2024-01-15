@@ -1,59 +1,51 @@
 "use client";
 
-import { useLocalStorage } from "@mantine/hooks";
-import { api } from "@/convex/_generated/api";
-import { useAction, useQuery } from "convex/react";
 import { useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
 import { Radio, Tooltip } from "@mantine/core";
 import { LuFlag } from "react-icons/lu";
 
-import useNetworkToasts from "@/hooks/useNetworkToasts";
-import { ConvexError } from "convex/values";
-import style from "./question.module.css";
-import Link from "next/link";
-import Image from "next/image";
 import { ContainImage } from "@/components/ui/Image/Image";
 import ReportQuestion from "./ReportQuestion";
 import { r2WorkerEndpoints } from "@/utils/getEnvVars";
 import * as amplitude from "@amplitude/analytics-browser";
 
-export default function Question({
+export default function GradedQuestion({
   question,
+  nextQuestion,
 }: {
+  session_id: Id<"practice_session">;
   question: {
-    _id: Id<"practice_question">;
-    question: string;
     questionImages: string[];
+    response: string;
+    correct: boolean;
+    question: string;
+    id: Id<"practice_question">;
     choices: string[];
+    time: number;
+    explanation: string[];
+    explanationImages: string[];
+    answer: string;
   };
+  isLast: boolean;
+  nextQuestion: () => void;
 }) {
-  const [answer, setAnswer] = useState<string | undefined>(undefined);
-
-  // TODO: for tutor mode
-  //   const [explanation, setExplanation] = useState<{
-  //     show: boolean;
-  //     explanation: string[];
-  //     explanationImages: string[];
-  //     answer: string;
-  //   }>({
-  //     show: false,
-  //     explanation: [],
-  //     explanationImages: [],
-  //     answer: "",
-  //   });
-  //   const [correct, setCorrect] = useState<boolean | undefined>(undefined);
-  const [loading, setLoading] = useState(false);
+  const [explanation, setExplanation] = useState<{
+    show: boolean;
+    explanation: string[];
+    explanationImages: string[];
+    answer: string;
+  }>({
+    show: false,
+    explanation: [],
+    explanationImages: [],
+    answer: "",
+  });
   const [open, setOpen] = useState(false);
-  //   const [showExplanationImages, setShowExplanationImages] = useState<
-  //     Set<number>
-  //   >(new Set<number>());
-  const toast = useNetworkToasts();
-
-  //   const checkAnswer = useAction(
-  //     api.practice_question.checkPracticeQuestionAnswer
-  //   );
+  const [showExplanationImages, setShowExplanationImages] = useState<
+    Set<number>
+  >(new Set<number>());
 
   return (
     <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 lg:max-w-2xl justify-self-center shadow-accent-2">
@@ -89,19 +81,12 @@ export default function Question({
           </div>
         )}
       </div>
-      <Radio.Group
-        required
-        value={answer}
-        onChange={(event) => {
-          setAnswer(event);
-        }}
-        className="mb-6"
-      >
+      <Radio.Group required value={question.response} className="mb-6">
         <div className="grid gap-3">
           {question.choices.map((answer, i) => {
             return (
               <Radio
-                // disabled={correct !== undefined}
+                disabled
                 key={i}
                 value={answer}
                 label={answer}
@@ -114,7 +99,7 @@ export default function Question({
           })}
         </div>
       </Radio.Group>
-      {/* {explanation.answer !== "" && (
+      {explanation.answer !== "" && (
         <div>
           <p className="font-medium">Correct Answer</p>
           {explanation.answer}
@@ -174,108 +159,43 @@ export default function Question({
           )}
         </div>
       )}
-      {correct === undefined ? (
+      <div className="flex gap-x-4">
         <Button
-          disabled={answer === undefined || loading}
-          variant="action"
-          onClick={async () => {
-            if (answer === undefined) {
-              return;
-            }
-
-            setLoading(true);
-            try {
-              toast.loading({
-                title: "Checking answer...",
-              });
-              const res = await checkAnswer({
-                practiceQuestionId: question._id,
-                answer,
-              });
-
-              setExplanation({
-                ...explanation,
-                explanation: res.explanation,
-                explanationImages: res.explanationImages,
-                answer: res.answer,
-              });
-              if (res.correct) {
-                toast.success({
-                  title: "Correct!",
-                });
-                setCorrect(true);
-                amplitude.track("practice-question-correct", {
-                  questionId: question._id,
-                });
-              } else {
-                toast.error({
-                  title: "Incorrect",
-                  message: "Click Show Explanation for more details",
-                });
-                setCorrect(false);
-                amplitude.track("practice-question-incorrect", {
-                  questionId: question._id,
-                });
-              }
-            } catch (e) {
-              toast.error({
-                title: "Error",
-                message:
-                  e instanceof ConvexError
-                    ? (e.data as { message: string }).message
-                    : undefined,
-              });
-            } finally {
-              setLoading(false);
-            }
+          variant="outline"
+          className="w-full border-primary/10"
+          onClick={() => {
+            setExplanation({
+              ...explanation,
+              show: !explanation.show,
+            });
+            amplitude.track("practice-question-explanation-toggle", {
+              questionId: question.id,
+              show: !explanation.show,
+            });
           }}
         >
-          Submit
+          {explanation.show ? "Hide" : "Show"} Explanation
         </Button>
-      ) : (
-        <div className="flex gap-x-4">
-          <Button
-            variant="outline"
-            className="w-full border-primary/10"
-            onClick={() => {
-              setExplanation({
-                ...explanation,
-                show: !explanation.show,
-              });
-              amplitude.track("practice-question-explanation-toggle", {
-                questionId: question._id,
-                show: !explanation.show,
-              });
-            }}
-          >
-            {explanation.show ? "Hide" : "Show"} Explanation
-          </Button>
-          <Button
-            variant="action"
-            className="w-full"
-            onClick={() => {
-              setAnswer(undefined);
-              setCorrect(undefined);
-              setExplanation({
-                show: false,
-                explanation: [],
-                explanationImages: [],
-                answer: "",
-              });
-              setSeenQuestions([...seenQuestions, question._id]);
-              amplitude.track("practice-question-session", {
-                total_questions: seenQuestions.length + 1,
-              });
-            }}
-          >
-            Next
-          </Button>
-        </div>
-      )} */}
+        <Button
+          variant="action"
+          className="w-full"
+          onClick={() => {
+            setExplanation({
+              show: false,
+              explanation: [],
+              explanationImages: [],
+              answer: "",
+            });
+            nextQuestion();
+          }}
+        >
+          Next
+        </Button>
+      </div>
       <ReportQuestion
         opened={open}
         setOpened={setOpen}
-        questionId={question._id}
+        questionId={question.id}
       />
     </div>
   );
