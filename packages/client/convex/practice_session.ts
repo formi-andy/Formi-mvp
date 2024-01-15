@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { UserRole } from "../types/role-types";
 import { SessionStatus } from "../types/practice-session-types";
-import { QueryCtx, mutation, query } from "./_generated/server";
+import { QueryCtx, internalQuery, mutation, query } from "./_generated/server";
 
 import { mustGetCurrentUser } from "./users";
 import { Doc, Id } from "./_generated/dataModel";
@@ -27,7 +27,19 @@ export const getSessions = query({
   },
 });
 
-export const getSessionQuestions = query({
+export const getSession = query({
+  args: {
+    session_id: v.id("practice_session"),
+  },
+  async handler(ctx, args) {
+    const { session_id } = args;
+    const session = await checkSession(ctx, session_id);
+
+    return session;
+  },
+});
+
+export const getSessionQuestions = internalQuery({
   args: {
     session_id: v.id("practice_session"),
   },
@@ -41,16 +53,56 @@ export const getSessionQuestions = query({
       questions.map((id) => ctx.db.get(id))
     );
 
-    for (const question of fullQuestions) {
+    const parsedQuestions = fullQuestions.map((question) => {
       if (!question) {
         throw new ConvexError({
           message: "Question not found",
           code: 404,
         });
       }
-    }
 
-    return fullQuestions;
+      return question;
+    });
+
+    return parsedQuestions;
+  },
+});
+
+export const getStrippedSessionQuestions = query({
+  args: {
+    session_id: v.id("practice_session"),
+  },
+  async handler(ctx, args) {
+    const { session_id } = args;
+    const session = await checkSession(ctx, session_id);
+
+    const questions = session.questions.map((question) => question.id);
+
+    const fullQuestions = await Promise.all(
+      questions.map((id) => ctx.db.get(id))
+    );
+
+    const parsedQuestions = fullQuestions.map((question) => {
+      if (!question) {
+        throw new ConvexError({
+          message: "Question not found",
+          code: 404,
+        });
+      }
+
+      return question;
+    });
+
+    const strippedPracticeQuestions = parsedQuestions.map((question) => {
+      return {
+        _id: question._id,
+        question: question.question,
+        choices: question.choices,
+        questionImages: question.question_images,
+      };
+    });
+
+    return strippedPracticeQuestions;
   },
 });
 
@@ -58,7 +110,7 @@ export const createSession = mutation({
   args: {
     name: v.optional(v.string()),
     total_questions: v.number(),
-    tags: v.optional(v.array(v.string())),
+    tags: v.array(v.string()),
     zen: v.boolean(),
   },
   async handler(ctx, args) {
@@ -74,7 +126,7 @@ export const createSession = mutation({
 
     let uniqueIds: Set<Id<"practice_question">>;
 
-    if (tags) {
+    if (tags.length > 0) {
       const matchingQuestions = (
         await Promise.all(
           tags.map(async (tag) => {
@@ -99,8 +151,9 @@ export const createSession = mutation({
 
     const uniquePracticeQuestions = Array.from(uniqueIds);
 
-    if (uniquePracticeQuestions.length > total_questions) {
-      uniquePracticeQuestions.sort(() => Math.random() - 0.5);
+    uniquePracticeQuestions.sort(() => Math.random() - 0.5);
+
+    if (uniquePracticeQuestions.length >= total_questions) {
       uniquePracticeQuestions.splice(total_questions);
     }
 

@@ -4,7 +4,13 @@ import { Dispatch, SetStateAction, useState } from "react";
 import DashboardCases from "./DashboardCases";
 import style from "./doctorgallery.module.css";
 import { Button } from "../ui/button";
+
+import { NumberInput } from "@mantine/core";
 import Link from "next/link";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { set } from "lodash";
+import { useRouter } from "next/navigation";
 
 // TODO: get tags from convex eventually?
 const tags = [
@@ -60,6 +66,10 @@ function Tag({
 
 export default function DoctorDashboard() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [numQuestions, setNumQuestions] = useState<number>();
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const createSession = useMutation(api.practice_session.createSession);
 
   return (
     <div className="grid gap-3 sm:gap-6 max-w-5xl self-center justify-self-center">
@@ -70,6 +80,7 @@ export default function DoctorDashboard() {
           className={`grid rounded-lg min-h-[200px] p-3 sm:p-6 gap-3 relative ${style.glass}`}
         >
           <p className="text-2xl font-medium text-white">Practice</p>
+          <p className="text-white font-medium">Tags</p>
           <div className="flex flex-wrap gap-3">
             {tags.map((tag) => (
               <Tag
@@ -80,7 +91,43 @@ export default function DoctorDashboard() {
               />
             ))}
           </div>
-          <Link
+          <NumberInput
+            label="Number of Questions (1-40)"
+            min={1}
+            max={40}
+            value={numQuestions}
+            onChange={(value) => setNumQuestions(Number(value))}
+            variant="filled"
+            classNames={{
+              label: "text-white text-base mb-1",
+              root: "w-fit",
+            }}
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+          />
+          <Button
+            className="w-full"
+            variant="action"
+            disabled={loading || !numQuestions}
+            onClick={async () => {
+              setLoading(true);
+              try {
+                if (!numQuestions) return;
+                const res = await createSession({
+                  tags: Array.from(selectedTags),
+                  total_questions: numQuestions,
+                  zen: false,
+                });
+                router.push(`/practice/${res}`);
+              } catch {
+                setLoading(false);
+              }
+            }}
+          >
+            Start
+          </Button>
+          {/* <Link
             href="practice"
             onClick={() => {
               if (selectedTags.size === 0) {
@@ -96,7 +143,7 @@ export default function DoctorDashboard() {
             <Button className="w-full" variant="action">
               Start
             </Button>
-          </Link>
+          </Link> */}
         </div>
         {/* <div
           className={`flex flex-col rounded-lg min-h-[200px] p-3 lg:p-6 gap-4 relative ${style.glass}`}
