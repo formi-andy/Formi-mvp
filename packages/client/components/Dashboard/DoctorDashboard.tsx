@@ -9,7 +9,6 @@ import { NumberInput } from "@mantine/core";
 import Link from "next/link";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { set } from "lodash";
 import { useRouter } from "next/navigation";
 
 // TODO: get tags from convex eventually?

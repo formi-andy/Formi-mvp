@@ -1,4 +1,4 @@
-import { CaseForm } from "@/app/home/(private)/case/create/page";
+import { CaseForm } from "@/app/home/(private)/(padded)/case/create/page";
 import {
   ABDOMINAL_QUESTIONS,
   COUGH_QUESTIONS,

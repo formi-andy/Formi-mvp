@@ -1,5 +1,5 @@
 import React from "react";
-import { CaseForm } from "@/app/home/(private)/case/create/page";
+import { CaseForm } from "@/app/home/(private)/(padded)/case/create/page";
 import { Radio, Select, TextInput, NumberInput } from "@mantine/core";
 
 type Props = {
