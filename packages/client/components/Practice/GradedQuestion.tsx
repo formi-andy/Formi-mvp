@@ -14,11 +14,13 @@ import Link from "next/link";
 
 export default function GradedQuestion({
   question,
+  questionNumber,
   nextQuestion,
   isLast,
   session_id,
 }: {
   session_id: Id<"practice_session">;
+  questionNumber: number;
   question: {
     questionImages: string[];
     response?: string;
@@ -44,7 +46,7 @@ export default function GradedQuestion({
     <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 justify-self-center">
       <div>
         <div className="flex justify-between items-center mb-4">
-          <p className="font-medium text-xl">Question</p>
+          <p className="font-medium text-xl">Question {questionNumber}</p>
           <Tooltip label="Report Question">
             <Button
               size="icon"
