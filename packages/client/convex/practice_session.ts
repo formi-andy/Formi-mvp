@@ -98,6 +98,39 @@ export const getStrippedSessionQuestions = query({
   },
 });
 
+export const getQuestions = query({
+  args: {
+    session_id: v.id("practice_session"),
+  },
+  async handler(ctx, args) {
+    const { session_id } = args;
+    const session = await checkSession(ctx, session_id);
+
+    const questions = await Promise.all(
+      session.questions.map(async (sessionQuestion) => {
+        const question = await ctx.db.get(sessionQuestion.id);
+
+        if (!question) {
+          throw new ConvexError({
+            message: "Question not found",
+            code: 404,
+          });
+        }
+
+        return {
+          ...sessionQuestion,
+          explanation: question.explanation,
+          answer: question.answer,
+          explanationImages: question.explanation_images,
+          questionImages: question.question_images,
+        };
+      })
+    );
+
+    return questions;
+  },
+});
+
 export const createSession = mutation({
   args: {
     name: v.optional(v.string()),

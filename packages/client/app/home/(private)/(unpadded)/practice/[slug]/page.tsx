@@ -11,6 +11,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { ConvexError } from "convex/values";
 import SessionQuestion from "@/components/Practice/SessionQuestion";
 import { LuCheck, LuX } from "react-icons/lu";
+import { SessionStatus } from "@/types/practice-session-types";
+import GradedQuestion from "@/components/Practice/GradedQuestion";
 
 function renderCorrect(correct: boolean | undefined) {
   if (correct === undefined) {
@@ -26,13 +28,30 @@ function SessionPage({ params }: { params: { slug: string } }) {
   const session = useQuery(api.practice_session.getSession, {
     session_id: slug as Id<"practice_session">,
   });
-  const questions = useQuery(api.practice_session.getStrippedSessionQuestions, {
-    session_id: slug as Id<"practice_session">,
-  });
+
+  const strippedQuestions = useQuery(
+    api.practice_session.getStrippedSessionQuestions,
+    session?.status !== SessionStatus.Completed
+      ? {
+          session_id: slug as Id<"practice_session">,
+        }
+      : "skip"
+  );
+  const questions = useQuery(
+    api.practice_session.getQuestions,
+    session?.status == SessionStatus.Completed
+      ? {
+          session_id: slug as Id<"practice_session">,
+        }
+      : "skip"
+  );
 
   const [questionIndex, setQuestionIndex] = useState(0);
 
-  if (session === undefined || questions === undefined) {
+  if (
+    session === undefined ||
+    (strippedQuestions === undefined && questions === undefined)
+  ) {
     return <AppLoader />;
   }
 
@@ -41,7 +60,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
       <div className="flex flex-col w-full sm:w-1/5 relative sm:border-r h-screen">
         <p className="ml-4 my-2">Questions</p>
         <div className="flex flex-col border-t">
-          {questions.map((question, index) => (
+          {session.questions.map((question, index) => (
             <div
               key={question.id}
               className={`flex items-center justify-between border-b gap-2 px-6 lg:px-8 py-2 transition cursor-pointer ${
@@ -58,12 +77,22 @@ function SessionPage({ params }: { params: { slug: string } }) {
         </div>
       </div>
       <div className="flex flex-col w-full sm:w-4/5 gap-y-4">
-        <SessionQuestion
-          session_id={slug as Id<"practice_session">}
-          question={questions[questionIndex]}
-          isLast={questionIndex === questions.length - 1}
-          nextQuestion={() => setQuestionIndex(questionIndex + 1)}
-        />
+        {questions !== undefined && (
+          <GradedQuestion
+            session_id={slug as Id<"practice_session">}
+            question={questions[questionIndex]}
+            isLast={questionIndex === questions.length - 1}
+            nextQuestion={() => setQuestionIndex(questionIndex + 1)}
+          />
+        )}
+        {strippedQuestions !== undefined && (
+          <SessionQuestion
+            session_id={slug as Id<"practice_session">}
+            question={strippedQuestions[questionIndex]}
+            isLast={questionIndex === strippedQuestions.length - 1}
+            nextQuestion={() => setQuestionIndex(questionIndex + 1)}
+          />
+        )}
       </div>
     </div>
   );

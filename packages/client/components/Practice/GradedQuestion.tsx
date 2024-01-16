@@ -10,16 +10,19 @@ import { ContainImage } from "@/components/ui/Image/Image";
 import ReportQuestion from "./ReportQuestion";
 import { r2WorkerEndpoints } from "@/utils/getEnvVars";
 import * as amplitude from "@amplitude/analytics-browser";
+import Link from "next/link";
 
 export default function GradedQuestion({
   question,
   nextQuestion,
+  isLast,
+  session_id,
 }: {
   session_id: Id<"practice_session">;
   question: {
     questionImages: string[];
-    response: string;
-    correct: boolean;
+    response?: string;
+    correct?: boolean;
     question: string;
     id: Id<"practice_question">;
     choices: string[];
@@ -31,24 +34,14 @@ export default function GradedQuestion({
   isLast: boolean;
   nextQuestion: () => void;
 }) {
-  const [explanation, setExplanation] = useState<{
-    show: boolean;
-    explanation: string[];
-    explanationImages: string[];
-    answer: string;
-  }>({
-    show: false,
-    explanation: [],
-    explanationImages: [],
-    answer: "",
-  });
+  const [showExplanation, setShowExplanation] = useState(false);
   const [open, setOpen] = useState(false);
   const [showExplanationImages, setShowExplanationImages] = useState<
     Set<number>
   >(new Set<number>());
 
   return (
-    <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 lg:max-w-2xl justify-self-center shadow-accent-2">
+    <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 justify-self-center">
       <div>
         <div className="flex justify-between items-center mb-4">
           <p className="font-medium text-xl">Question</p>
@@ -99,25 +92,23 @@ export default function GradedQuestion({
           })}
         </div>
       </Radio.Group>
-      {explanation.answer !== "" && (
-        <div>
-          <p className="font-medium">Correct Answer</p>
-          {explanation.answer}
-        </div>
-      )}
-      {explanation.show && (
+      <div>
+        <p className="font-medium">Correct Answer</p>
+        {question.answer}
+      </div>
+      {showExplanation && (
         <div className="flex flex-col gap-y-4">
           <p className="font-medium">Explanation</p>
           <div className="grid gap-y-2 mb-6">
-            {explanation.explanation.map((paragraph, i) => {
+            {question.explanation.map((paragraph, i) => {
               return <p key={i}>{paragraph}</p>;
             })}
           </div>
-          {explanation.explanationImages.length > 0 && (
+          {question.explanationImages.length > 0 && (
             <>
               <p className="font-medium">Reference Images</p>
               <ul className="flex flex-col gap-3 mb-6 w-full">
-                {explanation.explanationImages.map((image, i) => {
+                {question.explanationImages.map((image, i) => {
                   return (
                     <li key={image} className="w-full list-none">
                       <Button
@@ -164,33 +155,33 @@ export default function GradedQuestion({
           variant="outline"
           className="w-full border-primary/10"
           onClick={() => {
-            setExplanation({
-              ...explanation,
-              show: !explanation.show,
-            });
+            setShowExplanation(!showExplanation);
             amplitude.track("practice-question-explanation-toggle", {
               questionId: question.id,
-              show: !explanation.show,
+              show: !showExplanation,
             });
           }}
         >
-          {explanation.show ? "Hide" : "Show"} Explanation
+          {showExplanation ? "Hide" : "Show"} Explanation
         </Button>
-        <Button
-          variant="action"
-          className="w-full"
-          onClick={() => {
-            setExplanation({
-              show: false,
-              explanation: [],
-              explanationImages: [],
-              answer: "",
-            });
-            nextQuestion();
-          }}
-        >
-          Next
-        </Button>
+        {isLast ? (
+          <Link href="/dashboard" className="w-full">
+            <Button variant="action" className="w-full">
+              Back to Dashboard
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            variant="action"
+            className="w-full"
+            onClick={() => {
+              setShowExplanation(false);
+              nextQuestion();
+            }}
+          >
+            Next
+          </Button>
+        )}
       </div>
       <ReportQuestion
         opened={open}
