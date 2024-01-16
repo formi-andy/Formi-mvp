@@ -3,7 +3,7 @@ import PatientCaseGallery from "@/components/Dashboard/Gallery/PatientCaseGaller
 import { UserRole } from "@/types/role-types";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { auth } from "@clerk/nextjs";
-import style from "../../../../components/Dashboard/doctorgallery.module.css";
+import style from "@/components/Dashboard/doctorgallery.module.css";
 // import Gallery from "@/components/Gallery/Gallery";
 // import CareTeam from "@/components/CareTeam/CareTeam";
 // import ActionItems from "@/components/ActionItems/ActionItems";

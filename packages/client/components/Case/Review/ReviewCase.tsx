@@ -10,7 +10,7 @@ import { ConvexError } from "convex/values";
 import { Id } from "@/convex/_generated/dataModel";
 import DOMPurify from "dompurify";
 
-import style from "@/app/home/(private)/case/[slug]/case.module.css";
+import style from "@/app/home/(private)/(padded)/case/[slug]/case.module.css";
 import { LuChevronDown } from "react-icons/lu";
 import { ReviewStatus } from "@/types/review-types";
 

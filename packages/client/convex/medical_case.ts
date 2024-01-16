@@ -355,7 +355,7 @@ export const getCompletedMedicalCasesByReviewer = query({
     if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Invalid permissions",
-        code: 400,
+        code: 403,
       });
     }
     // await verifyCareTeam(ctx, user._id, patientId);
@@ -473,7 +473,7 @@ export const listClaimableMedicalCases = query({
     if (user.role !== UserRole.MedicalStudent) {
       throw new ConvexError({
         message: "Invalid permissions",
-        code: 400,
+        code: 403,
       });
     }
 
