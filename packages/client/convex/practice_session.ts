@@ -139,9 +139,10 @@ export const createSession = mutation({
     total_questions: v.number(),
     tags: v.array(v.string()),
     zen: v.boolean(),
+    excludeSeenQuestions: v.boolean(),
   },
   async handler(ctx, args) {
-    const { total_questions, name, tags, zen } = args;
+    const { total_questions, name, tags, zen, excludeSeenQuestions } = args;
     const user = await mustGetCurrentUser(ctx);
 
     if (user.role !== UserRole.MedicalStudent) {
@@ -158,7 +159,7 @@ export const createSession = mutation({
       const seenAndMatchingQuestions = await Promise.all(
         tags.map(async (tag) => {
           const [seenQuestions, matchingQuestions] = await Promise.all([
-            getSeenQuestions(ctx, { tag }),
+            excludeSeenQuestions ? getSeenQuestions(ctx, { tag }) : [],
             ctx.db
               .query("practice_question_tag")
               .withIndex("by_tag", (q) => q.eq("tag", tag))
@@ -181,7 +182,7 @@ export const createSession = mutation({
       );
     } else {
       const [seen, practiceQuestions] = await Promise.all([
-        getSeenQuestions(ctx, { tag: "ALL" }),
+        excludeSeenQuestions ? getSeenQuestions(ctx, { tag: "ALL" }) : [],
         ctx.db.query("practice_question").collect(),
       ]);
 

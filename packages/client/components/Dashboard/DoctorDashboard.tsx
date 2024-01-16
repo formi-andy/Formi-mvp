@@ -74,6 +74,7 @@ function Tag({
 export default function DoctorDashboard() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [numQuestions, setNumQuestions] = useState<number>();
+  const [excludeSeenQuestions, setExcludeSeenQuestions] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const toast = useNetworkToasts();
@@ -136,6 +137,7 @@ export default function DoctorDashboard() {
                 tags: Array.from(selectedTags),
                 total_questions: numQuestions > 40 ? 40 : numQuestions,
                 zen: false,
+                excludeSeenQuestions,
               });
               toast.success({
                 title: "Session created",

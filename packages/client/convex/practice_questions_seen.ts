@@ -37,7 +37,9 @@ export const addSeenQuestions = mutation({
 
     const seenQuestions = await ctx.db
       .query("practice_questions_seen")
-      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .withIndex("by_user_and_tag", (q) =>
+        q.eq("user_id", user._id).eq("tag", tag)
+      )
       .first();
 
     if (!seenQuestions) {
@@ -47,6 +49,7 @@ export const addSeenQuestions = mutation({
         tag,
       });
     }
+
     const questionSet = new Set(seenQuestions.questions);
     for (let i = 0; i < question_ids.length; i++) {
       questionSet.add(question_ids[i]);
