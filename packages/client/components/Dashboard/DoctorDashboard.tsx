@@ -6,7 +6,7 @@ import style from "./doctorgallery.module.css";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 
-import { NumberInput } from "@mantine/core";
+import { NumberInput, Switch, TextInput } from "@mantine/core";
 import Link from "next/link";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -74,6 +74,7 @@ function Tag({
 export default function DoctorDashboard() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [numQuestions, setNumQuestions] = useState<number>();
+  const [name, setName] = useState<string>("");
   const [excludeSeenQuestions, setExcludeSeenQuestions] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -90,7 +91,6 @@ export default function DoctorDashboard() {
   return (
     <div className="grid gap-3 sm:gap-6 max-w-5xl self-center justify-self-center">
       <DashboardCases />
-      {/* <div className="flex w-full lg:w-2/5 flex-col gap-4 md:gap-6 lg:gap-8"> */}
       <div
         className={`grid rounded-lg min-h-[200px] p-3 sm:p-6 gap-3 relative ${style.glass}`}
       >
@@ -106,21 +106,43 @@ export default function DoctorDashboard() {
             />
           ))}
         </div>
-        <NumberInput
-          label="Number of Questions (1-40)"
-          min={1}
-          max={40}
-          value={numQuestions}
-          onChange={(value) => setNumQuestions(Number(value))}
-          variant="filled"
-          classNames={{
-            label: "text-white text-base mb-1",
-            root: "w-fit",
-          }}
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-        />
+        <div className="flex items-end gap-x-6 gap-y-3 flex-wrap">
+          <NumberInput
+            label="Number of Questions (1-40)"
+            min={1}
+            max={40}
+            required
+            value={numQuestions}
+            onChange={(value) => setNumQuestions(Number(value))}
+            variant="filled"
+            classNames={{
+              label: "text-white text-base mb-1 font-normal",
+              root: "w-58",
+            }}
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+          />
+          <TextInput
+            maxLength={50}
+            label="Session Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            variant="filled"
+            classNames={{
+              label: "text-white text-base mb-1 font-normal",
+              root: "flex-1",
+            }}
+          />
+          <Switch
+            label="Exclude seen questions"
+            checked={excludeSeenQuestions}
+            onChange={(e) => setExcludeSeenQuestions(e.target.checked)}
+            classNames={{
+              label: "text-white text-base mb-1",
+            }}
+          />
+        </div>
         <Button
           className="w-full"
           variant="action"
@@ -138,6 +160,7 @@ export default function DoctorDashboard() {
                 total_questions: numQuestions > 40 ? 40 : numQuestions,
                 zen: false,
                 excludeSeenQuestions,
+                name,
               });
               toast.success({
                 title: "Session created",
@@ -171,9 +194,9 @@ export default function DoctorDashboard() {
               className="grid gap-3 p-3 border-b first:rounded-t-lg last:rounded-b-lg last:border-0 hover:bg-blue-400 transition"
             >
               <div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <p className="text-white text-lg font-medium">
-                    {dayjs(session._creationTime).format("M/DD/YYYY h:mm A")}
+                    {session.name ? session.name : "Practice Session"}
                   </p>
                   <p className="text-white font-medium">
                     {session.status === SessionStatus.Completed
@@ -189,9 +212,14 @@ export default function DoctorDashboard() {
                       : "In Progress"}
                   </p>
                 </div>
-                <p className="text-white text-sm font-medium">
-                  Time elapsed: {formatTime(session.total_time)}
-                </p>
+                <div className="flex flex-wrap items-center justify-between">
+                  <p className="text-white text-sm font-medium">
+                    {dayjs(session._creationTime).format("M/DD/YYYY h:mm A")}
+                  </p>
+                  <p className="text-white text-sm font-medium">
+                    Time elapsed: {formatTime(session.total_time)}
+                  </p>
+                </div>
               </div>
               <div className="flex flex-wrap gap-2">
                 {session.tags.length === 0 ? (
