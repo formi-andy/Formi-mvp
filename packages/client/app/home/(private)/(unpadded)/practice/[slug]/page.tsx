@@ -60,8 +60,8 @@ function SessionPage({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 lg:gap-8">
-      <div className="flex flex-col w-full sm:w-1/5 relative sm:border-r h-screen">
+    <div className="flex">
+      <div className="flex flex-col w-36 relative border-r">
         <p className="ml-4 my-2">Questions</p>
         <div className="flex flex-col border-t">
           {session.questions.map((question, index) => (
@@ -80,7 +80,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
           ))}
         </div>
       </div>
-      <div className="flex flex-col w-full sm:w-4/5 gap-y-4">
+      <div className="flex flex-col w-full gap-y-4">
         {questions !== undefined && (
           <GradedQuestion
             session_id={slug as Id<"practice_session">}
