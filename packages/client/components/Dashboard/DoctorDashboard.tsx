@@ -127,7 +127,7 @@ export default function DoctorDashboard() {
               if (!numQuestions) return;
               const res = await createSession({
                 tags: Array.from(selectedTags),
-                total_questions: numQuestions,
+                total_questions: numQuestions > 40 ? 40 : numQuestions,
                 zen: false,
               });
               router.push(`/practice/${res}`);

@@ -85,6 +85,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
           <GradedQuestion
             session_id={slug as Id<"practice_session">}
             question={questions[questionIndex]}
+            questionNumber={questionIndex + 1}
             isLast={questionIndex === questions.length - 1}
             nextQuestion={() => setQuestionIndex(questionIndex + 1)}
           />
@@ -93,6 +94,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
           <SessionQuestion
             session_id={slug as Id<"practice_session">}
             question={strippedQuestions[questionIndex]}
+            questionNumber={questionIndex + 1}
             isLast={questionIndex === strippedQuestions.length - 1}
             nextQuestion={() => setQuestionIndex(questionIndex + 1)}
           />
