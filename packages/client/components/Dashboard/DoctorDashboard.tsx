@@ -16,6 +16,8 @@ import AppLoader from "../Loaders/AppLoader";
 import dayjs from "dayjs";
 import { SessionStatus } from "@/types/practice-session-types";
 import { formatTime } from "@/utils/formatTime";
+import useNetworkToasts from "@/hooks/useNetworkToasts";
+import { ConvexError } from "convex/values";
 
 // TODO: get tags from convex eventually?
 const tags = [
@@ -74,6 +76,7 @@ export default function DoctorDashboard() {
   const [numQuestions, setNumQuestions] = useState<number>();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const toast = useNetworkToasts();
   const createSession = useMutation(api.practice_session.createSession);
 
   // TODO: move to separate component and add pagination
@@ -125,13 +128,28 @@ export default function DoctorDashboard() {
             setLoading(true);
             try {
               if (!numQuestions) return;
+              toast.loading({
+                title: "Creating session...",
+                message: "This may take a few seconds",
+              });
               const res = await createSession({
                 tags: Array.from(selectedTags),
                 total_questions: numQuestions > 40 ? 40 : numQuestions,
                 zen: false,
               });
+              toast.success({
+                title: "Session created",
+                message: "You will be redirected shortly",
+              });
               router.push(`/practice/${res}`);
-            } catch {
+            } catch (error) {
+              toast.error({
+                title: "Error creating session",
+                message:
+                  error instanceof ConvexError
+                    ? (error.data as { message: string }).message
+                    : "Please try again later",
+              });
               setLoading(false);
             }
           }}

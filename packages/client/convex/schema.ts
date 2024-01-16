@@ -274,6 +274,13 @@ export default defineSchema({
   })
     .index("by_question", ["question"])
     .index("by_answer", ["answer"]),
+  practice_questions_seen: defineTable({
+    user_id: v.id("users"),
+    questions: v.array(v.id("practice_question")),
+    tag: v.string(),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_user_and_tag", ["user_id", "tag"]),
   practice_question_tag: defineTable({
     practice_question_id: v.id("practice_question"),
     tag: v.string(),
