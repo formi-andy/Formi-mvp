@@ -21,6 +21,7 @@ export const getSessions = query({
     const sessions = await ctx.db
       .query("practice_session")
       .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .order("desc")
       .collect();
 
     return sessions;

@@ -14,12 +14,16 @@ import { LuCheck, LuX } from "react-icons/lu";
 import { SessionStatus } from "@/types/practice-session-types";
 import GradedQuestion from "@/components/Practice/GradedQuestion";
 
-function renderCorrect(correct: boolean | undefined) {
+function renderCorrect(correct: boolean | undefined, isSelected: boolean) {
   if (correct === undefined) {
     return null;
   }
 
-  return correct ? <LuCheck /> : <LuX />;
+  return correct ? (
+    <LuCheck className={isSelected ? "text-white" : "text-green-500"} />
+  ) : (
+    <LuX className={isSelected ? "text-white" : "text-red-500"} />
+  );
 }
 
 // TODO: Move this to ssr after convex supports server side reactive queries
@@ -71,7 +75,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
               onClick={() => setQuestionIndex(index)}
             >
               <p className="text-sm">{index + 1}</p>
-              {renderCorrect(question.correct)}
+              {renderCorrect(question.correct, questionIndex === index)}
             </div>
           ))}
         </div>
