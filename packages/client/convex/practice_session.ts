@@ -359,6 +359,8 @@ export const gradeSession = mutation({
 
     const fullQuestions = await getSessionQuestions(ctx, { session_id });
 
+    let correct_count = 0;
+
     for (let i = 0; i < session.questions.length; i++) {
       if (updatedQuestions[i].id !== session.questions[i].id) {
         throw new ConvexError({
@@ -374,6 +376,10 @@ export const gradeSession = mutation({
         });
       }
 
+      if (updatedQuestions[i].response === fullQuestions[i]?.answer) {
+        correct_count++;
+      }
+
       updatedQuestions[i] = {
         ...updatedQuestions[i],
         correct: updatedQuestions[i].response === fullQuestions[i]?.answer,
@@ -384,6 +390,7 @@ export const gradeSession = mutation({
       questions: updatedQuestions,
       updated_at: currentTime,
       total_time: session.total_time + timeElapsed,
+      total_correct: correct_count,
       status: SessionStatus.Completed,
     });
   },
