@@ -31,8 +31,12 @@ export const getSessions = query({
 });
 
 export const getPaginatedSessions = query({
-  args: { paginationOpts: paginationOptsValidator },
+  args: {
+    paginationOpts: paginationOptsValidator,
+    name: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
+    const { name, paginationOpts } = args;
     const user = await mustGetCurrentUser(ctx);
 
     if (user.role !== UserRole.MedicalStudent) {
@@ -42,11 +46,22 @@ export const getPaginatedSessions = query({
       });
     }
 
+    if (name) {
+      const sessions = await ctx.db
+        .query("practice_session")
+        .withSearchIndex("search_name", (q) =>
+          q.search("name", name).eq("user_id", user._id)
+        )
+        .paginate(paginationOpts);
+
+      return sessions;
+    }
+
     const sessions = await ctx.db
       .query("practice_session")
       .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
       .order("desc")
-      .paginate(args.paginationOpts);
+      .paginate(paginationOpts);
 
     return sessions;
   },
@@ -287,7 +302,7 @@ export const createSession = mutation({
         })
       ),
       ctx.db.insert("practice_session", {
-        name,
+        name: name || "Practice Session",
         user_id: user._id,
         total_time: 0,
         total_correct: 0,

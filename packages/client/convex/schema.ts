@@ -319,5 +319,9 @@ export default defineSchema({
     zen: v.boolean(),
   })
     .index("by_user_id", ["user_id"])
-    .index("by_name", ["name"]),
+    .index("by_name", ["name"])
+    .searchIndex("search_name", {
+      searchField: "name",
+      filterFields: ["user_id"],
+    }),
 });
