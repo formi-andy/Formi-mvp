@@ -109,6 +109,96 @@ const PaginationEllipsis = ({
   </span>
 );
 
+function renderPaginationBody(
+  activePage: number,
+  totalPages: number,
+  setPage: (page: number) => void
+) {
+  if (totalPages <= 5) {
+    return Array.from(Array(totalPages).keys()).map((page) => (
+      <PaginationButton
+        key={page}
+        onClick={() => setPage(page + 1)}
+        isActive={page + 1 === activePage}
+      >
+        {page + 1}
+      </PaginationButton>
+    ));
+  }
+
+  if (activePage === 1) {
+    return (
+      <>
+        {Array.from(Array(3).keys()).map((page) => (
+          <PaginationButton
+            key={page}
+            onClick={() => setPage(page + 1)}
+            isActive={page + 1 === activePage}
+          >
+            {page + 1}
+          </PaginationButton>
+        ))}
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationButton onClick={() => setPage(totalPages)}>
+          {totalPages}
+        </PaginationButton>
+      </>
+    );
+  } else if (activePage >= totalPages) {
+    return (
+      <>
+        <PaginationButton onClick={() => setPage(1)}>1</PaginationButton>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        {Array.from(Array(3).keys())
+          .reverse()
+          .map((page) => (
+            <PaginationButton
+              key={page}
+              onClick={() => setPage(totalPages - page)}
+              isActive={totalPages - page === activePage}
+            >
+              {totalPages - page}
+            </PaginationButton>
+          ))}
+      </>
+    );
+  } else {
+    return (
+      <>
+        {activePage - 1 > 1 && (
+          <>
+            <PaginationButton onClick={() => setPage(1)}>1</PaginationButton>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+          </>
+        )}
+        <PaginationButton onClick={() => setPage(activePage - 1)}>
+          {activePage - 1}
+        </PaginationButton>
+        <PaginationButton isActive>{activePage}</PaginationButton>
+        <PaginationButton onClick={() => setPage(activePage + 1)}>
+          {activePage + 1}
+        </PaginationButton>
+        {activePage + 1 < totalPages && (
+          <>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationButton onClick={() => setPage(totalPages)}>
+              {totalPages}
+            </PaginationButton>
+          </>
+        )}
+      </>
+    );
+  }
+}
+
 export {
   Pagination,
   PaginationContent,
@@ -117,4 +207,5 @@ export {
   PaginationButton,
   PaginationNext,
   PaginationPrevious,
+  renderPaginationBody,
 };
