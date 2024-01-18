@@ -5,6 +5,7 @@ import { QueryCtx, internalQuery, mutation, query } from "./_generated/server";
 
 import { mustGetCurrentUser } from "./users";
 import { Doc, Id } from "./_generated/dataModel";
+import { addSeenQuestions, getSeenQuestions } from "./practice_questions_seen";
 
 export const getSessions = query({
   args: {},
@@ -138,9 +139,10 @@ export const createSession = mutation({
     total_questions: v.number(),
     tags: v.array(v.string()),
     zen: v.boolean(),
+    excludeSeenQuestions: v.boolean(),
   },
   async handler(ctx, args) {
-    const { total_questions, name, tags, zen } = args;
+    const { total_questions, name, tags, zen, excludeSeenQuestions } = args;
     const user = await mustGetCurrentUser(ctx);
 
     if (user.role !== UserRole.MedicalStudent) {
@@ -151,31 +153,49 @@ export const createSession = mutation({
     }
 
     let uniqueIds: Set<Id<"practice_question">>;
+    let seenQuestions: Id<"practice_question">[] = [];
 
     if (tags.length > 0) {
-      const matchingQuestions = (
-        await Promise.all(
-          tags.map(async (tag) => {
-            return ctx.db
+      const seenAndMatchingQuestions = await Promise.all(
+        tags.map(async (tag) => {
+          const [seenQuestions, matchingQuestions] = await Promise.all([
+            excludeSeenQuestions ? getSeenQuestions(ctx, { tag }) : [],
+            ctx.db
               .query("practice_question_tag")
               .withIndex("by_tag", (q) => q.eq("tag", tag))
-              .collect();
-          })
-        )
-      ).flat();
+              .collect(),
+          ]);
+
+          return { seenQuestions, matchingQuestions };
+        })
+      );
+
+      seenQuestions = seenAndMatchingQuestions
+        .map((item) => item.seenQuestions)
+        .flat();
+      const matchingQuestions = seenAndMatchingQuestions
+        .map((item) => item.matchingQuestions)
+        .flat();
 
       uniqueIds = new Set(
         matchingQuestions.map((obj) => obj.practice_question_id)
       );
     } else {
-      const practiceQuestions = await ctx.db
-        .query("practice_question")
-        .collect();
+      const [seen, practiceQuestions] = await Promise.all([
+        excludeSeenQuestions ? getSeenQuestions(ctx, { tag: "ALL" }) : [],
+        ctx.db.query("practice_question").collect(),
+      ]);
 
+      seenQuestions = seen;
       uniqueIds = new Set(practiceQuestions.map((obj) => obj._id));
     }
 
-    const uniquePracticeQuestions = Array.from(uniqueIds);
+    let uniquePracticeQuestions = Array.from(uniqueIds);
+
+    if (seenQuestions.length > 0) {
+      seenQuestions.forEach((id) => uniqueIds.delete(id));
+      uniquePracticeQuestions = Array.from(uniqueIds);
+    }
 
     uniquePracticeQuestions.sort(() => Math.random() - 0.5);
 
@@ -183,15 +203,33 @@ export const createSession = mutation({
       uniquePracticeQuestions.splice(total_questions);
     }
 
+    const tagTally: Record<string, Id<"practice_question">[]> = {};
+
     const fullQuestions = await Promise.all(
       uniquePracticeQuestions.map(async (id) => {
-        const question = await ctx.db.get(id);
+        const [question, questionTags] = await Promise.all([
+          ctx.db.get(id),
+          ctx.db
+            .query("practice_question_tag")
+            .withIndex("by_practice_question_id", (q) =>
+              q.eq("practice_question_id", id)
+            )
+            .collect(),
+        ]);
 
         if (!question) {
           throw new ConvexError({
             message: "Question not found",
             code: 404,
           });
+        }
+
+        for (let i = 0; i < questionTags.length; i++) {
+          if (!tagTally[questionTags[i].tag]) {
+            tagTally[questionTags[i].tag] = [question._id];
+          } else {
+            tagTally[questionTags[i].tag].push(question._id);
+          }
         }
 
         const randomizedChoices = question.choices.sort(
@@ -206,22 +244,37 @@ export const createSession = mutation({
       })
     );
 
-    return ctx.db.insert("practice_session", {
-      name,
-      user_id: user._id,
-      total_time: 0,
-      total_correct: 0,
-      questions: fullQuestions.map(({ id, question, choices }) => ({
-        id,
-        question,
-        choices,
-        time: 0,
-      })),
-      tags: tags || [],
-      status: SessionStatus.Created,
-      updated_at: Date.now(),
-      zen,
-    });
+    // Add seen questions
+    const res = await Promise.all([
+      addSeenQuestions(ctx, {
+        question_ids: fullQuestions.map((question) => question.id),
+        tag: "ALL",
+      }),
+      ...Object.keys(tagTally).map((tag) =>
+        addSeenQuestions(ctx, {
+          question_ids: tagTally[tag],
+          tag,
+        })
+      ),
+      ctx.db.insert("practice_session", {
+        name,
+        user_id: user._id,
+        total_time: 0,
+        total_correct: 0,
+        questions: fullQuestions.map(({ id, question, choices }) => ({
+          id,
+          question,
+          choices,
+          time: 0,
+        })),
+        tags: tags || [],
+        status: SessionStatus.Created,
+        updated_at: Date.now(),
+        zen,
+      }),
+    ]);
+
+    return res[res.length - 1];
   },
 });
 
