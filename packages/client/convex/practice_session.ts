@@ -6,6 +6,7 @@ import { QueryCtx, internalQuery, mutation, query } from "./_generated/server";
 import { mustGetCurrentUser } from "./users";
 import { Doc, Id } from "./_generated/dataModel";
 import { addSeenQuestions, getSeenQuestions } from "./practice_questions_seen";
+import { paginationOptsValidator } from "convex/server";
 
 export const getSessions = query({
   args: {},
@@ -24,6 +25,28 @@ export const getSessions = query({
       .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
       .order("desc")
       .collect();
+
+    return sessions;
+  },
+});
+
+export const getPaginatedSessions = query({
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== UserRole.MedicalStudent) {
+      throw new ConvexError({
+        message: "Only medical students can access practice sessions",
+        code: 403,
+      });
+    }
+
+    const sessions = await ctx.db
+      .query("practice_session")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .order("desc")
+      .paginate(args.paginationOpts);
 
     return sessions;
   },
@@ -201,6 +224,13 @@ export const createSession = mutation({
 
     if (uniquePracticeQuestions.length >= total_questions) {
       uniquePracticeQuestions.splice(total_questions);
+    }
+
+    if (uniquePracticeQuestions.length === 0) {
+      throw new ConvexError({
+        message: "All questions seen",
+        code: 204,
+      });
     }
 
     const tagTally: Record<string, Id<"practice_question">[]> = {};

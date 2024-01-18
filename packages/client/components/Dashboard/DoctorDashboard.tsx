@@ -168,13 +168,23 @@ export default function DoctorDashboard() {
               });
               router.push(`/practice/${res}`);
             } catch (error) {
-              toast.error({
-                title: "Error creating session",
-                message:
-                  error instanceof ConvexError
-                    ? (error.data as { message: string }).message
-                    : "Please try again later",
-              });
+              if (
+                error instanceof ConvexError &&
+                (error.data as { code: string }).code === "204"
+              ) {
+                toast.error({
+                  title: "Error creating session",
+                  message: "All questions have been seen for these tags",
+                });
+              } else {
+                toast.error({
+                  title: "Error creating session",
+                  message:
+                    error instanceof ConvexError
+                      ? (error.data as { message: string }).message
+                      : "Please try again later",
+                });
+              }
               setLoading(false);
             }
           }}
