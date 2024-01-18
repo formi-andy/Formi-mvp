@@ -6,6 +6,7 @@ import { QueryCtx, internalQuery, mutation, query } from "./_generated/server";
 import { mustGetCurrentUser } from "./users";
 import { Doc, Id } from "./_generated/dataModel";
 import { addSeenQuestions, getSeenQuestions } from "./practice_questions_seen";
+import { paginationOptsValidator } from "convex/server";
 
 export const getSessions = query({
   args: {},
@@ -24,6 +25,43 @@ export const getSessions = query({
       .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
       .order("desc")
       .collect();
+
+    return sessions;
+  },
+});
+
+export const getPaginatedSessions = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+    name: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const { name, paginationOpts } = args;
+    const user = await mustGetCurrentUser(ctx);
+
+    if (user.role !== UserRole.MedicalStudent) {
+      throw new ConvexError({
+        message: "Only medical students can access practice sessions",
+        code: 403,
+      });
+    }
+
+    if (name) {
+      const sessions = await ctx.db
+        .query("practice_session")
+        .withSearchIndex("search_name", (q) =>
+          q.search("name", name).eq("user_id", user._id)
+        )
+        .paginate(paginationOpts);
+
+      return sessions;
+    }
+
+    const sessions = await ctx.db
+      .query("practice_session")
+      .withIndex("by_user_id", (q) => q.eq("user_id", user._id))
+      .order("desc")
+      .paginate(paginationOpts);
 
     return sessions;
   },
@@ -203,6 +241,13 @@ export const createSession = mutation({
       uniquePracticeQuestions.splice(total_questions);
     }
 
+    if (uniquePracticeQuestions.length === 0) {
+      throw new ConvexError({
+        message: "All questions seen",
+        code: 204,
+      });
+    }
+
     const tagTally: Record<string, Id<"practice_question">[]> = {};
 
     const fullQuestions = await Promise.all(
@@ -257,7 +302,7 @@ export const createSession = mutation({
         })
       ),
       ctx.db.insert("practice_session", {
-        name,
+        name: name || "Practice Session",
         user_id: user._id,
         total_time: 0,
         total_correct: 0,
