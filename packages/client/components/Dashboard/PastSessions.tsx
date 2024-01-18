@@ -1,17 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { api } from "@/convex/_generated/api";
-import { usePaginatedQuery, useQuery } from "convex/react";
+import { usePaginatedQuery } from "convex/react";
 import Link from "next/link";
+import dayjs from "dayjs";
 
+import { Skeleton } from "antd";
 import { SessionStatus } from "@/types/practice-session-types";
 import { formatTime } from "@/utils/formatTime";
 import { Badge } from "../ui/badge";
-import dayjs from "dayjs";
 
 import style from "./doctorgallery.module.css";
-import { Skeleton } from "antd";
-import { useState } from "react";
 
 import {
   Pagination,
@@ -36,7 +36,6 @@ export default function PastSessions() {
     },
     { initialNumItems: PER_PAGE * 5 }
   );
-
   const totalPages = Math.ceil(results.length / PER_PAGE);
   const currentSessions = results.slice(
     (activePage - 1) * PER_PAGE,
@@ -50,7 +49,7 @@ export default function PastSessions() {
       <p className="text-2xl font-medium text-white">Past Sessions</p>
       <div className="border border-white rounded-lg flex flex-col">
         {status === "LoadingFirstPage" || status === "LoadingMore" ? (
-          Array.from(Array(3).keys()).map((i) => (
+          Array.from(Array(PER_PAGE).keys()).map((i) => (
             <div
               key={i}
               className="w-full grid gap-3 p-3 border-b first:rounded-t-lg last:rounded-b-lg last:border-0 h-[107px]"
@@ -93,7 +92,7 @@ export default function PastSessions() {
             <Link
               href={`/practice/${session._id}`}
               key={session._id}
-              className="grid gap-3 p-3 border-b first:rounded-t-lg last:rounded-b-lg last:border-0 hover:bg-blue-500 transition"
+              className="grid gap-3 p-3 border-b first:rounded-t-lg last:rounded-b-lg last:border-0 hover:bg-blue-500 transition animate-fade-in"
             >
               <div>
                 <div className="flex flex-wrap items-center justify-between">

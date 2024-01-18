@@ -4,18 +4,12 @@ import { Dispatch, SetStateAction, useState } from "react";
 import DashboardCases from "./DashboardCases";
 import style from "./doctorgallery.module.css";
 import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
 
 import { NumberInput, Switch, TextInput } from "@mantine/core";
-import Link from "next/link";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import * as amplitude from "@amplitude/analytics-browser";
-import AppLoader from "../Loaders/AppLoader";
-import dayjs from "dayjs";
-import { SessionStatus } from "@/types/practice-session-types";
-import { formatTime } from "@/utils/formatTime";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
 import PastSessions from "./PastSessions";
@@ -81,13 +75,6 @@ export default function DoctorDashboard() {
   const router = useRouter();
   const toast = useNetworkToasts();
   const createSession = useMutation(api.practice_session.createSession);
-
-  // TODO: move to separate component and add pagination
-  const pastSessions = useQuery(api.practice_session.getSessions);
-
-  if (pastSessions === undefined) {
-    return <AppLoader />;
-  }
 
   return (
     <div className="grid gap-3 sm:gap-6 max-w-5xl self-center justify-self-center">
