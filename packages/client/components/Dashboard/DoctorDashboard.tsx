@@ -18,6 +18,7 @@ import { SessionStatus } from "@/types/practice-session-types";
 import { formatTime } from "@/utils/formatTime";
 import useNetworkToasts from "@/hooks/useNetworkToasts";
 import { ConvexError } from "convex/values";
+import PastSessions from "./PastSessions";
 
 // TODO: get tags from convex eventually?
 const tags = [
@@ -192,60 +193,7 @@ export default function DoctorDashboard() {
           Start
         </Button>
       </div>
-      <div
-        className={`flex flex-col rounded-lg min-h-[200px] p-3 sm:p-6 gap-3 relative ${style.glass}`}
-      >
-        <p className="text-2xl font-medium text-white">Past Sessions</p>
-        <div className="border border-white rounded-lg flex flex-col">
-          {pastSessions.map((session) => (
-            <Link
-              href={`/practice/${session._id}`}
-              key={session._id}
-              className="grid gap-3 p-3 border-b first:rounded-t-lg last:rounded-b-lg last:border-0 hover:bg-blue-400 transition"
-            >
-              <div>
-                <div className="flex flex-wrap items-center justify-between">
-                  <p className="text-white text-lg font-medium">
-                    {session.name ? session.name : "Practice Session"}
-                  </p>
-                  <p className="text-white font-medium">
-                    {session.status === SessionStatus.Completed
-                      ? `${
-                          Math.round(
-                            (session.total_correct / session.questions.length +
-                              Number.EPSILON) *
-                              100
-                          ) / 100
-                        }% (${session.total_correct}/${
-                          session.questions.length
-                        })`
-                      : "In Progress"}
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center justify-between">
-                  <p className="text-white text-sm font-medium">
-                    {dayjs(session._creationTime).format("M/DD/YYYY h:mm A")}
-                  </p>
-                  <p className="text-white text-sm font-medium">
-                    Time elapsed: {formatTime(session.total_time)}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {session.tags.length === 0 ? (
-                  <Badge variant="secondary">All</Badge>
-                ) : (
-                  session.tags.map((tag) => (
-                    <Badge key={tag} variant="default">
-                      {tag}
-                    </Badge>
-                  ))
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+      <PastSessions />
     </div>
   );
 }
