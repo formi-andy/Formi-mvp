@@ -48,7 +48,7 @@ export default function SessionQuestion({
   const saveAnswer = useMutation(api.practice_session.saveAnswer);
 
   return (
-    <ScrollArea scrollbars="y" h={"calc(100vh - 104px)"}>
+    <ScrollArea scrollbars="y" h={"calc(100vh - 64px)"}>
       <div className="grid rounded-lg p-3 sm:p-6 gap-3 lg:gap-6 justify-self-center">
         <div>
           <div className="flex justify-between items-center mb-4">

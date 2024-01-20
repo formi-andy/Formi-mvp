@@ -284,22 +284,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
           scrollbars="y"
           h={"calc(100vh - 104px)"}
         >
-          {test.map((question, index) => (
-            <div
-              key={question.id}
-              className={`flex items-center justify-between border-b gap-2 px-6 lg:px-8 py-2 transition cursor-pointer ${
-                questionIndex === index
-                  ? "bg-blue-500 text-white hover:bg-blue-500"
-                  : "hover:bg-slate-100"
-              }`}
-              onClick={() => setQuestionIndex(index)}
-            >
-              <p className="text-sm">{index + 1}</p>
-            </div>
-          ))}
-        </ScrollArea>
-        {/* <div className="flex flex-col border-t">
-          {test.map((question, index) => (
+          {session.questions.map((question, index) => (
             <div
               key={question.id}
               className={`flex items-center justify-between border-b gap-2 px-6 lg:px-8 py-2 transition cursor-pointer ${
@@ -313,7 +298,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
               {renderCorrect(question.correct, questionIndex === index)}
             </div>
           ))}
-        </div> */}
+        </ScrollArea>
       </div>
       <div className="flex flex-col w-full gap-y-4">
         {questions !== undefined && (

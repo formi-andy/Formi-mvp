@@ -16,22 +16,22 @@ import PastSessions from "./PastSessions";
 
 // TODO: get tags from convex eventually?
 const tags = [
-  "Psychiatry, Behavioral & Substance Abuse",
-  "Surgery",
-  "General Principles",
-  "Pediatrics",
-  "Obstetrics, Gynecology & Breast",
-  "Poisoning & Environmental Exposure",
-  "Pregnancy, Childbirth & Puerperium",
-  "Rheumatology, Orthopedics & Sports",
-  "Immunology",
   "Allergy",
+  "Ear, Nose & Throat (ENT)",
+  "General Principles",
+  "Immunology",
   "Male Reproductive System",
   "Neurology",
-  "Ear, Nose & Throat (ENT)",
-  "Pathology",
+  "Obstetrics, Gynecology & Breast",
   "Oncology",
-  "Ophthalmology"
+  "Ophthalmology",
+  "Pathology",
+  "Pediatrics",
+  "Poisoning & Environmental Exposure",
+  "Pregnancy, Childbirth & Puerperium",
+  "Psychiatry, Behavioral & Substance Abuse",
+  "Rheumatology, Orthopedics & Sports",
+  "Surgery",
 ];
 
 function Tag({
