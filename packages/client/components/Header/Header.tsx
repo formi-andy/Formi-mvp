@@ -33,12 +33,12 @@ export default async function Header() {
                 >
                   Dashboard
                 </Link>
-                <Link
+                {/* <Link
                   href="/record"
                   className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"
                 >
                   Record
-                </Link>
+                </Link> */}
                 <Link
                   href="/case/create"
                   className="h-full px-4 flex items-center hover:text-blue-500 transition font-medium"

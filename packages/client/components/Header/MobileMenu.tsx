@@ -50,14 +50,11 @@ export default function MobileMenu() {
           <MobileNavLink to={`/dashboard`} onClick={() => setOpened(false)}>
             Dashboard
           </MobileNavLink>
-          <MobileNavLink to={`/record`} onClick={() => setOpened(false)}>
+          {/* <MobileNavLink to={`/record`} onClick={() => setOpened(false)}>
             Record
-          </MobileNavLink>
+          </MobileNavLink> */}
           <MobileNavLink to={`/case/create`} onClick={() => setOpened(false)}>
             Create Case
-          </MobileNavLink>
-          <MobileNavLink to={`/students`} onClick={() => setOpened(false)}>
-            For Students
           </MobileNavLink>
           <div className="relative left-4 md:left-8">
             <UserButton afterSignOutUrl="/login" />

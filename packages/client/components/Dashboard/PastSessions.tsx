@@ -48,7 +48,7 @@ export default function PastSessions() {
 
   return (
     <div
-      className={`flex flex-col rounded-lg min-h-[200px] p-3 sm:p-6 gap-3 relative ${style.glass}`}
+      className={`flex flex-col rounded-lg min-h-[200px] p-3 sm:p-6 gap-6 relative ${style.glass}`}
     >
       <p className="text-2xl font-medium text-white">Past Sessions</p>
       <div className="flex gap-1.5 px-6 rounded-lg">
