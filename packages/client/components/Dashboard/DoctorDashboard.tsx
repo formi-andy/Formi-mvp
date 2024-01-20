@@ -16,22 +16,22 @@ import PastSessions from "./PastSessions";
 
 // TODO: get tags from convex eventually?
 const tags = [
-  "Psychiatry, Behavioral & Substance Abuse",
-  "Surgery",
-  "General Principles",
-  "Pediatrics",
-  "Obstetrics, Gynecology & Breast",
-  "Poisoning & Environmental Exposure",
-  "Pregnancy, Childbirth & Puerperium",
-  "Rheumatology, Orthopedics & Sports",
-  "Immunology",
   "Allergy",
+  "Ear, Nose & Throat (ENT)",
+  "General Principles",
+  "Immunology",
   "Male Reproductive System",
   "Neurology",
-  "Ear, Nose & Throat (ENT)",
-  "Pathology",
+  "Obstetrics, Gynecology & Breast",
   "Oncology",
-  "Ophthatlmology",
+  "Ophthalmology",
+  "Pathology",
+  "Pediatrics",
+  "Poisoning & Environmental Exposure",
+  "Pregnancy, Childbirth & Puerperium",
+  "Psychiatry, Behavioral & Substance Abuse",
+  "Rheumatology, Orthopedics & Sports",
+  "Surgery",
 ];
 
 function Tag({
@@ -83,7 +83,7 @@ export default function DoctorDashboard() {
         className={`grid rounded-lg min-h-[200px] p-3 sm:p-6 gap-3 relative ${style.glass}`}
       >
         <p className="text-2xl font-medium text-white">Practice</p>
-        <p className="text-white font-medium">Tags</p>
+        <p className="text-white font-medium">Topics</p>
         <div className="flex flex-wrap gap-3">
           {tags.map((tag) => (
             <Tag

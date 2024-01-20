@@ -13,6 +13,7 @@ import SessionQuestion from "@/components/Practice/SessionQuestion";
 import { LuCheck, LuX } from "react-icons/lu";
 import { SessionStatus } from "@/types/practice-session-types";
 import GradedQuestion from "@/components/Practice/GradedQuestion";
+import { ScrollArea } from "@mantine/core";
 
 function renderCorrect(correct: boolean | undefined, isSelected: boolean) {
   if (correct === undefined) {
@@ -63,7 +64,11 @@ function SessionPage({ params }: { params: { slug: string } }) {
     <div className="flex">
       <div className="flex flex-col w-36 relative border-r">
         <p className="ml-4 my-2">Questions</p>
-        <div className="flex flex-col border-t">
+        <ScrollArea
+          className="flex flex-col border-t"
+          scrollbars="y"
+          h={"calc(100vh - 104px)"}
+        >
           {session.questions.map((question, index) => (
             <div
               key={question.id}
@@ -78,7 +83,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
               {renderCorrect(question.correct, questionIndex === index)}
             </div>
           ))}
-        </div>
+        </ScrollArea>
       </div>
       <div className="flex flex-col w-full gap-y-4">
         {questions !== undefined && (
