@@ -12,7 +12,6 @@ export default async function ConvexClientProvider({
     <ConvexContext>
       <Header />
       {children}
-      <Footer />
     </ConvexContext>
   );
 }

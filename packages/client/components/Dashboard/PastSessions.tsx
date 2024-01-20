@@ -126,13 +126,11 @@ export default function PastSessions() {
                   </p>
                   <p className="text-white font-medium">
                     {session.status === SessionStatus.Completed
-                      ? `${
-                          Math.round(
-                            (session.total_correct / session.questions.length +
-                              Number.EPSILON) *
-                              100
-                          ) / 100
-                        }% (${session.total_correct}/${
+                      ? `${Math.round(
+                          (session.total_correct / session.questions.length +
+                            Number.EPSILON) *
+                            100
+                        )}% (${session.total_correct}/${
                           session.questions.length
                         })`
                       : "In Progress"}

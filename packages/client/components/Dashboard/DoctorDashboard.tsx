@@ -31,7 +31,7 @@ const tags = [
   "Ear, Nose & Throat (ENT)",
   "Pathology",
   "Oncology",
-  "Ophthatlmology",
+  "Ophthalmology"
 ];
 
 function Tag({
@@ -83,7 +83,7 @@ export default function DoctorDashboard() {
         className={`grid rounded-lg min-h-[200px] p-3 sm:p-6 gap-3 relative ${style.glass}`}
       >
         <p className="text-2xl font-medium text-white">Practice</p>
-        <p className="text-white font-medium">Tags</p>
+        <p className="text-white font-medium">Topics</p>
         <div className="flex flex-wrap gap-3">
           {tags.map((tag) => (
             <Tag

@@ -113,8 +113,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       convex:
-        specifier: ^1.6.1
-        version: 1.6.3(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^1.8.0
+        version: 1.8.0(react-dom@18.2.0)(react@18.2.0)
       dayjs:
         specifier: ^1.11.9
         version: 1.11.9
@@ -5226,8 +5226,8 @@ packages:
     resolution: {integrity: sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==}
     dev: false
 
-  /convex@1.6.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-//veFCiphkeclTVA2Zy5UYW7Ezhvy5pn/W6yUtLltzvdjKWNyMLa1jwBpaxevgFHbs6H0iBWXFugDrXcGzjdlQ==}
+  /convex@1.8.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-3Iis7NL46qGNZ8Ac5/kQ+aulmomUjbIOUGKOoGNF7JQtIrixmPsckt/4QK8YuOp5mLBdGghdSgGCF8C79jfS4Q==}
     engines: {node: '>=16.15.1', npm: '>=7.0.0'}
     hasBin: true
     peerDependencies:

@@ -13,6 +13,222 @@ import SessionQuestion from "@/components/Practice/SessionQuestion";
 import { LuCheck, LuX } from "react-icons/lu";
 import { SessionStatus } from "@/types/practice-session-types";
 import GradedQuestion from "@/components/Practice/GradedQuestion";
+import { ScrollArea } from "@mantine/core";
+
+const test = [
+  {
+    id: "1",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "2",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "3",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "4",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "5",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "6",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "7",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "8",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "9",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "10",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "11",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "12",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "13",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "14",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "15",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "16",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "17",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "18",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "19",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "20",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "21",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "22",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "23",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "24",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "25",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "26",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "27",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "28",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "29",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "30",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "31",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "32",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "33",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "34",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "35",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "36",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "37",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "38",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "39",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "40",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "41",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "42",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "43",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "44",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "45",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "46",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "47",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "48",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "49",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "50",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "51",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "52",
+    question: "What is the meaning of life?",
+  },
+  {
+    id: "53",
+    question: "What is the meaning of life?",
+  },
+];
 
 function renderCorrect(correct: boolean | undefined, isSelected: boolean) {
   if (correct === undefined) {
@@ -63,8 +279,27 @@ function SessionPage({ params }: { params: { slug: string } }) {
     <div className="flex">
       <div className="flex flex-col w-36 relative border-r">
         <p className="ml-4 my-2">Questions</p>
-        <div className="flex flex-col border-t">
-          {session.questions.map((question, index) => (
+        <ScrollArea
+          className="flex flex-col border-t"
+          scrollbars="y"
+          h={"calc(100vh - 104px)"}
+        >
+          {test.map((question, index) => (
+            <div
+              key={question.id}
+              className={`flex items-center justify-between border-b gap-2 px-6 lg:px-8 py-2 transition cursor-pointer ${
+                questionIndex === index
+                  ? "bg-blue-500 text-white hover:bg-blue-500"
+                  : "hover:bg-slate-100"
+              }`}
+              onClick={() => setQuestionIndex(index)}
+            >
+              <p className="text-sm">{index + 1}</p>
+            </div>
+          ))}
+        </ScrollArea>
+        {/* <div className="flex flex-col border-t">
+          {test.map((question, index) => (
             <div
               key={question.id}
               className={`flex items-center justify-between border-b gap-2 px-6 lg:px-8 py-2 transition cursor-pointer ${
@@ -78,7 +313,7 @@ function SessionPage({ params }: { params: { slug: string } }) {
               {renderCorrect(question.correct, questionIndex === index)}
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
       <div className="flex flex-col w-full gap-y-4">
         {questions !== undefined && (
