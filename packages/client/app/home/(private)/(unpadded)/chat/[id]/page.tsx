@@ -14,8 +14,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const { userId } = auth();
   const user = await clerkClient.users.getUser(userId || "");
 
-  console.log("USER", user);
-
   const chat = await getChat(params.id, userId);
 
   if (!chat) {
