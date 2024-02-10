@@ -12,6 +12,8 @@ import "@mantine/tiptap/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
+import ThemeProviders from "@/context/ThemeProviders";
 
 export const metadata = {
   title: "Formi",
@@ -40,15 +42,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <ColorSchemeScript />
         </head>
         <body className={`h-fit ${inter.className}`}>
+          <Toaster />
           <NextTopLoader showSpinner={false} />
-          <MantineProvider
-            theme={{
-              fontFamily: "var(--inter-font)",
-            }}
+          <ThemeProviders
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
           >
-            <Notifications autoClose={3000} />
-            {children}
-          </MantineProvider>
+            <MantineProvider
+              theme={{
+                fontFamily: "var(--inter-font)",
+              }}
+            >
+              <Notifications autoClose={3000} />
+              {children}
+            </MantineProvider>
+          </ThemeProviders>
         </body>
       </html>
     </ClerkProvider>

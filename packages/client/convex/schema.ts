@@ -104,6 +104,14 @@ export default defineSchema({
     .index("by_updated_at", ["updated_at"])
     .index("by_user_id_and_completed", ["user_id", "completed"])
     .index("by_user_id_and_created_by", ["user_id", "created_by"]),
+  chat: defineTable({
+    title: v.string(),
+    created_at: v.number(),
+    user_id: v.string(),
+    path: v.string(),
+    messages: v.array(v.any()),
+    share_path: v.optional(v.string()),
+  }).index("by_user_id", ["user_id"]),
   patient_doctor: defineTable({
     patient_id: v.string(),
     doctor_id: v.string(),

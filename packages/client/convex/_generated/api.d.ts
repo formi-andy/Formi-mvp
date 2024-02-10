@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as action_item from "../action_item.js";
+import type * as chat from "../chat.js";
 import type * as contact_us_message from "../contact_us_message.js";
 import type * as history from "../history.js";
 import type * as http from "../http.js";
@@ -42,6 +43,7 @@ import type * as waitlist from "../waitlist.js";
  */
 declare const fullApi: ApiFromModules<{
   action_item: typeof action_item;
+  chat: typeof chat;
   contact_us_message: typeof contact_us_message;
   history: typeof history;
   http: typeof http;
