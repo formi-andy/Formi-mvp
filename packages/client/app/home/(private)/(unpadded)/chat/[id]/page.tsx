@@ -1,5 +1,3 @@
-import clerkClient from "@clerk/clerk-sdk-node";
-import { auth } from "@clerk/nextjs";
 import { getChat } from "@/app/actions";
 import { Chat } from "@/components/Chat/chat";
 import { notFound } from "next/navigation";
@@ -11,18 +9,20 @@ export interface ChatPageProps {
 }
 
 export default async function ChatPage({ params }: ChatPageProps) {
-  const { userId } = auth();
-  const user = await clerkClient.users.getUser(userId || "");
-
-  const chat = await getChat(params.id, userId);
+  const chat = await getChat(params.id);
 
   if (!chat) {
     notFound();
   }
 
-  if (chat?.userId !== userId) {
-    notFound();
-  }
+  const parsedMessages = chat.messages.map((message) => {
+    return {
+      id: message._id,
+      content: message.content,
+      createdAt: new Date(message._creationTime),
+      role: message.role,
+    };
+  });
 
-  return <Chat id={chat.id} initialMessages={chat.messages} />;
+  return <Chat id={chat._id} initialMessages={parsedMessages} />;
 }

@@ -1,6 +1,11 @@
+import { auth } from "@clerk/nextjs";
 import { type ClassValue, clsx } from "clsx";
 import { customAlphabet } from "nanoid";
 import { twMerge } from "tailwind-merge";
+
+export async function getAuthToken() {
+  return (await auth().getToken({ template: "convex" })) ?? undefined;
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

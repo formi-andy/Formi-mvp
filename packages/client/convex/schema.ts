@@ -107,11 +107,20 @@ export default defineSchema({
   chat: defineTable({
     title: v.string(),
     created_at: v.number(),
+    archived: v.boolean(),
     user_id: v.string(),
-    path: v.string(),
-    messages: v.array(v.any()),
     share_path: v.optional(v.string()),
   }).index("by_user_id", ["user_id"]),
+  message: defineTable({
+    chat_id: v.id("chat"),
+    content: v.string(),
+    role: v.union(v.literal("user"), v.literal("assistant")),
+    user_id: v.string(),
+    index: v.number(),
+  })
+    .index("by_chat_id_and_index", ["chat_id", "index"])
+    .index("by_chat_id", ["chat_id"])
+    .index("by_user_id", ["user_id"]),
   patient_doctor: defineTable({
     patient_id: v.string(),
     doctor_id: v.string(),

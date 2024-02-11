@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { toast } from "react-hot-toast";
@@ -39,12 +39,14 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
   const [previewTokenInput, setPreviewTokenInput] = useState(
     previewToken ?? ""
   );
-  const { messages, append, reload, stop, isLoading, input, setInput } =
+  const [chatId, setChatId] = useState<string | undefined>();
+
+  const { messages, append, reload, stop, isLoading, input, setInput, data } =
     useChat({
       initialMessages,
       id,
       body: {
-        id,
+        id: chatId,
         previewToken,
       },
       onResponse(response) {
@@ -58,6 +60,23 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         }
       },
     });
+
+  useEffect(() => {
+    if (id && !chatId) {
+      setChatId(id);
+      return;
+    }
+    if (
+      data &&
+      data[0] &&
+      (data[0] as { chat_id: string }).chat_id !== chatId
+    ) {
+      setChatId((data[0] as { chat_id: string }).chat_id);
+    }
+  }, [data, chatId, id]);
+
+  console.log("CHAT ID", chatId);
+
   return (
     <>
       <div className={cn("pb-[200px] pt-4 md:pt-10", className)}>

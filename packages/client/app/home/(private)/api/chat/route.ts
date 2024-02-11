@@ -1,32 +1,25 @@
 // TODO: move to python serverless runtime when stable
-
 import { NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
-import { Message as VercelChatMessage, StreamingTextResponse } from "ai";
+import {
+  Message as VercelChatMessage,
+  StreamingTextResponse,
+  experimental_StreamData,
+  createStreamDataTransformer,
+} from "ai";
 
 import { ChatOpenAI } from "@langchain/openai";
-import { MessagesPlaceholder, PromptTemplate } from "@langchain/core/prompts";
+import { PromptTemplate } from "@langchain/core/prompts";
 import { Client } from "langsmith";
 import { HttpResponseOutputParser } from "langchain/output_parsers";
 import { auth } from "@clerk/nextjs";
 
-import { DynamicTool } from "@langchain/core/tools";
-import {
-  Runnable,
-  RunnableBranch,
-  RunnableSequence,
-} from "@langchain/core/runnables";
-import {
-  AgentExecutor,
-  createOpenAIFunctionsAgent,
-  type AgentStep,
-  RunnableAgent,
-  createReactAgent,
-} from "langchain/agents";
-import { MultiPromptChain } from "langchain/chains";
+import { RunnableBranch, RunnableSequence } from "@langchain/core/runnables";
 
-import { nanoid } from "@/lib/utils";
+import { getAuthToken } from "@/lib/utils";
 import { StringOutputParser } from "@langchain/core/output_parsers";
+import { fetchMutation } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 export const runtime = "edge";
 
@@ -34,7 +27,9 @@ const formatMessage = (message: VercelChatMessage) => {
   return `${message.role}: ${message.content}`;
 };
 
-const TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
+const CATEGORIES = new Set(["symptom", "history", "final"]);
+
+const SYMPTOM_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You will start by asking the user for their chief complaint, symptoms, and duration.
 Then it is up to you to ask follow up questions. Do not to overwhelm the user with many questions asked at once. Some topics to consider include:
 - location and radiation
@@ -46,7 +41,7 @@ Then it is up to you to ask follow up questions. Do not to overwhelm the user wi
 - associated symptoms
 - how the symptoms have affected the user's life
 
-All responses must be respectful.
+All responses must be respectful. Do not thank the user.
 
 Current conversation:
 {chat_history}
@@ -56,22 +51,23 @@ Formi:`;
 
 const HISTORY_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You are now asking about their medical history, including any past surgeries, medications, and allergies.
-Do this briefly and respectfully, and remember to ask open-ended questions to get the most information.
+Do this briefly and respectfully, and remember to ask open-ended questions to get the most information. If the answer is superficial, ask for more details.
 
-All responses must be respectful.
+All responses must be respectful. Do not thank the user.
 
 Current conversation:
 {chat_history}
 
 User: {input}
 Formi:`;
+
+// "All responses must be respectful and you must avoid extra sentences You can only ask 3 questions maximum in your reply."
 
 const FINAL_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You have now gathered enough information about the user's symptoms and medical history.
-You will now let the user know that you have enough information and then thank them for their time. Tell them that
-if they have any other concerns or questions, they can put them in the chat.
+You will now let the user know that you have enough information to generate a report for their doctor and that the conversation will be archived.
 
-All responses must be respectful.
+The response must start with \`Thank you for using Formi.\`.
 
 Current conversation:
 {chat_history}
@@ -79,8 +75,8 @@ Current conversation:
 User: {input}
 Formi:`;
 
-const REVIEWER = `You are tasked with classifying if a conversation has enough information for a doctor to review later.
-You will check if the user has provided enough information about their symptoms and enough information about their medical history related to their condition.
+const TOT_REVIEWER = `Imagine three different experts tasked with classifying if a conversation has enough information for a doctor to review later.
+The experts will check if the user has provided enough information about their symptoms and enough information about their medical history related to their condition.
 Some topics to consider checking for symptoms include:
 - location and radiation
 - quality
@@ -95,12 +91,16 @@ Some topics to consider checking for medical history include:
 - past surgeries
 - medications
 - allergies
+- achohol and drug use
+- family history
 
-If the user has not provided enough information about their symptoms, you will respond with \`symptom\`.
-If the user has not provided enough information about their medical history, you will respond with \`history\`.
-If the user has provided enough information about their symptoms and history, you will respond with \`final\`.
+All experts will write down 1 step of their thinking, then share it with the group.
+Then all experts will go on to the next step, etc. If any expert realises they're wrong at any point then they leave.
 
-Do not respond with more than one word.
+Finally, the group will decide if the user has provided enough information about their symptoms and history.
+If the user has not provided enough information about their symptoms, the group will respond with \`symptom\`.
+If the user has not provided enough information about their medical history, the group will respond with \`history\`.
+If the user has provided enough information about their symptoms and history, the group will respond with \`final\`.
 
 Current conversation:
 {chat_history}
@@ -129,6 +129,29 @@ export async function POST(req: Request) {
     const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
     const currentMessageContent = messages[messages.length - 1].content;
 
+    const token = await getAuthToken();
+
+    let chatId: string;
+    const data = new experimental_StreamData();
+
+    if (json.id) {
+      chatId = json.id;
+    } else {
+      const title = json.messages[0].content.substring(0, 100);
+      chatId = await fetchMutation(
+        api.chat.createChat,
+        {
+          title,
+        },
+        {
+          token,
+        }
+      );
+      data.append({
+        chat_id: chatId,
+      });
+    }
+
     /**
      * You can also try e.g.:
      *
@@ -145,21 +168,14 @@ export async function POST(req: Request) {
     });
 
     const outputParser = new HttpResponseOutputParser();
-    // const chain = symptomPrompt.pipe(model).pipe(outputParser);
 
-    const classificationChain = RunnableSequence.from([
-      PromptTemplate.fromTemplate(REVIEWER),
+    const totChain = RunnableSequence.from([
+      PromptTemplate.fromTemplate(TOT_REVIEWER),
       model,
       new StringOutputParser(),
     ]);
 
-    const classificationChainResult = await classificationChain.invoke({
-      chat_history: formattedPreviousMessages.join("\n"),
-      input: currentMessageContent,
-    });
-    console.log("CLASSIFICATION", classificationChainResult);
-
-    const symptomPrompt = PromptTemplate.fromTemplate(TEMPLATE)
+    const symptomPrompt = PromptTemplate.fromTemplate(SYMPTOM_TEMPLATE)
       .pipe(model)
       .pipe(outputParser);
     const historyPrompt = PromptTemplate.fromTemplate(HISTORY_TEMPLATE)
@@ -171,97 +187,94 @@ export async function POST(req: Request) {
 
     const branch = RunnableBranch.from([
       [
-        (x: { topic: string; input: string; chat_history: string }) =>
-          x.topic.toLowerCase().includes("symptom"),
+        (x: { topic: string; input: string; chat_history: string }) => {
+          const splitTopic = x.topic.split(" ");
+          const lastWord = splitTopic[splitTopic.length - 1];
+          return lastWord.toLowerCase().includes("symptom");
+        },
         symptomPrompt,
       ],
       [
-        (x: { topic: string; input: string; chat_history: string }) =>
-          x.topic.toLowerCase().includes("history"),
+        (x: { topic: string; input: string; chat_history: string }) => {
+          const splitTopic = x.topic.split(" ");
+          const lastWord = splitTopic[splitTopic.length - 1];
+          return lastWord.toLowerCase().includes("history");
+        },
         historyPrompt,
       ],
       finalPrompt,
     ]);
 
-    try {
-      const fullChain = RunnableSequence.from([
-        {
-          topic: classificationChain,
-          input: (x: { chat_history: string; input: string }) => x.input,
-          chat_history: (x: { chat_history: string; input: string }) =>
-            x.chat_history,
-          // topic: classificationChain,
-          // input: currentMessageContent,
-          // chatHistory: formattedPreviousMessages.join("\n"),
-        },
-        branch,
-      ]);
+    const fullChain = RunnableSequence.from([
+      {
+        topic: totChain,
+        input: (x: { chat_history: string; input: string }) => x.input,
+        chat_history: (x: { chat_history: string; input: string }) =>
+          x.chat_history,
+      },
+      branch,
+    ]);
 
-      // const multiChain = MultiPromptChain.fromLLMAndPrompts(model, {
-      //   promptNames: ["symptoms", "history", "final"],
-      //   promptDescriptions: [
-      //     "When there isn't enough information about the symptoms",
-      //     "When there isn't enough information about the history",
-      //     "When there is enough information about the symptoms and history",
-      //   ],
-      //   promptTemplates: [symptomPrompt, historyPrompt, finalPrompt],
-      // });
-
-      console.log("RUNNING FULL CHAIN");
-
-      const stream = await fullChain.stream(
-        {
-          chat_history: formattedPreviousMessages.join("\n"),
-          input: currentMessageContent,
-        },
-        {
-          callbacks: [
-            {
-              handleLLMEnd: async (res) => {
-                if (res.generations[0][0].text.split(" ").length === 1) {
-                  // if response is final, archive chat afterwards
-                  return;
-                }
-
-                console.log("RES", res.generations[0]);
-                const title = json.messages[0].content.substring(0, 100);
-                const id = json.id ?? nanoid();
-                const createdAt = Date.now();
-                const path = `/chat/${id}`;
-                const payload = {
-                  id,
-                  title,
-                  userId,
-                  createdAt,
-                  path,
-                  messages: [
-                    ...messages,
-                    {
-                      content: res.generations?.[0][0].text,
-                      role: "assistant",
-                    },
-                  ],
-                };
-                await kv.hmset(`chat:${id}`, payload);
-                await kv.zadd(`user:chat:${userId}`, {
-                  score: createdAt,
-                  member: `chat:${id}`,
-                });
-              },
+    const stream = await fullChain.stream(
+      {
+        chat_history: formattedPreviousMessages.join("\n"),
+        input: currentMessageContent,
+      },
+      {
+        callbacks: [
+          {
+            handleChainEnd(outputs, runId, parentRunId) {
+              // check that main chain (without parent) is finished:
+              if (!parentRunId) {
+                data.close();
+              }
             },
-          ],
-        }
-      );
+            handleLLMEnd: async (res) => {
+              const splitGeneration = res.generations[0][0].text.split(" ");
+              const lastWord = splitGeneration[splitGeneration.length - 1];
 
-      return new StreamingTextResponse(stream);
-    } catch (e: any) {
-      console.log("ERROR", e);
+              if (CATEGORIES.has(lastWord.toLowerCase())) {
+                // if response is final, generate report for doctor and archive chat
+                return;
+              }
 
-      return NextResponse.json(
-        { error: e.message },
-        { status: e.status ?? 500 }
-      );
-    }
+              await Promise.all([
+                fetchMutation(
+                  api.chat.createMessage,
+                  {
+                    chat_id: chatId as Id<"chat">,
+                    content: currentMessageContent,
+                    role: "user",
+                    index: messages.length - 1,
+                  },
+                  {
+                    token,
+                  }
+                ),
+                fetchMutation(
+                  api.chat.createMessage,
+                  {
+                    chat_id: chatId as Id<"chat">,
+                    content: res.generations?.[0][0].text,
+                    role: "assistant",
+                    index: messages.length,
+                  },
+                  {
+                    token,
+                  }
+                ),
+              ]);
+            },
+          },
+        ],
+      }
+    );
+
+    return new StreamingTextResponse(
+      stream.pipeThrough(createStreamDataTransformer(true)),
+      {},
+      data
+    );
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
   }
