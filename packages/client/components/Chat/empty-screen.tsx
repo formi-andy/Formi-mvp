@@ -5,16 +5,16 @@ import { IconArrowRight } from "@/components/ui/icons";
 
 const exampleMessages = [
   {
-    heading: "Explain technical concepts",
-    message: `What is a "serverless function"?`,
+    heading: "Start with asking about my symptoms",
+    message: "What symptoms are you experiencing?",
   },
   {
-    heading: "Summarize an article",
-    message: "Summarize the following article for a 2nd grader: \n",
+    heading: "Start with asking about my chronic health conditions",
+    message: "What chronic health conditions do you have?",
   },
   {
-    heading: "Draft an email",
-    message: `Draft an email to my boss about the following: \n`,
+    heading: "Start with asking about my medications",
+    message: "What medications are you taking?",
   },
 ];
 
@@ -22,14 +22,13 @@ export function EmptyScreen({ setInput }: Pick<UseChatHelpers, "setInput">) {
   return (
     <div className="mx-auto max-w-2xl px-4">
       <div className="rounded-lg border bg-background p-8">
-        <h1 className="mb-2 text-lg font-semibold">Welcome to Formi Chat!</h1>
+        <h1 className="mb-2 text-lg font-semibold">Hi there, I&apos;m Formi</h1>
         <p className="mb-2 leading-normal text-muted-foreground">
-          This is an assistant that helps your doctor to understand your medical
-          condition by asking you questions about how you&apos;re feeling and
-          what symptoms you&apos;re experiencing.
+          I&apos;m here to help your doctor better understand your medical
+          condition and provide you with the best care possible.
         </p>
         <p className="leading-normal text-muted-foreground">
-          You can start a conversation here or try the following examples:
+          You can start a conversation here or try the following starters:
         </p>
         <div className="mt-4 flex flex-col items-start space-y-2">
           {exampleMessages.map((message, index) => (

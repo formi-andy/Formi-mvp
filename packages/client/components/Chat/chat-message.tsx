@@ -38,7 +38,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
           "relative flex size-8 shrink-0 select-none overflow-hidden items-center justify-center rounded-md shadow",
           message.role === "user"
             ? "bg-background"
-            : "bg-white text-primary-foreground"
+            : "bg-white text-primary-foreground border"
         )}
       >
         {renderRole(message.role, user?.hasImage ? user?.imageUrl : null)}
