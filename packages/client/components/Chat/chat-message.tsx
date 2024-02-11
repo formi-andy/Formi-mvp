@@ -8,7 +8,7 @@ import remarkMath from "remark-math";
 import { cn } from "@/lib/utils";
 import { CodeBlock } from "@/components/ui/codeblock";
 import { MemoizedReactMarkdown } from "@/components/Chat/markdown";
-import { IconOpenAI, IconUser } from "@/components/ui/icons";
+import { IconFormi, IconOpenAI, IconUser } from "@/components/ui/icons";
 import { ChatMessageActions } from "@/components/Chat/chat-message-actions";
 import { useUser } from "@clerk/nextjs";
 import Image from "../ui/Image/Image";
@@ -22,7 +22,7 @@ function renderRole(role: Message["role"], pfp: string | null) {
     return pfp ? <Image url={pfp} alt="User profile picture" /> : <IconUser />;
   }
 
-  return <IconOpenAI />;
+  return <IconFormi />;
 }
 
 export function ChatMessage({ message, ...props }: ChatMessageProps) {
@@ -35,10 +35,10 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
     >
       <div
         className={cn(
-          "relative flex size-8 shrink-0 select-none items-center justify-center rounded-md shadow",
+          "relative flex size-8 shrink-0 select-none overflow-hidden items-center justify-center rounded-md shadow",
           message.role === "user"
             ? "bg-background"
-            : "bg-primary text-primary-foreground"
+            : "bg-white text-primary-foreground"
         )}
       >
         {renderRole(message.role, user?.hasImage ? user?.imageUrl : null)}
