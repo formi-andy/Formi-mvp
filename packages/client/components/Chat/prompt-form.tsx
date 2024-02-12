@@ -57,11 +57,7 @@ export function PromptForm({
                 e.preventDefault();
                 path;
                 router.refresh();
-
-                // TODO: actually fix this, hack for routing for now
-                path === "/chat/new"
-                  ? router.push("/chat")
-                  : router.push("/chat/new");
+                router.push("/chat");
               }}
               className={cn(
                 buttonVariants({ size: "sm", variant: "outline" }),

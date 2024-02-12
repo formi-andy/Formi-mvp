@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { toast } from "react-hot-toast";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const IS_PREVIEW = process.env.VERCEL_ENV === "preview";
 export interface ChatProps extends React.ComponentProps<"div"> {
@@ -30,7 +30,7 @@ export interface ChatProps extends React.ComponentProps<"div"> {
 
 export function Chat({ id, initialMessages, className }: ChatProps) {
   const router = useRouter();
-  const path = usePathname();
+  const path = window.location.pathname;
   const [previewToken, setPreviewToken] = useLocalStorage<string | null>(
     "ai-token",
     null
@@ -66,17 +66,13 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       data[0] &&
       (data[0] as { chat_id: string }).chat_id !== chatId
     ) {
-      if (path === "/chat" || path === "/chat/new") {
-        window.history.pushState(
-          {},
-          "",
-          `/chat/${(data[0] as { chat_id: string }).chat_id}`
-        );
+      if (path === "/chat") {
+        router.push(`/chat/${(data[0] as { chat_id: string }).chat_id}`);
       } else {
         setChatId((data[0] as { chat_id: string }).chat_id);
       }
     }
-  }, [data, chatId, id, path]);
+  }, [data, chatId, id, path, router]);
 
   return (
     <>
