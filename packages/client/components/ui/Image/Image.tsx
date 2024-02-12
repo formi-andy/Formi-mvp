@@ -9,7 +9,9 @@ export default function Image({ url, alt }: { url: string; alt: string }) {
 
   return (
     <>
-      {loading && <Skeleton.Button active className="!w-full !h-full z-100" />}
+      {loading && (
+        <Skeleton.Button active className="!w-full !h-full z-100 !min-w-0" />
+      )}
       <NextImage
         onLoad={() => {
           setLoading(false);
