@@ -47,7 +47,6 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
-    "@vercel/kv": "^1.0.1",
     "@zoom/videosdk": "1.8.0",
     "ai": "^2.2.34",
     "antd": "^5.7.0",
