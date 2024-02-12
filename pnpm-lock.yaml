@@ -118,9 +118,6 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^2.1.13
         version: 2.1.13(@tiptap/pm@2.1.13)
-      '@vercel/kv':
-        specifier: ^1.0.1
-        version: 1.0.1
       '@zoom/videosdk':
         specifier: 1.8.0
         version: 1.8.0
@@ -177,7 +174,7 @@ importers:
         version: 10.8.6
       langchain:
         specifier: ^0.1.17
-        version: 0.1.17(@aws-sdk/client-s3@3.474.0)(@vercel/kv@1.0.1)(axios@1.5.0)(convex@1.8.0)(lodash@4.17.21)
+        version: 0.1.17(@aws-sdk/client-s3@3.474.0)(axios@1.5.0)(convex@1.8.0)(lodash@4.17.21)
       langsmith:
         specifier: 0.0.69-rc0.0
         version: 0.0.69-rc0.0
@@ -2822,7 +2819,7 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@langchain/community@0.0.27(@vercel/kv@1.0.1)(convex@1.8.0)(lodash@4.17.21):
+  /@langchain/community@0.0.27(convex@1.8.0)(lodash@4.17.21):
     resolution: {integrity: sha512-b/eV2MepDrGrImFbKdfiuhBYIQratKD45nILfmHpNJ4DFfs0RbCeZgyGBoIaVeIppnApkZmMGMisspjkDmJ+zA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -3082,7 +3079,6 @@ packages:
     dependencies:
       '@langchain/core': 0.1.26
       '@langchain/openai': 0.0.14
-      '@vercel/kv': 1.0.1
       convex: 1.8.0(react-dom@18.2.0)(react@18.2.0)
       flat: 5.0.2
       langsmith: 0.0.68
@@ -5587,19 +5583,6 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: false
 
-  /@upstash/redis@1.25.1:
-    resolution: {integrity: sha512-ACj0GhJ4qrQyBshwFgPod6XufVEfKX2wcaihsEvSdLYnY+m+pa13kGt1RXm/yTHKf4TQi/Dy2A8z/y6WUEOmlg==}
-    dependencies:
-      crypto-js: 4.2.0
-    dev: false
-
-  /@vercel/kv@1.0.1:
-    resolution: {integrity: sha512-uTKddsqVYS2GRAM/QMNNXCTuw9N742mLoGRXoNDcyECaxEXvIHG0dEY+ZnYISV4Vz534VwJO+64fd9XeSggSKw==}
-    engines: {node: '>=14.6'}
-    dependencies:
-      '@upstash/redis': 1.25.1
-    dev: false
-
   /@vue/compiler-core@3.4.18:
     resolution: {integrity: sha512-F7YK8lMK0iv6b9/Gdk15A67wM0KKZvxDxed0RR60C1z9tIJTKta+urs4j0RTN5XqHISzI3etN3mX0uHhjmoqjQ==}
     dependencies:
@@ -6408,10 +6391,6 @@ packages:
 
   /crypt@0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
-    dev: false
-
-  /crypto-js@4.2.0:
-    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
     dev: false
 
   /css-select@5.1.0:
@@ -8062,7 +8041,7 @@ packages:
     engines: {node: '>= 8'}
     dev: false
 
-  /langchain@0.1.17(@aws-sdk/client-s3@3.474.0)(@vercel/kv@1.0.1)(axios@1.5.0)(convex@1.8.0)(lodash@4.17.21):
+  /langchain@0.1.17(@aws-sdk/client-s3@3.474.0)(axios@1.5.0)(convex@1.8.0)(lodash@4.17.21):
     resolution: {integrity: sha512-w+fSAxsPdeMpJMhbS1Ur/dRhgRvw4j/vqD5kgfgmZNAh5X3nz5BXktcsyH8hwXLjuoFJMUyp3mIFy60APrY0Vw==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -8223,10 +8202,9 @@ packages:
     dependencies:
       '@anthropic-ai/sdk': 0.9.1
       '@aws-sdk/client-s3': 3.474.0
-      '@langchain/community': 0.0.27(@vercel/kv@1.0.1)(convex@1.8.0)(lodash@4.17.21)
+      '@langchain/community': 0.0.27(convex@1.8.0)(lodash@4.17.21)
       '@langchain/core': 0.1.26
       '@langchain/openai': 0.0.14
-      '@vercel/kv': 1.0.1
       axios: 1.5.0
       binary-extensions: 2.2.0
       convex: 1.8.0(react-dom@18.2.0)(react@18.2.0)
