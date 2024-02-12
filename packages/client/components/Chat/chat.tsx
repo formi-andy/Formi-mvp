@@ -21,6 +21,9 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { IconFormi } from "../ui/icons";
+import { Loader } from "@mantine/core";
+import { Separator } from "../ui/separator";
 
 const IS_PREVIEW = process.env.VERCEL_ENV === "preview";
 export interface ChatProps extends React.ComponentProps<"div"> {
@@ -80,6 +83,29 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         {messages.length ? (
           <>
             <ChatList messages={messages} />
+            {isLoading && messages.length % 2 === 1 && (
+              // prompt engine running
+              <div className="relative mx-auto max-w-2xl px-4">
+                <Separator className="my-4 md:my-8" />
+                <div
+                  className={cn(
+                    "group relative mb-4 flex items-start md:-ml-12"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "relative flex size-8 shrink-0 select-none overflow-hidden items-center justify-center rounded-md shadow bg-white text-primary-foreground border"
+                    )}
+                  >
+                    <IconFormi />
+                  </div>
+                  <div className="flex flex-1 items-center gap-x-2 px-1 ml-4 space-y-2 overflow-hidden">
+                    Formi is thinking
+                    <Loader size={20} />
+                  </div>
+                </div>
+              </div>
+            )}
             <ChatScrollAnchor trackVisibility={isLoading} />
           </>
         ) : (
