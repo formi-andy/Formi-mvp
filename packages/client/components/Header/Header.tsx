@@ -1,26 +1,19 @@
 import Link from "next/link";
-import Image from "next/image";
 import { auth, UserButton } from "@clerk/nextjs";
 
 import SideButton from "./SideButton.header";
 import MobileMenu from "./MobileMenu";
 import styles from "./header.module.css";
 import HeaderContext from "@/context/HeaderContext";
+import LogoImage from "./LogoImage";
 
 export default async function Header() {
   const { userId } = auth();
 
   return (
-    <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 bg-white">
+    <header className="flex justify-between items-center px-4 md:px-8 w-full border-b h-16 bg-white dark:bg-accent">
       <Link href="/" className={styles.headerLogo}>
-        <Image
-          priority
-          // src="/assets/logo.svg"
-          src="/assets/formi_wordmark_grey.svg"
-          alt="Formi Logo"
-          width={128}
-          height={32}
-        />
+        <LogoImage />
       </Link>
       <HeaderContext>
         <nav className={styles.headerNav}>
