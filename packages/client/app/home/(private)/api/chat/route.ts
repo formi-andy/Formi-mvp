@@ -63,6 +63,28 @@ Current conversation:
 User: {input}
 Formi:`;
 
+const SYMPTOM_PROMPT_FROM_REVIEW = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
+You will be given a conversation from three different experts who have determined that the user has not provided enough information about their symptoms related to their condition.
+You will now prompt the user for more information about their symptoms based on the conversation from the experts. You can only ask up to 3 questions at a time.
+
+All responses must be respectful. Do not thank the user.
+
+Experts' conversation:
+{expert_conversation}
+
+Formi:`;
+
+const HISTORY_PROMPT_FROM_REVIEW = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
+You will be given a conversation from three different experts who have determined that the user has not provided enough information about their medical history related to their condition.
+You will now prompt the user for more information about their symptoms based on the conversation from the experts. You can only ask up to 3 questions at a time.
+
+All responses must be respectful. Do not thank the user.
+
+Experts' conversation:
+{expert_conversation}
+
+Formi:`;
+
 // "All responses must be respectful and you must avoid extra sentences You can only ask 3 questions maximum in your reply."
 
 const FINAL_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
@@ -250,10 +272,20 @@ export async function POST(req: Request) {
       new StringOutputParser(),
     ]);
 
-    const symptomPrompt = PromptTemplate.fromTemplate(SYMPTOM_TEMPLATE)
+    // const symptomPrompt = PromptTemplate.fromTemplate(SYMPTOM_TEMPLATE)
+    //   .pipe(model)
+    //   .pipe(outputParser);
+    // const historyPrompt = PromptTemplate.fromTemplate(HISTORY_TEMPLATE)
+    //   .pipe(model)
+    //   .pipe(outputParser);
+    const symptomPrompt = PromptTemplate.fromTemplate(
+      SYMPTOM_PROMPT_FROM_REVIEW
+    )
       .pipe(model)
       .pipe(outputParser);
-    const historyPrompt = PromptTemplate.fromTemplate(HISTORY_TEMPLATE)
+    const historyPrompt = PromptTemplate.fromTemplate(
+      HISTORY_PROMPT_FROM_REVIEW
+    )
       .pipe(model)
       .pipe(outputParser);
     const finalPrompt = PromptTemplate.fromTemplate(FINAL_TEMPLATE)
@@ -271,7 +303,8 @@ export async function POST(req: Request) {
     if (symptomReviewerResult.toLowerCase().includes("prompt_user")) {
       const stream = await symptomPrompt.stream(
         {
-          chat_history: formattedPreviousMessages.join("\n"),
+          // chat_history: formattedPreviousMessages.join("\n"),
+          expert_conversation: symptomReviewerResult,
           input: currentMessageContent,
         },
         {
@@ -303,12 +336,27 @@ export async function POST(req: Request) {
       );
     } else {
       // next step is history branch
+      // const historyBranch = RunnableBranch.from([
+      //   [
+      //     (x: {
+      //       topic: string;
+      //       input: string;
+      //       chat_history: string;
+      //       user_messages: string;
+      //     }) => {
+      //       return x.topic.toLowerCase().includes("prompt_user");
+      //     },
+      //     historyPrompt,
+      //   ],
+      //   finalPrompt,
+      // ]);
       const historyBranch = RunnableBranch.from([
         [
           (x: {
             topic: string;
             input: string;
             chat_history: string;
+            expert_conversation: string;
             user_messages: string;
           }) => {
             return x.topic.toLowerCase().includes("prompt_user");
@@ -318,9 +366,31 @@ export async function POST(req: Request) {
         finalPrompt,
       ]);
 
+      // const fullChain = RunnableSequence.from([
+      //   {
+      //     topic: historyReviewerChain,
+      //     input: (x: {
+      //       chat_history: string;
+      //       input: string;
+      //       user_messages: string;
+      //     }) => x.input,
+      //     chat_history: (x: {
+      //       chat_history: string;
+      //       input: string;
+      //       user_messages: string;
+      //     }) => x.chat_history,
+      //     user_messages: (x: {
+      //       chat_history: string;
+      //       input: string;
+      //       user_messages: string;
+      //     }) => x.user_messages,
+      //   },
+      //   historyBranch,
+      // ]);
       const fullChain = RunnableSequence.from([
         {
           topic: historyReviewerChain,
+          expert_conversation: historyReviewerChain,
           input: (x: {
             chat_history: string;
             input: string;
@@ -384,100 +454,100 @@ export async function POST(req: Request) {
       );
     }
 
-    const historyBranch = RunnableBranch.from([
-      [
-        (x: { topic: string; input: string; chat_history: string }) => {
-          const splitTopic = x.topic.split(" ");
-          const lastWord = splitTopic[splitTopic.length - 1];
-          return lastWord.toLowerCase().includes("next");
-        },
-        historyPrompt,
-      ],
-      finalPrompt,
-    ]);
+    // const historyBranch = RunnableBranch.from([
+    //   [
+    //     (x: { topic: string; input: string; chat_history: string }) => {
+    //       const splitTopic = x.topic.split(" ");
+    //       const lastWord = splitTopic[splitTopic.length - 1];
+    //       return lastWord.toLowerCase().includes("next");
+    //     },
+    //     historyPrompt,
+    //   ],
+    //   finalPrompt,
+    // ]);
 
-    const symptomBranch = RunnableBranch.from([
-      [
-        (x: { topic: string; input: string; chat_history: string }) => {
-          const splitTopic = x.topic.split(" ");
-          const lastWord = splitTopic[splitTopic.length - 1];
-          return lastWord.toLowerCase().includes("symptom");
-        },
-        symptomPrompt,
-      ],
-      historyBranch,
-    ]);
+    // const symptomBranch = RunnableBranch.from([
+    //   [
+    //     (x: { topic: string; input: string; chat_history: string }) => {
+    //       const splitTopic = x.topic.split(" ");
+    //       const lastWord = splitTopic[splitTopic.length - 1];
+    //       return lastWord.toLowerCase().includes("symptom");
+    //     },
+    //     symptomPrompt,
+    //   ],
+    //   historyBranch,
+    // ]);
 
-    const fullChain = RunnableSequence.from([
-      {
-        topic: symptomReviewerChain,
-        input: (x: { chat_history: string; input: string }) => x.input,
-        chat_history: (x: { chat_history: string; input: string }) =>
-          x.chat_history,
-      },
-      symptomBranch,
-    ]);
+    // const fullChain = RunnableSequence.from([
+    //   {
+    //     topic: symptomReviewerChain,
+    //     input: (x: { chat_history: string; input: string }) => x.input,
+    //     chat_history: (x: { chat_history: string; input: string }) =>
+    //       x.chat_history,
+    //   },
+    //   symptomBranch,
+    // ]);
 
-    const stream = await fullChain.stream(
-      {
-        chat_history: formattedPreviousMessages.join("\n"),
-        input: currentMessageContent,
-      },
-      {
-        callbacks: [
-          {
-            handleChainEnd(outputs, runId, parentRunId) {
-              // check that main chain (without parent) is finished:
-              if (!parentRunId) {
-                data.close();
-              }
-            },
-            handleLLMEnd: async (res) => {
-              const splitGeneration = res.generations[0][0].text.split(" ");
-              const lastWord = splitGeneration[splitGeneration.length - 1];
+    // const stream = await fullChain.stream(
+    //   {
+    //     chat_history: formattedPreviousMessages.join("\n"),
+    //     input: currentMessageContent,
+    //   },
+    //   {
+    //     callbacks: [
+    //       {
+    //         handleChainEnd(outputs, runId, parentRunId) {
+    //           // check that main chain (without parent) is finished:
+    //           if (!parentRunId) {
+    //             data.close();
+    //           }
+    //         },
+    //         handleLLMEnd: async (res) => {
+    //           const splitGeneration = res.generations[0][0].text.split(" ");
+    //           const lastWord = splitGeneration[splitGeneration.length - 1];
 
-              if (CATEGORIES.has(lastWord.toLowerCase())) {
-                // if response is final, generate report for doctor and archive chat
-                return;
-              }
+    //           if (CATEGORIES.has(lastWord.toLowerCase())) {
+    //             // if response is final, generate report for doctor and archive chat
+    //             return;
+    //           }
 
-              await Promise.all([
-                fetchMutation(
-                  api.chat.createMessage,
-                  {
-                    chat_id: chatId as Id<"chat">,
-                    content: currentMessageContent,
-                    role: "user",
-                    index: messages.length - 1,
-                  },
-                  {
-                    token,
-                  }
-                ),
-                fetchMutation(
-                  api.chat.createMessage,
-                  {
-                    chat_id: chatId as Id<"chat">,
-                    content: res.generations?.[0][0].text,
-                    role: "assistant",
-                    index: messages.length,
-                  },
-                  {
-                    token,
-                  }
-                ),
-              ]);
-            },
-          },
-        ],
-      }
-    );
+    //           await Promise.all([
+    //             fetchMutation(
+    //               api.chat.createMessage,
+    //               {
+    //                 chat_id: chatId as Id<"chat">,
+    //                 content: currentMessageContent,
+    //                 role: "user",
+    //                 index: messages.length - 1,
+    //               },
+    //               {
+    //                 token,
+    //               }
+    //             ),
+    //             fetchMutation(
+    //               api.chat.createMessage,
+    //               {
+    //                 chat_id: chatId as Id<"chat">,
+    //                 content: res.generations?.[0][0].text,
+    //                 role: "assistant",
+    //                 index: messages.length,
+    //               },
+    //               {
+    //                 token,
+    //               }
+    //             ),
+    //           ]);
+    //         },
+    //       },
+    //     ],
+    //   }
+    // );
 
-    return new StreamingTextResponse(
-      stream.pipeThrough(createStreamDataTransformer(true)),
-      {},
-      data
-    );
+    // return new StreamingTextResponse(
+    //   stream.pipeThrough(createStreamDataTransformer(true)),
+    //   {},
+    //   data
+    // );
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
   }

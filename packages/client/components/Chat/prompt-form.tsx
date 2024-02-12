@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { IconArrowElbow, IconPlus } from "@/components/ui/icons";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export interface PromptProps
   extends Pick<UseChatHelpers, "input" | "setInput"> {
@@ -35,6 +35,8 @@ export function PromptForm({
     }
   }, []);
 
+  const path = usePathname();
+
   return (
     <form
       onSubmit={async (e) => {
@@ -53,8 +55,13 @@ export function PromptForm({
             <button
               onClick={(e) => {
                 e.preventDefault();
+                path;
                 router.refresh();
-                router.push("/chat");
+
+                // TODO: actually fix this, hack for routing for now
+                path === "/chat/new"
+                  ? router.push("/chat")
+                  : router.push("/chat/new");
               }}
               className={cn(
                 buttonVariants({ size: "sm", variant: "outline" }),

@@ -54,11 +54,6 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
           toast.error(response.statusText);
         }
       },
-      onFinish() {
-        if (!path.includes("chat")) {
-          window.history.pushState({}, "", `/chat/${id}`);
-        }
-      },
     });
 
   useEffect(() => {
@@ -71,9 +66,17 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       data[0] &&
       (data[0] as { chat_id: string }).chat_id !== chatId
     ) {
-      setChatId((data[0] as { chat_id: string }).chat_id);
+      if (path === "/chat" || path === "/chat/new") {
+        window.history.pushState(
+          {},
+          "",
+          `/chat/${(data[0] as { chat_id: string }).chat_id}`
+        );
+      } else {
+        setChatId((data[0] as { chat_id: string }).chat_id);
+      }
     }
-  }, [data, chatId, id]);
+  }, [data, chatId, id, path]);
 
   return (
     <>
