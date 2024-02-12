@@ -18,6 +18,21 @@ const exampleMessages = [
   },
 ];
 
+const tempMessages = [
+  {
+    heading: "Start with how you're feeling",
+    message: "I am feeling...",
+  },
+  {
+    heading: "Start with the area of your body that's bothering you",
+    message: "I am experiencing pain in my...",
+  },
+  {
+    heading: "Start with your current symptoms",
+    message: "I current have these symptoms:",
+  },
+];
+
 export function EmptyScreen({ setInput }: Pick<UseChatHelpers, "setInput">) {
   return (
     <div className="mx-auto max-w-2xl px-4">
@@ -28,6 +43,22 @@ export function EmptyScreen({ setInput }: Pick<UseChatHelpers, "setInput">) {
           condition and provide you with the best care possible.
         </p>
         <p className="leading-normal text-muted-foreground">
+          You can start a conversation here or try the following starters:
+        </p>
+        <div className="mt-4 flex flex-col items-start space-y-2">
+          {tempMessages.map((message, index) => (
+            <Button
+              key={index}
+              variant="link"
+              className="h-auto p-0 text-left text-base text-black dark:text-white"
+              onClick={() => setInput(message.message)}
+            >
+              <IconArrowRight className="mr-2 text-muted-foreground h-4" />
+              {message.heading}
+            </Button>
+          ))}
+        </div>
+        {/* <p className="leading-normal text-muted-foreground">
           You can start a conversation here or try the following starters:
         </p>
         <div className="mt-4 flex flex-col items-start space-y-2">
@@ -42,7 +73,7 @@ export function EmptyScreen({ setInput }: Pick<UseChatHelpers, "setInput">) {
               {message.heading}
             </Button>
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
