@@ -88,7 +88,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         )}
       </div>
       <ChatPanel
-        id={id}
+        id={chatId}
         isLoading={isLoading}
         stop={stop}
         append={append}
