@@ -27,14 +27,14 @@ import {
 interface SidebarActionsProps {
   chat: Chat;
   removeChat: (args: { id: string; path: string }) => ServerActionResult<void>;
-  shareChat: (id: string) => ServerActionResult<Chat>;
+  // shareChat: (id: string) => ServerActionResult<Chat>;
 }
 
 export function SidebarActions({
   chat,
   removeChat,
-  shareChat,
-}: SidebarActionsProps) {
+}: // shareChat,
+SidebarActionsProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
@@ -73,7 +73,7 @@ export function SidebarActions({
       </div>
       <ChatShareDialog
         chat={chat}
-        shareChat={shareChat}
+        // shareChat={shareChat}
         open={shareDialogOpen}
         onOpenChange={setShareDialogOpen}
         onCopy={() => setShareDialogOpen(false)}

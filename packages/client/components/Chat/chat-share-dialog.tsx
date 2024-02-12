@@ -1,62 +1,62 @@
-'use client'
+"use client";
 
-import * as React from 'react'
-import { type DialogProps } from '@radix-ui/react-dialog'
-import { toast } from 'react-hot-toast'
+import * as React from "react";
+import { type DialogProps } from "@radix-ui/react-dialog";
+import { toast } from "react-hot-toast";
 
-import { ServerActionResult, type Chat } from '@/lib/types'
-import { Button } from '@/components/ui/button'
+import { ServerActionResult, type Chat } from "@/lib/types";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { IconSpinner } from '@/components/ui/icons'
-import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard'
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { IconSpinner } from "@/components/ui/icons";
+import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 
 interface ChatShareDialogProps extends DialogProps {
-  chat: Pick<Chat, 'id' | 'title' | 'messages'>
-  shareChat: (id: string) => ServerActionResult<Chat>
-  onCopy: () => void
+  chat: Pick<Chat, "id" | "title" | "messages">;
+  // shareChat: (id: string) => ServerActionResult<Chat>
+  onCopy: () => void;
 }
 
 export function ChatShareDialog({
   chat,
-  shareChat,
+  // shareChat,
   onCopy,
   ...props
 }: ChatShareDialogProps) {
-  const { copyToClipboard } = useCopyToClipboard({ timeout: 1000 })
-  const [isSharePending, startShareTransition] = React.useTransition()
+  const { copyToClipboard } = useCopyToClipboard({ timeout: 1000 });
+  const [isSharePending, startShareTransition] = React.useTransition();
 
   const copyShareLink = React.useCallback(
     async (chat: Chat) => {
       if (!chat.sharePath) {
-        return toast.error('Could not copy share link to clipboard')
+        return toast.error("Could not copy share link to clipboard");
       }
 
-      const url = new URL(window.location.href)
-      url.pathname = chat.sharePath
-      copyToClipboard(url.toString())
-      onCopy()
-      toast.success('Share link copied to clipboard', {
+      const url = new URL(window.location.href);
+      url.pathname = chat.sharePath;
+      copyToClipboard(url.toString());
+      onCopy();
+      toast.success("Share link copied to clipboard", {
         style: {
-          borderRadius: '10px',
-          background: '#333',
-          color: '#fff',
-          fontSize: '14px'
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+          fontSize: "14px",
         },
         iconTheme: {
-          primary: 'white',
-          secondary: 'black'
-        }
-      })
+          primary: "white",
+          secondary: "black",
+        },
+      });
     },
     [copyToClipboard, onCopy]
-  )
+  );
 
   return (
     <Dialog {...props}>
@@ -78,16 +78,14 @@ export function ChatShareDialog({
             disabled={isSharePending}
             onClick={() => {
               // @ts-ignore
-              startShareTransition(async () => {
-                const result = await shareChat(chat.id)
-
-                if (result && 'error' in result) {
-                  toast.error(result.error)
-                  return
-                }
-
-                copyShareLink(result)
-              })
+              // startShareTransition(async () => {
+              //   const result = await shareChat(chat.id);
+              //   if (result && "error" in result) {
+              //     toast.error(result.error);
+              //     return;
+              //   }
+              //   copyShareLink(result);
+              // });
             }}
           >
             {isSharePending ? (
@@ -102,5 +100,5 @@ export function ChatShareDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -75,8 +75,6 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
     }
   }, [data, chatId, id]);
 
-  console.log("CHAT ID", chatId);
-
   return (
     <>
       <div className={cn("pb-[200px] pt-4 md:pt-10", className)}>

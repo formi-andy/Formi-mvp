@@ -20,6 +20,7 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { fetchMutation } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { LLMResult } from "@langchain/core/outputs";
 
 export const runtime = "edge";
 
@@ -31,7 +32,7 @@ const CATEGORIES = new Set(["symptom", "history", "final"]);
 
 const SYMPTOM_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You will start by asking the user for their chief complaint, symptoms, and duration.
-Then it is up to you to ask follow up questions. Do not to overwhelm the user with many questions asked at once. Some topics to consider include:
+Then it is up to you to ask follow up questions. You can only ask up to 3 questions at a time. Some topics to consider include:
 - location and radiation
 - quality
 - severity
@@ -52,6 +53,7 @@ Formi:`;
 const HISTORY_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You are now asking about their medical history, including any past surgeries, medications, and allergies.
 Do this briefly and respectfully, and remember to ask open-ended questions to get the most information. If the answer is superficial, ask for more details.
+You can only ask up to 3 questions at a time.
 
 All responses must be respectful. Do not thank the user.
 
@@ -75,8 +77,8 @@ Current conversation:
 User: {input}
 Formi:`;
 
-const TOT_REVIEWER = `Imagine three different experts tasked with classifying if a conversation has enough information for a doctor to review later.
-The experts will check if the user has provided enough information about their symptoms and enough information about their medical history related to their condition.
+const SYMPTOM_REVIEWER = `Imagine three different experts tasked with classifying if a conversation has enough information for a doctor to review later.
+The experts will check if the user has provided enough information about their symptoms related to their condition.
 Some topics to consider checking for symptoms include:
 - location and radiation
 - quality
@@ -86,6 +88,26 @@ Some topics to consider checking for symptoms include:
 - modifying factors
 - associated symptoms
 - how the symptoms have affected the user's life
+
+All experts will write down 1 step of their thinking, then share it with the group.
+Then all experts will go on to the next step, etc. If any expert realises they're wrong at any point then they leave.
+
+After the last expert has shared their thinking, the group will decide if the user has provided enough information about their symptoms.
+If the group thinks the user has not provided enough information about their symptoms, the group will respond with \`prompt_user\`.
+If the group thinks the user has provided enough information about their symptoms and history, the group will respond with \`next_review\`.
+
+Only one category can be chosen.
+
+Current conversation:
+{chat_history}
+Last user message: {input}
+
+Classification:`;
+
+// Finally, the group will decide if the user has provided enough information about their symptoms and history.
+
+const HISTORY_REVIEWER = `Imagine three different experts tasked with classifying if a conversation has enough information for a doctor to review later.
+The experts will check if the user has provided enough information about their medical history related to their condition.
 
 Some topics to consider checking for medical history include:
 - past surgeries
@@ -97,16 +119,19 @@ Some topics to consider checking for medical history include:
 All experts will write down 1 step of their thinking, then share it with the group.
 Then all experts will go on to the next step, etc. If any expert realises they're wrong at any point then they leave.
 
-Finally, the group will decide if the user has provided enough information about their symptoms and history.
-If the user has not provided enough information about their symptoms, the group will respond with \`symptom\`.
-If the user has not provided enough information about their medical history, the group will respond with \`history\`.
-If the user has provided enough information about their symptoms and history, the group will respond with \`final\`.
+After the last expert has shared their thinking, the group will decide if the user has provided enough information about their symptoms.
+If the group thinks the user has not provided enough information about their medical history, the group will respond with \`prompt_user\`.
+If the group thinks the user has provided enough information about their symptoms and history, the group will respond with \`final_prompt\`.
+
+Only one category can be chosen.
 
 Current conversation:
-{chat_history}
+{user_messages}
 Last user message: {input}
 
 Classification:`;
+
+// Finally, the group will decide if the user has provided enough information about their symptoms and history.
 
 /**
  * This handler initializes and calls a simple chain with a prompt,
@@ -114,6 +139,42 @@ Classification:`;
  *
  * https://js.langchain.com/docs/guides/expression_language/cookbook#prompttemplate--llm--outputparser
  */
+
+async function handleResponse(
+  res: LLMResult,
+  chatId: string,
+  messages: any[],
+  currentMessageContent: string,
+  token: string | undefined
+) {
+  await Promise.all([
+    fetchMutation(
+      api.chat.createMessage,
+      {
+        chat_id: chatId as Id<"chat">,
+        content: currentMessageContent,
+        role: "user",
+        index: messages.length - 1,
+      },
+      {
+        token,
+      }
+    ),
+    fetchMutation(
+      api.chat.createMessage,
+      {
+        chat_id: chatId as Id<"chat">,
+        content: res.generations?.[0][0].text,
+        role: "assistant",
+        index: messages.length,
+      },
+      {
+        token,
+      }
+    ),
+  ]);
+}
+
 export async function POST(req: Request) {
   try {
     const json = await req.json();
@@ -125,8 +186,15 @@ export async function POST(req: Request) {
       });
     }
 
+    console.log("MESSAGES", messages);
+
     const client = new Client();
     const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
+    const userOnlyMessages = messages.filter(
+      (m: any) => m.role === "user"
+    ) as VercelChatMessage[];
+    const formattedUserOnlyMessages = userOnlyMessages.map(formatMessage);
+
     const currentMessageContent = messages[messages.length - 1].content;
 
     const token = await getAuthToken();
@@ -163,14 +231,21 @@ export async function POST(req: Request) {
      */
     const model = new ChatOpenAI({
       temperature: 0.7,
+      // modelName: "gpt-4-0125-preview",
       modelName: "gpt-3.5-turbo-1106",
       streaming: true,
     });
 
     const outputParser = new HttpResponseOutputParser();
 
-    const totChain = RunnableSequence.from([
-      PromptTemplate.fromTemplate(TOT_REVIEWER),
+    const symptomReviewerChain = RunnableSequence.from([
+      PromptTemplate.fromTemplate(SYMPTOM_REVIEWER),
+      model,
+      new StringOutputParser(),
+    ]);
+
+    const historyReviewerChain = RunnableSequence.from([
+      PromptTemplate.fromTemplate(HISTORY_REVIEWER),
       model,
       new StringOutputParser(),
     ]);
@@ -185,7 +260,143 @@ export async function POST(req: Request) {
       .pipe(model)
       .pipe(outputParser);
 
-    const branch = RunnableBranch.from([
+    // invoke the symptom reviewer chain
+    const symptomReviewerResult = await symptomReviewerChain.invoke({
+      chat_history: formattedUserOnlyMessages.join("\n"),
+      input: currentMessageContent,
+    });
+
+    console.log("SYMPTOM REVIEWER RESULT", symptomReviewerResult);
+
+    if (symptomReviewerResult.toLowerCase().includes("prompt_user")) {
+      const stream = await symptomPrompt.stream(
+        {
+          chat_history: formattedPreviousMessages.join("\n"),
+          input: currentMessageContent,
+        },
+        {
+          callbacks: [
+            {
+              handleChainEnd(outputs, runId, parentRunId) {
+                if (!parentRunId) {
+                  data.close();
+                }
+              },
+              handleLLMEnd: async (res) => {
+                await handleResponse(
+                  res,
+                  chatId,
+                  messages,
+                  currentMessageContent,
+                  token
+                );
+              },
+            },
+          ],
+        }
+      );
+
+      return new StreamingTextResponse(
+        stream.pipeThrough(createStreamDataTransformer(true)),
+        {},
+        data
+      );
+    } else {
+      // next step is history branch
+      const historyBranch = RunnableBranch.from([
+        [
+          (x: {
+            topic: string;
+            input: string;
+            chat_history: string;
+            user_messages: string;
+          }) => {
+            return x.topic.toLowerCase().includes("prompt_user");
+          },
+          historyPrompt,
+        ],
+        finalPrompt,
+      ]);
+
+      const fullChain = RunnableSequence.from([
+        {
+          topic: historyReviewerChain,
+          input: (x: {
+            chat_history: string;
+            input: string;
+            user_messages: string;
+          }) => x.input,
+          chat_history: (x: {
+            chat_history: string;
+            input: string;
+            user_messages: string;
+          }) => x.chat_history,
+          user_messages: (x: {
+            chat_history: string;
+            input: string;
+            user_messages: string;
+          }) => x.user_messages,
+        },
+        historyBranch,
+      ]);
+
+      const stream = await fullChain.stream(
+        {
+          chat_history: formattedPreviousMessages.join("\n"),
+          input: currentMessageContent,
+          user_messages: formattedUserOnlyMessages.join("\n"),
+        },
+        {
+          callbacks: [
+            {
+              handleChainEnd(outputs, runId, parentRunId) {
+                if (!parentRunId) {
+                  data.close();
+                }
+              },
+              handleLLMEnd: async (res) => {
+                const response = res.generations[0][0].text;
+                if (
+                  response.toLowerCase().includes("final_prompt") ||
+                  response.toLowerCase().includes("prompt_user")
+                ) {
+                  // don't save review responses
+                  return;
+                }
+
+                await handleResponse(
+                  res,
+                  chatId,
+                  messages,
+                  currentMessageContent,
+                  token
+                );
+              },
+            },
+          ],
+        }
+      );
+
+      return new StreamingTextResponse(
+        stream.pipeThrough(createStreamDataTransformer(true)),
+        {},
+        data
+      );
+    }
+
+    const historyBranch = RunnableBranch.from([
+      [
+        (x: { topic: string; input: string; chat_history: string }) => {
+          const splitTopic = x.topic.split(" ");
+          const lastWord = splitTopic[splitTopic.length - 1];
+          return lastWord.toLowerCase().includes("next");
+        },
+        historyPrompt,
+      ],
+      finalPrompt,
+    ]);
+
+    const symptomBranch = RunnableBranch.from([
       [
         (x: { topic: string; input: string; chat_history: string }) => {
           const splitTopic = x.topic.split(" ");
@@ -194,25 +405,17 @@ export async function POST(req: Request) {
         },
         symptomPrompt,
       ],
-      [
-        (x: { topic: string; input: string; chat_history: string }) => {
-          const splitTopic = x.topic.split(" ");
-          const lastWord = splitTopic[splitTopic.length - 1];
-          return lastWord.toLowerCase().includes("history");
-        },
-        historyPrompt,
-      ],
-      finalPrompt,
+      historyBranch,
     ]);
 
     const fullChain = RunnableSequence.from([
       {
-        topic: totChain,
+        topic: symptomReviewerChain,
         input: (x: { chat_history: string; input: string }) => x.input,
         chat_history: (x: { chat_history: string; input: string }) =>
           x.chat_history,
       },
-      branch,
+      symptomBranch,
     ]);
 
     const stream = await fullChain.stream(

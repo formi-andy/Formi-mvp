@@ -3,7 +3,7 @@
 import { Chat } from "@/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { removeChat, shareChat } from "@/app/actions";
+import { removeChat } from "@/app/actions";
 import { SidebarActions } from "@/components/Chat/sidebar-actions";
 import { SidebarItem } from "@/components/Chat/sidebar-item";
 
@@ -30,7 +30,7 @@ export function SidebarItems({ chats }: SidebarItemsProps) {
                 <SidebarActions
                   chat={chat}
                   removeChat={removeChat}
-                  shareChat={shareChat}
+                  // shareChat={shareChat}
                 />
               </SidebarItem>
             </motion.div>
