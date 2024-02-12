@@ -15,6 +15,7 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { fetchMutation } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { getAuthToken } from "@/lib/utils";
 
 const REPORT_TEMPLATE = `You are a health assistant named Formi tasked with generating a report for a doctor based off of the current conversation which 
 has details about the user's symptoms and medical history.
@@ -50,10 +51,6 @@ Expert conversation:
 Report:`;
 
 export const runtime = "edge";
-
-export async function getAuthToken() {
-  return (await auth().getToken({ template: "convex" })) ?? undefined;
-}
 
 const formatMessage = (message: VercelChatMessage) => {
   return `${message.role}: ${message.content}`;
