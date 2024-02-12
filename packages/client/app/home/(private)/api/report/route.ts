@@ -12,6 +12,9 @@ import { ChatOpenAI } from "@langchain/openai";
 import { HttpResponseOutputParser } from "langchain/output_parsers";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
+import { fetchMutation } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 const REPORT_TEMPLATE = `You are a health assistant named Formi tasked with generating a report for a doctor based off of the current conversation which 
 has details about the user's symptoms and medical history.
@@ -94,11 +97,28 @@ export async function POST(req: Request) {
       new StringOutputParser(),
     ]);
 
-    const stream = await fullChain.stream({
+    const response = await fullChain.invoke({
       chat_history: formattedMessages.join("\n"),
     });
 
-    return new StreamingTextResponse(stream);
+    await fetchMutation(
+      api.chat.createReport,
+      {
+        chat_id: chat_id as Id<"chat">,
+        content: response,
+      },
+      {
+        token,
+      }
+    );
+
+    return NextResponse.json({ report: response });
+
+    // TODO: figure out how to stream and add to chat later
+    // const stream = await fullChain.stream({
+    //   chat_history: formattedMessages.join("\n"),
+    // });
+
     // return new StreamingTextResponse(stream);
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });

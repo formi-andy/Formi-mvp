@@ -149,3 +149,160 @@ export const createMessage = mutation({
     });
   },
 });
+
+export const createReport = mutation({
+  args: {
+    chat_id: v.id("chat"),
+    content: v.string(),
+  },
+  async handler(ctx, { chat_id, content }) {
+    const user = await mustGetCurrentUser(ctx);
+
+    const chat = await ctx.db.get(chat_id);
+
+    if (chat?.user_id !== user._id) {
+      throw new ConvexError({
+        code: 403,
+        message: "Unauthorized",
+      });
+    }
+
+    if (!chat) {
+      throw new ConvexError({
+        code: 404,
+        message: "Not found",
+      });
+    }
+
+    const existingReport = await ctx.db
+      .query("report")
+      .withIndex("by_chat_id", (q) => q.eq("chat_id", chat_id))
+      .first();
+
+    if (existingReport) {
+      throw new ConvexError({
+        code: 409,
+        message: "Report already exists",
+      });
+    }
+
+    return ctx.db.insert("report", {
+      content,
+      chat_id,
+      user_id: user._id,
+      sent: false,
+      updated_at: Date.now(),
+    });
+  },
+});
+
+export const saveReport = mutation({
+  args: {
+    id: v.id("report"),
+    content: v.string(),
+  },
+  async handler(ctx, { id, content }) {
+    const user = await mustGetCurrentUser(ctx);
+
+    const report = await ctx.db.get(id);
+
+    if (report?.user_id !== user._id) {
+      throw new ConvexError({
+        code: 403,
+        message: "Unauthorized",
+      });
+    }
+
+    if (!report) {
+      throw new ConvexError({
+        code: 404,
+        message: "Not found",
+      });
+    }
+
+    return ctx.db.patch(id, {
+      content,
+      updated_at: Date.now(),
+    });
+  },
+});
+
+export const sendReport = mutation({
+  args: {
+    id: v.id("report"),
+    content: v.string(),
+  },
+  async handler(ctx, { id, content }) {
+    const user = await mustGetCurrentUser(ctx);
+
+    const report = await ctx.db.get(id);
+
+    if (report?.user_id !== user._id) {
+      throw new ConvexError({
+        code: 403,
+        message: "Unauthorized",
+      });
+    }
+
+    if (!report) {
+      throw new ConvexError({
+        code: 404,
+        message: "Not found",
+      });
+    }
+
+    return ctx.db.patch(id, {
+      content,
+      updated_at: Date.now(),
+      sent: true,
+      sent_at: Date.now(),
+    });
+  },
+});
+
+export const getReport = query({
+  args: {
+    id: v.id("report"),
+  },
+  async handler(ctx, { id }) {
+    const user = await mustGetCurrentUser(ctx);
+
+    const report = await ctx.db.get(id);
+
+    if (report?.user_id !== user._id) {
+      throw new ConvexError({
+        code: 403,
+        message: "Unauthorized",
+      });
+    }
+
+    if (!report) {
+      throw new ConvexError({
+        code: 404,
+        message: "Not found",
+      });
+    }
+
+    return report;
+  },
+});
+
+export const getReportByChat = query({
+  args: {
+    chat_id: v.id("chat"),
+  },
+  async handler(ctx, { chat_id }) {
+    const user = await mustGetCurrentUser(ctx);
+
+    const report = await ctx.db
+      .query("report")
+      .withIndex("by_chat_id", (q) => q.eq("chat_id", chat_id))
+      .first();
+
+    if (!report) {
+      return null;
+    }
+
+    return report;
+  },
+});

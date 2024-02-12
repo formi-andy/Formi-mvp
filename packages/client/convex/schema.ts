@@ -108,19 +108,31 @@ export default defineSchema({
     title: v.string(),
     created_at: v.number(),
     archived: v.boolean(),
-    user_id: v.string(),
+    user_id: v.id("users"),
     share_path: v.optional(v.string()),
   }).index("by_user_id", ["user_id"]),
   message: defineTable({
     chat_id: v.id("chat"),
     content: v.string(),
     role: v.union(v.literal("user"), v.literal("assistant")),
-    user_id: v.string(),
+    user_id: v.id("users"),
     index: v.number(),
   })
     .index("by_chat_id_and_index", ["chat_id", "index"])
     .index("by_chat_id", ["chat_id"])
     .index("by_user_id", ["user_id"]),
+  report: defineTable({
+    chat_id: v.id("chat"),
+    content: v.string(),
+    user_id: v.id("users"),
+    sent: v.boolean(),
+    updated_at: v.number(),
+    sent_at: v.optional(v.number()),
+  })
+    .index("by_chat_id", ["chat_id"])
+    .index("by_user_id", ["user_id"])
+    .index("by_sent", ["sent"])
+    .index("by_updated_at", ["updated_at"]),
   patient_doctor: defineTable({
     patient_id: v.string(),
     doctor_id: v.string(),
