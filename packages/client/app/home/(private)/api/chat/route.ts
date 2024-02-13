@@ -35,7 +35,7 @@ const CATEGORIES = new Set(["symptom", "history", "final"]);
 
 const SYMPTOM_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You will start by asking the user for their chief complaint, symptoms, and duration.
-Then it is up to you to ask follow up questions. You can only ask up to 3 questions at a time. Some topics to consider include:
+Then it is up to you to ask follow up questions. You can only ask up to two questions at a time. Some topics to consider include:
 - location and radiation
 - quality
 - severity
@@ -56,7 +56,7 @@ Formi:`;
 const HISTORY_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You are now asking about their medical history, including any past surgeries, medications, and allergies.
 Do this briefly and respectfully, and remember to ask open-ended questions to get the most information. If the answer is superficial, ask for more details.
-You can only ask up to 3 questions at a time.
+You can only ask up to two questions at a time.
 
 All responses must be respectful. Do not thank the user.
 
@@ -256,8 +256,8 @@ export async function POST(req: Request) {
      */
     const model = new ChatOpenAI({
       temperature: 0.7,
-      modelName: "gpt-4-0125-preview",
-      // modelName: "gpt-3.5-turbo-1106",
+      // modelName: "gpt-4-0125-preview",
+      modelName: "gpt-3.5-turbo-1106",
       streaming: true,
     });
 

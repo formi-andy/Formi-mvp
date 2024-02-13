@@ -67,7 +67,8 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
     if (
       data &&
       data[0] &&
-      (data[0] as { chat_id: string }).chat_id !== chatId
+      (data[0] as { chat_id: string }).chat_id !== chatId &&
+      !isLoading
     ) {
       if (path === "/chat") {
         router.push(`/chat/${(data[0] as { chat_id: string }).chat_id}`);
@@ -75,7 +76,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         setChatId((data[0] as { chat_id: string }).chat_id);
       }
     }
-  }, [data, chatId, id, path, router]);
+  }, [data, chatId, id, path, router, isLoading]);
 
   return (
     <>
