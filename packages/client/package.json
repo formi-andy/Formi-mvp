@@ -64,6 +64,7 @@
     "framer-motion": "^11.0.3",
     "google": "link:@next/font/google",
     "immer": "^10.0.2",
+    "jspdf": "^2.5.1",
     "jsrsasign": "^10.8.6",
     "langchain": "^0.1.17",
     "langsmith": "0.0.69-rc0.0",
