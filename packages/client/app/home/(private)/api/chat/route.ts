@@ -15,7 +15,6 @@ import { auth } from "@clerk/nextjs";
 
 import { RunnableBranch, RunnableSequence } from "@langchain/core/runnables";
 
-import { getAuthToken } from "@/lib/utils";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { fetchMutation } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
@@ -27,6 +26,10 @@ export const runtime = "edge";
 const formatMessage = (message: VercelChatMessage) => {
   return `${message.role}: ${message.content}`;
 };
+
+async function getAuthToken() {
+  return (await auth().getToken({ template: "convex" })) ?? undefined;
+}
 
 const CATEGORIES = new Set(["symptom", "history", "final"]);
 
