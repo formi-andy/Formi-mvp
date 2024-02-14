@@ -17,39 +17,12 @@ export default function FinishedForm({
   setReportContent,
 }: {
   report: Doc<"report">;
-  // report: any; // uncomment to test w/ temp text to save time
   reportContent: string;
   setReportContent: Dispatch<SetStateAction<string>>;
 }) {
   const toast = useNetworkToasts();
   const [loading, setLoading] = useState(false);
   const sendReport = useMutation(api.chat.sendReport);
-
-  const temp = `**Patient Symptoms:**
-  - The patient is experiencing severe wrist pain, which is constant and significantly impairs their ability to use their hand for daily activities.
-  
-  **Medical History:**
-  - The patient has a history of injuring their wrist while skateboarding, which may be related to the current symptoms.
-  - No other relevant medical history or medication use has been reported.
-  
-  **Lifestyle and Additional Information:**
-  - The wrist pain is accompanied by swelling in the affected area.
-  
-  **Conclusion and Recommendations:**
-  Given the severity of the pain, the history of injury, and the presence of swelling, it is recommended that the patient seek medical attention promptly for a comprehensive examination and potential imaging to assess the extent of the injury and formulate an appropriate treatment plan. This approach aims to address any potential fractures, ligament damage, or other significant issues that may be contributing to the wrist pain.
-  
-  **Conclusion and Recommendations:**
-  Given the severity of the pain, the history of injury, and the presence of swelling, it is recommended that the patient seek medical attention promptly for a comprehensive examination and potential imaging to assess the extent of the injury and formulate an appropriate treatment plan. This approach aims to address any potential fractures, ligament damage, or other significant issues that may be contributing to the wrist pain.
-
-  **Conclusion and Recommendations:**
-  Given the severity of the pain, the history of injury, and the presence of swelling, it is recommended that the patient seek medical attention promptly for a comprehensive examination and potential imaging to assess the extent of the injury and formulate an appropriate treatment plan. This approach aims to address any potential fractures, ligament damage, or other significant issues that may be contributing to the wrist pain.
-  
-  **Conclusion and Recommendations:**
-  Given the severity of the pain, the history of injury, and the presence of swelling, it is recommended that the patient seek medical attention promptly for a comprehensive examination and potential imaging to assess the extent of the injury and formulate an appropriate treatment plan. This approach aims to address any potential fractures, ligament damage, or other significant issues that may be contributing to the wrist pain.
-
-  **Conclusion and Recommendations:**
-  Given the severity of the pain, the history of injury, and the presence of swelling, it is recommended that the patient seek medical attention promptly for a comprehensive examination and potential imaging to assess the extent of the injury and formulate an appropriate treatment plan. This approach aims to address any potential fractures, ligament damage, or other significant issues that may be contributing to the wrist pain.
-  `;
 
   return (
     <div className="flex justify-center gap-x-8 relative">
@@ -66,7 +39,7 @@ export default function FinishedForm({
             10,
             20
           );
-          const splitText = temp.split("\n");
+          const splitText = reportContent.split("\n");
           let pageY = 30;
 
           splitText.forEach((item, index) => {

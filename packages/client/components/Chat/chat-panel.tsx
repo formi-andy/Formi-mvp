@@ -121,24 +121,12 @@ export function ChatPanel({
         </div>
         <div className="px-4 py-2 space-y-4 border-t mt-3 shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4">
           {report ? (
-            // Replace this with new FinishedForm component
-            // <ReportForm
-            //   report={report}
-            //   reportContent={reportContent}
-            //   setReportContent={setReportContent}
-            // />
             <FinishedForm
               report={report}
               reportContent={reportContent}
               setReportContent={setReportContent}
             />
           ) : (
-            // Uncomment for testing to save time, remove once you see how it works
-            // <FinishedForm
-            //   report={report as any}
-            //   reportContent={reportContent}
-            //   setReportContent={setReportContent}
-            // />
             <PromptForm
               disabled={isFinished}
               onSubmit={async (value) => {

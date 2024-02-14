@@ -84,7 +84,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         {messages.length ? (
           <>
             <ChatList messages={messages} />
-            {isLoading && messages.length % 2 === 1 && (
+            {isLoading && messages.length % 2 === 0 && (
               // prompt engine running
               <div className="relative mx-auto max-w-2xl px-4">
                 <Separator className="my-4 md:my-8" />

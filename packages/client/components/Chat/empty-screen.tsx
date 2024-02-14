@@ -42,6 +42,10 @@ export function EmptyScreen({ setInput }: Pick<UseChatHelpers, "setInput">) {
           I&apos;m here to help your doctor better understand your medical
           condition and provide you with the best care possible.
         </p>
+        <p className="mb-2 leading-normal text-muted-foreground">
+          After having a brief conversation with me, I will generate a report
+          for your doctor.
+        </p>
         <p className="leading-normal text-muted-foreground">
           You can start a conversation here or try the following starters:
         </p>
