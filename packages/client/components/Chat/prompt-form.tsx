@@ -17,6 +17,7 @@ export interface PromptProps
   onSubmit: (value: string) => void;
   isLoading: boolean;
   disabled: boolean;
+  chatLength: number;
 }
 
 export function PromptForm({
@@ -25,6 +26,7 @@ export function PromptForm({
   setInput,
   isLoading,
   disabled,
+  chatLength,
 }: PromptProps) {
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
@@ -55,7 +57,6 @@ export function PromptForm({
             <button
               onClick={(e) => {
                 e.preventDefault();
-                path;
                 router.refresh();
                 router.push("/chat");
               }}
@@ -71,7 +72,7 @@ export function PromptForm({
           <TooltipContent>New Chat</TooltipContent>
         </Tooltip>
         <Textarea
-          disabled={disabled}
+          disabled={disabled || (path === "/chat" && chatLength === 3)}
           ref={inputRef}
           tabIndex={0}
           onKeyDown={onKeyDown}
@@ -88,7 +89,11 @@ export function PromptForm({
               <Button
                 type="submit"
                 size="icon"
-                disabled={isLoading || input === ""}
+                disabled={
+                  isLoading ||
+                  input === "" ||
+                  (path === "/chat" && chatLength === 3)
+                }
               >
                 <IconArrowElbow className="h-6" />
                 <span className="sr-only">Send message</span>
