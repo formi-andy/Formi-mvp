@@ -139,6 +139,7 @@ export function ChatPanel({
               input={input}
               setInput={setInput}
               isLoading={isLoading}
+              chatLength={messages.length}
             />
           )}
         </div>
