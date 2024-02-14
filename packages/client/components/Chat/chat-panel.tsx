@@ -17,6 +17,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import ReportForm from "./report-form";
+import FinishedForm from "./finished-form";
 
 export interface ChatPanelProps
   extends Pick<
@@ -120,7 +121,7 @@ export function ChatPanel({
         </div>
         <div className="px-4 py-2 space-y-4 border-t mt-3 shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4">
           {report ? (
-            <ReportForm
+            <FinishedForm
               report={report}
               reportContent={reportContent}
               setReportContent={setReportContent}

@@ -35,7 +35,7 @@ const CATEGORIES = new Set(["symptom", "history", "final"]);
 
 const SYMPTOM_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You will start by asking the user for their chief complaint, symptoms, and duration.
-Then it is up to you to ask follow up questions. You can only ask up to 3 questions at a time. Some topics to consider include:
+Then it is up to you to ask follow up questions. You can only ask up to two questions at a time. Some topics to consider include:
 - location and radiation
 - quality
 - severity
@@ -56,7 +56,7 @@ Formi:`;
 const HISTORY_TEMPLATE = `You are a health assistant named Formi tasked with gathering user medical information with questions for their doctor to review later.
 You are now asking about their medical history, including any past surgeries, medications, and allergies.
 Do this briefly and respectfully, and remember to ask open-ended questions to get the most information. If the answer is superficial, ask for more details.
-You can only ask up to 3 questions at a time.
+You can only ask up to two questions at a time.
 
 All responses must be respectful. Do not thank the user.
 
@@ -155,6 +155,27 @@ Current conversation:
 Last user message: {input}
 
 Classification:`;
+
+const temp = `
+Let's do an exercise where I pretend to be a patient and you are a medical professional. To start, you must prompt me for the four components of a chief complaint all at once: 1) age, 2) sex, 3) main concern/symptom, and 4) duration. 
+
+After obtaining the chief complaint, your job is to ask me a series of questions, one at a time, to identify, based on our conversation, the history of present illness, which includes: 1) location and radiation, 2) quality, 3) intensity and severity, 4) chronology, 5) setting (a description of what was happening when they noticed symptoms), 6) alleviating and aggravating factors, 7) associated symptoms, 8) effect on quality of life, and any social, medical, or family history that would be directly relevant to the history of present illness and be useful to generate a diagnosis.
+
+At the conclusion of our conversation, thank the user for using Formi with this message: \`Thank you for using Formi. Your conversation has been archived and a report will be generated for your doctor.\`
+
+Some guidelines: 
+1) Do not end the conversation without obtaining the four components of a chief complaint or the history of present illness. This information is critical, and the patient may not always provide complete answers to your questions.
+2) Don't number the questions, since this should feel like a natural conversation
+3) Don't provide examples with the questions to not lead the patient, unless they are not answering the questions properly. In that case it will be useful to give some examples and clarify terms.
+4) Avoid using medical jargon when speaking with the patient, but use it when generating the physician-facing report.
+5) Do not anthropomorphize your responses to the patient, they should feel as though you are a tool not an actual human. Avoid being overly empathetic, simply ask direct questions about what is happening.
+6) Your questions should be dynamic and related to the information that the patient provides.
+7) Never simulate what the patient would say, only ask questions and prompt the patient for more information.
+
+Current conversation:
+{chat_history}
+User: {input}
+`;
 
 // Finally, the group will decide if the user has provided enough information about their symptoms and history.
 
@@ -257,7 +278,7 @@ export async function POST(req: Request) {
     const model = new ChatOpenAI({
       temperature: 0.7,
       modelName: "gpt-4-0125-preview",
-      // modelName: "gpt-3.5-turbo-1106",
+      // modelName: "gpt-3.5-turbo-1106", // CHANGE BACK TO 4 WHEN LIVE
       streaming: true,
     });
 
@@ -295,167 +316,213 @@ export async function POST(req: Request) {
       .pipe(model)
       .pipe(outputParser);
 
-    // invoke the symptom reviewer chain
-    const symptomReviewerResult = await symptomReviewerChain.invoke({
-      chat_history: formattedUserOnlyMessages.join("\n"),
-      input: currentMessageContent,
-    });
+    const prompt = PromptTemplate.fromTemplate(temp)
+      .pipe(model)
+      .pipe(outputParser);
 
-    console.log("SYMPTOM REVIEWER RESULT", symptomReviewerResult);
-
-    if (symptomReviewerResult.toLowerCase().includes("prompt_user")) {
-      const stream = await symptomPrompt.stream(
-        {
-          // chat_history: formattedPreviousMessages.join("\n"),
-          expert_conversation: symptomReviewerResult,
-          input: currentMessageContent,
-        },
-        {
-          callbacks: [
-            {
-              handleChainEnd(outputs, runId, parentRunId) {
-                if (!parentRunId) {
-                  data.close();
-                }
-              },
-              handleLLMEnd: async (res) => {
-                await handleResponse(
-                  res,
-                  chatId,
-                  messages,
-                  currentMessageContent,
-                  token
-                );
-              },
+    const stream = await prompt.stream(
+      {
+        chat_history: formattedPreviousMessages.join("\n"),
+        input: currentMessageContent,
+      },
+      {
+        callbacks: [
+          {
+            handleChainEnd(outputs, runId, parentRunId) {
+              if (!parentRunId) {
+                data.close();
+              }
             },
-          ],
-        }
-      );
+            handleLLMEnd: async (res) => {
+              const response = res.generations[0][0].text;
+              if (
+                response.toLowerCase().includes("final_prompt") ||
+                response.toLowerCase().includes("prompt_user")
+              ) {
+                // don't save review responses
+                return;
+              }
 
-      return new StreamingTextResponse(
-        stream.pipeThrough(createStreamDataTransformer(true)),
-        {},
-        data
-      );
-    } else {
-      // next step is history branch
-      // const historyBranch = RunnableBranch.from([
-      //   [
-      //     (x: {
-      //       topic: string;
-      //       input: string;
-      //       chat_history: string;
-      //       user_messages: string;
-      //     }) => {
-      //       return x.topic.toLowerCase().includes("prompt_user");
-      //     },
-      //     historyPrompt,
-      //   ],
-      //   finalPrompt,
-      // ]);
-      const historyBranch = RunnableBranch.from([
-        [
-          (x: {
-            topic: string;
-            input: string;
-            chat_history: string;
-            expert_conversation: string;
-            user_messages: string;
-          }) => {
-            return x.topic.toLowerCase().includes("prompt_user");
+              await handleResponse(
+                res,
+                chatId,
+                messages,
+                currentMessageContent,
+                token
+              );
+            },
           },
-          historyPrompt,
         ],
-        finalPrompt,
-      ]);
+      }
+    );
 
-      // const fullChain = RunnableSequence.from([
-      //   {
-      //     topic: historyReviewerChain,
-      //     input: (x: {
-      //       chat_history: string;
-      //       input: string;
-      //       user_messages: string;
-      //     }) => x.input,
-      //     chat_history: (x: {
-      //       chat_history: string;
-      //       input: string;
-      //       user_messages: string;
-      //     }) => x.chat_history,
-      //     user_messages: (x: {
-      //       chat_history: string;
-      //       input: string;
-      //       user_messages: string;
-      //     }) => x.user_messages,
-      //   },
-      //   historyBranch,
-      // ]);
-      const fullChain = RunnableSequence.from([
-        {
-          topic: historyReviewerChain,
-          expert_conversation: historyReviewerChain,
-          input: (x: {
-            chat_history: string;
-            input: string;
-            user_messages: string;
-          }) => x.input,
-          chat_history: (x: {
-            chat_history: string;
-            input: string;
-            user_messages: string;
-          }) => x.chat_history,
-          user_messages: (x: {
-            chat_history: string;
-            input: string;
-            user_messages: string;
-          }) => x.user_messages,
-        },
-        historyBranch,
-      ]);
+    return new StreamingTextResponse(
+      stream.pipeThrough(createStreamDataTransformer(true)),
+      {},
+      data
+    );
 
-      const stream = await fullChain.stream(
-        {
-          chat_history: formattedPreviousMessages.join("\n"),
-          input: currentMessageContent,
-          user_messages: formattedUserOnlyMessages.join("\n"),
-        },
-        {
-          callbacks: [
-            {
-              handleChainEnd(outputs, runId, parentRunId) {
-                if (!parentRunId) {
-                  data.close();
-                }
-              },
-              handleLLMEnd: async (res) => {
-                const response = res.generations[0][0].text;
-                if (
-                  response.toLowerCase().includes("final_prompt") ||
-                  response.toLowerCase().includes("prompt_user")
-                ) {
-                  // don't save review responses
-                  return;
-                }
+    // invoke the symptom reviewer chain
+    // const symptomReviewerResult = await symptomReviewerChain.invoke({
+    //   chat_history: formattedUserOnlyMessages.join("\n"),
+    //   input: currentMessageContent,
+    // });
 
-                await handleResponse(
-                  res,
-                  chatId,
-                  messages,
-                  currentMessageContent,
-                  token
-                );
-              },
-            },
-          ],
-        }
-      );
+    // console.log("SYMPTOM REVIEWER RESULT", symptomReviewerResult);
 
-      return new StreamingTextResponse(
-        stream.pipeThrough(createStreamDataTransformer(true)),
-        {},
-        data
-      );
-    }
+    // if (symptomReviewerResult.toLowerCase().includes("prompt_user")) {
+    //   const stream = await symptomPrompt.stream(
+    //     {
+    //       // chat_history: formattedPreviousMessages.join("\n"),
+    //       expert_conversation: symptomReviewerResult,
+    //       input: currentMessageContent,
+    //     },
+    //     {
+    //       callbacks: [
+    //         {
+    //           handleChainEnd(outputs, runId, parentRunId) {
+    //             if (!parentRunId) {
+    //               data.close();
+    //             }
+    //           },
+    //           handleLLMEnd: async (res) => {
+    //             await handleResponse(
+    //               res,
+    //               chatId,
+    //               messages,
+    //               currentMessageContent,
+    //               token
+    //             );
+    //           },
+    //         },
+    //       ],
+    //     }
+    //   );
+
+    //   return new StreamingTextResponse(
+    //     stream.pipeThrough(createStreamDataTransformer(true)),
+    //     {},
+    //     data
+    //   );
+    // } else {
+    //   // next step is history branch
+    //   // const historyBranch = RunnableBranch.from([
+    //   //   [
+    //   //     (x: {
+    //   //       topic: string;
+    //   //       input: string;
+    //   //       chat_history: string;
+    //   //       user_messages: string;
+    //   //     }) => {
+    //   //       return x.topic.toLowerCase().includes("prompt_user");
+    //   //     },
+    //   //     historyPrompt,
+    //   //   ],
+    //   //   finalPrompt,
+    //   // ]);
+    //   const historyBranch = RunnableBranch.from([
+    //     [
+    //       (x: {
+    //         topic: string;
+    //         input: string;
+    //         chat_history: string;
+    //         expert_conversation: string;
+    //         user_messages: string;
+    //       }) => {
+    //         return x.topic.toLowerCase().includes("prompt_user");
+    //       },
+    //       historyPrompt,
+    //     ],
+    //     finalPrompt,
+    //   ]);
+
+    //   // const fullChain = RunnableSequence.from([
+    //   //   {
+    //   //     topic: historyReviewerChain,
+    //   //     input: (x: {
+    //   //       chat_history: string;
+    //   //       input: string;
+    //   //       user_messages: string;
+    //   //     }) => x.input,
+    //   //     chat_history: (x: {
+    //   //       chat_history: string;
+    //   //       input: string;
+    //   //       user_messages: string;
+    //   //     }) => x.chat_history,
+    //   //     user_messages: (x: {
+    //   //       chat_history: string;
+    //   //       input: string;
+    //   //       user_messages: string;
+    //   //     }) => x.user_messages,
+    //   //   },
+    //   //   historyBranch,
+    //   // ]);
+    //   const fullChain = RunnableSequence.from([
+    //     {
+    //       topic: historyReviewerChain,
+    //       expert_conversation: historyReviewerChain,
+    //       input: (x: {
+    //         chat_history: string;
+    //         input: string;
+    //         user_messages: string;
+    //       }) => x.input,
+    //       chat_history: (x: {
+    //         chat_history: string;
+    //         input: string;
+    //         user_messages: string;
+    //       }) => x.chat_history,
+    //       user_messages: (x: {
+    //         chat_history: string;
+    //         input: string;
+    //         user_messages: string;
+    //       }) => x.user_messages,
+    //     },
+    //     historyBranch,
+    //   ]);
+
+    //   const stream = await fullChain.stream(
+    //     {
+    //       chat_history: formattedPreviousMessages.join("\n"),
+    //       input: currentMessageContent,
+    //       user_messages: formattedUserOnlyMessages.join("\n"),
+    //     },
+    //     {
+    //       callbacks: [
+    //         {
+    //           handleChainEnd(outputs, runId, parentRunId) {
+    //             if (!parentRunId) {
+    //               data.close();
+    //             }
+    //           },
+    //           handleLLMEnd: async (res) => {
+    //             const response = res.generations[0][0].text;
+    //             if (
+    //               response.toLowerCase().includes("final_prompt") ||
+    //               response.toLowerCase().includes("prompt_user")
+    //             ) {
+    //               // don't save review responses
+    //               return;
+    //             }
+
+    //             await handleResponse(
+    //               res,
+    //               chatId,
+    //               messages,
+    //               currentMessageContent,
+    //               token
+    //             );
+    //           },
+    //         },
+    //       ],
+    //     }
+    //   );
+
+    //   return new StreamingTextResponse(
+    //     stream.pipeThrough(createStreamDataTransformer(true)),
+    //     {},
+    //     data
+    //   );
+    // }
 
     // const historyBranch = RunnableBranch.from([
     //   [

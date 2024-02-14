@@ -67,7 +67,8 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
     if (
       data &&
       data[0] &&
-      (data[0] as { chat_id: string }).chat_id !== chatId
+      (data[0] as { chat_id: string }).chat_id !== chatId &&
+      !isLoading
     ) {
       if (path === "/chat") {
         router.push(`/chat/${(data[0] as { chat_id: string }).chat_id}`);
@@ -75,7 +76,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         setChatId((data[0] as { chat_id: string }).chat_id);
       }
     }
-  }, [data, chatId, id, path, router]);
+  }, [data, chatId, id, path, router, isLoading]);
 
   return (
     <>
@@ -83,7 +84,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         {messages.length ? (
           <>
             <ChatList messages={messages} />
-            {isLoading && messages.length % 2 === 1 && (
+            {isLoading && messages.length % 2 === 0 && (
               // prompt engine running
               <div className="relative mx-auto max-w-2xl px-4">
                 <Separator className="my-4 md:my-8" />
