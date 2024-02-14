@@ -46,8 +46,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <NextTopLoader showSpinner={false} />
           <ThemeProviders
             attribute="class"
-            defaultTheme="system"
-            enableSystem
+            defaultTheme="light"
+            // enableSystem
             disableTransitionOnChange
           >
             <MantineProvider
